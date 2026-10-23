@@ -3977,8 +3977,10 @@
                     // Initialize icons
                     lucide.createIcons();
 
-                    // API URL
-                    const API_BASE = 'http://localhost:5000/api';
+                    // API URL (Auto-adapts to Vercel production domain or local server)
+                    const API_BASE = (window.location.origin && window.location.origin.startsWith('http')) 
+                      ? `${window.location.origin}/api` 
+                      : 'http://localhost:5000/api';
 
                     // SQLite Database Telemetry Badge
                     function updateDbBadge() {

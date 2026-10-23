@@ -1,0 +1,14 @@
+{
+  "name": "grocify-app",
+  "version": "1.0.0",
+  "description": "Grocify - Smart Kirana & Neighborhood Grocery Platform",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}

@@ -2,13 +2,30 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
-const DB_PATH = path.join(__dirname, 'grocify.db');
+let DB_PATH = path.join(__dirname, 'grocify.db');
+
+// Handle Vercel serverless read-only filesystem: copy seed DB to /tmp if running in production serverless
+if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  try {
+    const tmpDbPath = path.join('/tmp', 'grocify.db');
+    if (!fs.existsSync(tmpDbPath) && fs.existsSync(DB_PATH)) {
+      fs.copyFileSync(DB_PATH, tmpDbPath);
+    }
+    DB_PATH = tmpDbPath;
+  } catch (err) {
+    console.warn('[DB] Warning: could not use /tmp/grocify.db, falling back to original path:', err.message);
+  }
+}
 
 // Connect to SQLite Database
-const db = new Database(DB_PATH, { verbose: null });
-
-// Enable WAL mode for high performance and concurrency
-db.pragma('journal_mode = WAL');
+let db;
+try {
+  db = new Database(DB_PATH, { verbose: null });
+  db.pragma('journal_mode = WAL');
+} catch (e) {
+  console.warn('[DB] WAL or file db failed, attempting in-memory fallback:', e.message);
+  db = new Database(':memory:');
+}
 
 // Initialize Tables
 function initSchema() {
