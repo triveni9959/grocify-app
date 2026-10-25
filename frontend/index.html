@@ -69,6 +69,89 @@
       </div>
     </div>
 
+  <!-- Top Professional Navigation Bar (Desktop & Mobile Responsive) -->
+  <header class="grocify-top-navbar" id="main-top-navbar">
+    <div class="grocify-nav-container">
+      <!-- GROCIFY Brand Logo -->
+      <a class="grocify-brand" onclick="showView('landing')">
+        <div class="grocify-brand-logo">
+          <i data-lucide="leaf" style="width: 22px; height: 22px;"></i>
+        </div>
+        <div class="grocify-brand-name">
+          GROCIFY
+          <span class="grocify-brand-badge">Smart OS</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links: Home, Products, Inventory, Dashboard, Profile -->
+      <nav class="grocify-nav-links" id="desktop-nav-links">
+        <a class="grocify-nav-link" id="nav-btn-home" onclick="showView('landing')">
+          <i data-lucide="home" style="width: 17px; height: 17px;"></i>
+          <span>Home</span>
+        </a>
+        <a class="grocify-nav-link" id="nav-btn-products" onclick="showView('discover')">
+          <i data-lucide="shopping-bag" style="width: 17px; height: 17px;"></i>
+          <span>Products</span>
+        </a>
+        <a class="grocify-nav-link" id="nav-btn-inventory" onclick="showView('inventory')">
+          <i data-lucide="boxes" style="width: 17px; height: 17px;"></i>
+          <span>Inventory</span>
+        </a>
+        <a class="grocify-nav-link" id="nav-btn-dashboard" onclick="showView('merchant')">
+          <i data-lucide="layout-dashboard" style="width: 17px; height: 17px;"></i>
+          <span>Dashboard</span>
+        </a>
+        <a class="grocify-nav-link" id="nav-btn-profile" onclick="showView('profile')">
+          <i data-lucide="user" style="width: 17px; height: 17px;"></i>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <!-- Right Nav Actions: Cart & Mobile Hamburger Toggle -->
+      <div class="grocify-nav-actions">
+        <button class="nav-cart-btn" onclick="showView('cart')" title="View Shopping Basket">
+          <i data-lucide="shopping-cart" style="width: 17px; height: 17px;"></i>
+          <span class="desktop-only-text">Basket</span>
+          <span class="nav-cart-counter" id="top-nav-cart-count">0</span>
+        </button>
+
+        <!-- Mobile Hamburger Button -->
+        <button class="grocify-menu-toggle" id="mobile-menu-toggle-btn" onclick="toggleMobileNavDrawer()" aria-label="Toggle Navigation Menu">
+          <i data-lucide="menu" id="mobile-hamburger-icon" style="width: 26px; height: 26px;"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Navigation Drawer -->
+  <div class="grocify-mobile-drawer" id="mobile-nav-drawer">
+    <a class="grocify-drawer-link" onclick="handleDrawerNav('landing')">
+      <i data-lucide="home" style="width: 18px; color: var(--primary-dark);"></i>
+      <span>Home (Overview)</span>
+    </a>
+    <a class="grocify-drawer-link" onclick="handleDrawerNav('discover')">
+      <i data-lucide="shopping-bag" style="width: 18px; color: var(--primary-dark);"></i>
+      <span>Products & Store</span>
+    </a>
+    <a class="grocify-drawer-link" onclick="handleDrawerNav('inventory')">
+      <i data-lucide="boxes" style="width: 18px; color: var(--primary-dark);"></i>
+      <span>Inventory Intel</span>
+    </a>
+    <a class="grocify-drawer-link" onclick="handleDrawerNav('merchant')">
+      <i data-lucide="layout-dashboard" style="width: 18px; color: var(--primary-dark);"></i>
+      <span>Dashboard (Merchant Pulse)</span>
+    </a>
+    <a class="grocify-drawer-link" onclick="handleDrawerNav('profile')">
+      <i data-lucide="user" style="width: 18px; color: var(--primary-dark);"></i>
+      <span>My Profile & Orders</span>
+    </a>
+    <div class="grocify-drawer-divider"></div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-primary" style="flex: 1; font-size: 13px; padding: 10px;" onclick="handleDrawerNav('customer')">Customer Mode</button>
+      <button class="btn btn-secondary" style="flex: 1; font-size: 13px; padding: 10px;" onclick="handleDrawerNav('shopkeeper')">Shopkeeper Mode</button>
+    </div>
+  </div>
+
   <div class="app-container" id="app">
     <!-- SPLASH SCREEN VIEW -->
     <div id="view-splash">
@@ -217,50 +300,52 @@
           Shop locally while your purchase patterns help stores understand what customers actually need.
         </p>
 
-        <div class="role-card" onclick="showView('customer-login')">
-          <div class="role-icon">
-            <i data-lucide="user"></i>
-          </div>
-          <div style="flex: 1; text-align: left;">
-            <div class="flex items-center gap-2 mb-2">
-              <h2 style="font-size: 20px;">I'm a Customer</h2>
-              <span class="badge gray">Shopper</span>
+        <div class="landing-roles-grid">
+          <div class="role-card" onclick="showView('customer-login')">
+            <div class="role-icon">
+              <i data-lucide="user"></i>
             </div>
-            <div class="text-primary text-xs font-medium mb-2">Neighborhood Member</div>
-            <p style="font-size: 13px; margin-bottom: 12px;">Discover availability, personalized offers and your
-              shopping patterns.</p>
-            <div class="flex items-center gap-2">
-              <span class="badge"><span
-                  style="width: 4px; height: 4px; background: var(--primary-dark); border-radius: 50%; margin-right: 4px;"></span>
-                Pantry Sync & Local Offers</span>
-              <span class="text-xs text-muted">Free for households</span>
+            <div style="flex: 1; text-align: left;">
+              <div class="flex items-center gap-2 mb-2">
+                <h2 style="font-size: 20px;">I'm a Customer</h2>
+                <span class="badge gray">Shopper</span>
+              </div>
+              <div class="text-primary text-xs font-medium mb-2">Neighborhood Member</div>
+              <p style="font-size: 13px; margin-bottom: 12px;">Discover availability, personalized offers and your
+                shopping patterns.</p>
+              <div class="flex items-center gap-2">
+                <span class="badge"><span
+                    style="width: 4px; height: 4px; background: var(--primary-dark); border-radius: 50%; margin-right: 4px;"></span>
+                  Pantry Sync & Local Offers</span>
+                <span class="text-xs text-muted">Free for households</span>
+              </div>
             </div>
+            <i data-lucide="arrow-right" class="text-muted"
+              style="background: #f3f4f6; border-radius: 50%; padding: 4px;"></i>
           </div>
-          <i data-lucide="arrow-right" class="text-muted"
-            style="background: #f3f4f6; border-radius: 50%; padding: 4px;"></i>
-        </div>
 
-        <div class="role-card merchant" onclick="showView('shopkeeper-login')" style="background: #eef8f2;">
-          <div class="role-icon">
-            <i data-lucide="store"></i>
-          </div>
-          <div style="flex: 1; text-align: left;">
-            <div class="flex items-center gap-2 mb-2">
-              <h2 style="font-size: 20px;">Grocify</h2>
-              <span class="badge">Merchant OS</span>
+          <div class="role-card merchant" onclick="showView('shopkeeper-login')" style="background: #eef8f2;">
+            <div class="role-icon">
+              <i data-lucide="store"></i>
             </div>
-            <div class="text-primary text-xs font-medium mb-2">Independent Retailer</div>
-            <p style="font-size: 13px; margin-bottom: 12px;">Understand demand, reduce wastage and make smarter
-              inventory decisions.</p>
-            <div class="flex items-center justify-between">
-              <span class="badge" style="background: #d5eedd;"><span
-                  style="width: 4px; height: 4px; background: var(--primary-dark); border-radius: 50%; margin-right: 4px;"></span>
-                Predictive EOQ & Waste</span>
-              <div class="text-primary font-bold text-sm" style="text-align: right;">99.4%<br>Accuracy</div>
+            <div style="flex: 1; text-align: left;">
+              <div class="flex items-center gap-2 mb-2">
+                <h2 style="font-size: 20px;">Grocify</h2>
+                <span class="badge">Merchant OS</span>
+              </div>
+              <div class="text-primary text-xs font-medium mb-2">Independent Retailer</div>
+              <p style="font-size: 13px; margin-bottom: 12px;">Understand demand, reduce wastage and make smarter
+                inventory decisions.</p>
+              <div class="flex items-center justify-between">
+                <span class="badge" style="background: #d5eedd;"><span
+                    style="width: 4px; height: 4px; background: var(--primary-dark); border-radius: 50%; margin-right: 4px;"></span>
+                  Predictive EOQ & Waste</span>
+                <div class="text-primary font-bold text-sm" style="text-align: right;">99.4%<br>Accuracy</div>
+              </div>
             </div>
+            <i data-lucide="arrow-right" class="text-muted"
+              style="background: #d5eedd; border-radius: 50%; padding: 4px; color: var(--primary-dark);"></i>
           </div>
-          <i data-lucide="arrow-right" class="text-muted"
-            style="background: #d5eedd; border-radius: 50%; padding: 4px; color: var(--primary-dark);"></i>
         </div>
 
         <div class="flex items-center justify-center gap-3 mt-6 text-sm text-muted">
@@ -308,63 +393,74 @@
             sync</span>
         </div>
 
-        <div class="card"
-          style="background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
-          <div class="flex items-center gap-3">
-            <div style="background: white; padding: 8px; border-radius: 8px;"><i data-lucide="store"
-                style="width: 16px;"></i></div>
-            <div>
-              <div class="font-semibold text-sm">Sri Lakshmi Stores <span class="text-muted font-normal text-xs">· 0.8
-                  km</span></div>
-              <div class="text-xs text-muted">Synced with neighborhood store inventory</div>
-            </div>
-          </div>
-          <div class="text-xs text-primary font-medium flex items-center gap-1">
-            <span style="width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></span> Active
-          </div>
-        </div>
-
-        <div class="card" style="background: white;">
-          <div class="flex justify-between items-center mb-4">
-            <div class="text-xs font-bold text-primary flex items-center gap-1 uppercase tracking-wide">
-              <i data-lucide="clock" style="width: 14px;"></i> Your shopping pattern
-            </div>
-            <div class="badge gray">Cycle #14</div>
-          </div>
-          <h2 style="font-size: 20px; line-height: 1.3; margin-bottom: 8px;">Milk is usually part of your basket every
-            6-7 days.</h2>
-          <p style="margin-bottom: 20px;">Demand intelligence prediction based on 6 months of store receipts.</p>
-
-          <div class="flex items-center gap-4 mb-4">
-            <div class="progress-circle">
-              <div class="progress-content">
-                <div style="font-size: 24px; font-weight: 700; color: var(--text-main); line-height: 1;">2</div>
-                <div
-                  style="font-size: 8px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; margin-top: 2px;">
-                  DAYS LEFT</div>
+        <div class="customer-dashboard-grid mb-6">
+          <div class="card"
+            style="background: #f8fafc; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div style="background: white; padding: 10px; border-radius: 10px;"><i data-lucide="store"
+                    style="width: 20px; color: var(--primary-dark);"></i></div>
+                <div>
+                  <div class="font-bold text-base">Sri Lakshmi Stores <span class="text-muted font-normal text-xs">· 0.8
+                      km</span></div>
+                  <div class="text-xs text-muted">Synced with neighborhood store inventory</div>
+                </div>
+              </div>
+              <div class="text-xs text-primary font-medium flex items-center gap-1">
+                <span style="width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></span> Active
               </div>
             </div>
-            <div>
-              <div class="text-sm font-semibold flex items-center gap-2 mb-1">
-                <span style="width: 6px; height: 6px; background: var(--primary-dark); border-radius: 50%;"></span>
-                Expected refill in 48 hours
+            <div style="background: white; border-radius: 12px; padding: 14px; border: 1px solid var(--border-color);">
+              <div class="flex justify-between items-center mb-2">
+                <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">Store Connection Telemetry</span>
+                <span class="badge" style="background: #eef8f2; color: var(--primary-dark); font-size: 10px;">99.8% Synced</span>
               </div>
-              <div class="text-xs text-muted">Last purchased: <span class="font-semibold text-main">5 days ago</span>
-              </div>
-              <div class="text-xs text-muted mb-2">Household rhythm: <span class="font-semibold text-main">7-day
-                  regular</span></div>
-              <div class="green-bar" style="width: 120px;">
-                <div class="green-bar-fill" style="width: 70%;"></div>
-              </div>
+              <div class="text-xs text-muted">Real-time stock balance & autonomous local kirana fulfillment engine.</div>
             </div>
           </div>
 
-          <button class="btn btn-secondary w-full justify-between" style="font-size: 13px;"
-            onclick="showView('pattern')">
-            <div class="flex items-center gap-2"><i data-lucide="trending-up" style="width: 16px;"></i> View my
-              consumption pattern</div>
-            <i data-lucide="arrow-right" style="width: 16px;"></i>
-          </button>
+          <div class="card" style="background: white; margin-bottom: 0;">
+            <div class="flex justify-between items-center mb-4">
+              <div class="text-xs font-bold text-primary flex items-center gap-1 uppercase tracking-wide">
+                <i data-lucide="clock" style="width: 14px;"></i> Your shopping pattern
+              </div>
+              <div class="badge gray">Cycle #14</div>
+            </div>
+            <h2 style="font-size: 18px; line-height: 1.3; margin-bottom: 6px;">Milk is usually part of your basket every
+              6-7 days.</h2>
+            <p style="margin-bottom: 16px; font-size: 13px;">Demand intelligence prediction based on 6 months of store receipts.</p>
+
+            <div class="flex items-center gap-4 mb-4">
+              <div class="progress-circle">
+                <div class="progress-content">
+                  <div style="font-size: 24px; font-weight: 700; color: var(--text-main); line-height: 1;">2</div>
+                  <div
+                    style="font-size: 8px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; margin-top: 2px;">
+                    DAYS LEFT</div>
+                </div>
+              </div>
+              <div>
+                <div class="text-sm font-semibold flex items-center gap-2 mb-1">
+                  <span style="width: 6px; height: 6px; background: var(--primary-dark); border-radius: 50%;"></span>
+                  Expected refill in 48 hours
+                </div>
+                <div class="text-xs text-muted">Last purchased: <span class="font-semibold text-main">5 days ago</span>
+                </div>
+                <div class="text-xs text-muted mb-2">Household rhythm: <span class="font-semibold text-main">7-day
+                    regular</span></div>
+                <div class="green-bar" style="width: 140px;">
+                  <div class="green-bar-fill" style="width: 70%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-secondary w-full justify-between" style="font-size: 13px;"
+              onclick="showView('pattern')">
+              <div class="flex items-center gap-2"><i data-lucide="trending-up" style="width: 16px;"></i> View my
+                consumption pattern</div>
+              <i data-lucide="arrow-right" style="width: 16px;"></i>
+            </button>
+          </div>
         </div>
 
         <div class="flex justify-between items-end mb-4 mt-6">
@@ -1372,7 +1468,7 @@
 
         <!-- Sticky Bottom Bar -->
         <div
-          style="position: fixed; bottom: 0; width: 100%; max-width: 400px; background: white; border-top: 1px solid var(--border-color); padding: 16px; z-index: 100; box-shadow: 0 -4px 12px rgba(0,0,0,0.05);">
+          class="sticky-bottom-action-bar">
           <div class="flex gap-3 mb-3">
             <div class="flex items-center"
               style="border: 1px solid var(--border-color); border-radius: 8px; background: white;">
@@ -1418,7 +1514,7 @@
         </div>
 
         <!-- Sticky Bottom Bar -->
-        <div style="position: fixed; bottom: 0; width: 100%; max-width: 400px; background: white; border-top: 1px solid var(--border-color); padding: 16px; z-index: 100; box-shadow: 0 -4px 12px rgba(0,0,0,0.05);">
+        <div class="sticky-bottom-action-bar">
           <div class="flex justify-between items-center mb-4">
             <span style="font-weight: 600; color: var(--text-muted);">Total Bill</span>
             <span style="font-size: 24px; font-weight: 800; color: var(--text-main);" id="cart-total-bill">₹0</span>
@@ -1542,7 +1638,7 @@
         </div>
 
         <!-- Sticky Bottom Bar -->
-        <div style="position: fixed; bottom: 0; width: 100%; max-width: 400px; background: white; border-top: 1px solid var(--border-color); padding: 16px; z-index: 100; box-shadow: 0 -4px 12px rgba(0,0,0,0.05);">
+        <div class="sticky-bottom-action-bar">
           <button class="btn-primary w-full justify-center" onclick="placeOrder(event)" style="padding: 16px; font-size: 16px; font-weight: bold; background: #0a3a2a;">
             <i data-lucide="check-circle" style="width: 18px; margin-right: 8px;"></i> Place Order & Pay
           </button>
@@ -1783,130 +1879,138 @@
         </div>
 
         <div class="p-4">
-          <!-- User Profile Identity Card -->
-          <div class="card p-4 mb-4" style="background: white; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
-            <div class="flex items-center gap-3 mb-3">
-              <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #074e33 0%, #10b981 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; box-shadow: 0 4px 12px rgba(7,78,51,0.2);">
-                AS
-              </div>
-              <div style="flex: 1;">
-                <div class="flex items-center gap-2">
-                  <h2 style="font-size: 17px; font-weight: 700; margin: 0;">Arjun Sharma</h2>
-                  <span class="badge" style="background: #ecfdf5; color: #047857; font-size: 9px; padding: 2px 6px;">PLUS</span>
+          <div class="profile-grid-desktop">
+            <!-- Left Column: Identity & Switch/Logout -->
+            <div>
+              <!-- User Profile Identity Card -->
+              <div class="card p-4 mb-4" style="background: white; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+                <div class="flex items-center gap-3 mb-3">
+                  <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #074e33 0%, #10b981 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; box-shadow: 0 4px 12px rgba(7,78,51,0.2);">
+                    AS
+                  </div>
+                  <div style="flex: 1;">
+                    <div class="flex items-center gap-2">
+                      <h2 style="font-size: 17px; font-weight: 700; margin: 0;">Arjun Sharma</h2>
+                      <span class="badge" style="background: #ecfdf5; color: #047857; font-size: 9px; padding: 2px 6px;">PLUS</span>
+                    </div>
+                    <div class="text-xs text-muted mt-0.5">+91 98765 43210</div>
+                    <div class="text-xs text-muted">arjun.sharma@example.com</div>
+                  </div>
+                  <button class="btn-icon" style="background: #f3f4f6;" title="Edit Profile">
+                    <i data-lucide="edit-3" style="width: 14px;"></i>
+                  </button>
                 </div>
-                <div class="text-xs text-muted mt-0.5">+91 98765 43210</div>
-                <div class="text-xs text-muted">arjun.sharma@example.com</div>
-              </div>
-              <button class="btn-icon" style="background: #f3f4f6;" title="Edit Profile">
-                <i data-lucide="edit-3" style="width: 14px;"></i>
-              </button>
-            </div>
-            <div class="flex justify-between items-center pt-3" style="border-top: 1px solid #f3f4f6; font-size: 11px;">
-              <span class="text-muted">Neighborhood Tier: <b style="color: var(--primary-dark);">Greenfield Regular</b></span>
-              <span class="text-muted">Pantry Cadence: <b style="color: #10b981;">Synced (7d)</b></span>
-            </div>
-          </div>
-
-          <!-- Prominent My Orders & Live Tracking Access Card -->
-          <div class="card p-4 mb-4" onclick="showView('orders')" style="background: linear-gradient(135deg, #074e33 0%, #065f46 100%); color: white; border-radius: 16px; box-shadow: 0 8px 24px rgba(7,78,51,0.2); cursor: pointer; transition: transform 0.15s ease;">
-            <div class="flex justify-between items-center mb-2">
-              <span class="badge" style="background: rgba(255,255,255,0.2); color: white; border: none; font-size: 10px; font-weight: 700;">
-                <i data-lucide="package" style="width: 12px; margin-right: 4px;"></i> MY ORDERS & TRACKING
-              </span>
-              <span id="profile-orders-count" class="badge" style="background: #34d399; color: #064e3b; font-weight: 800; font-size: 10px;">View Orders</span>
-            </div>
-            <div style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">My Orders & Live Deliveries</div>
-            <div style="font-size: 12px; opacity: 0.85; margin-bottom: 12px;">Track live courier progress, itemized receipts & reorder favorites.</div>
-            <div class="flex justify-between items-center text-xs font-bold" style="background: rgba(255,255,255,0.15); padding: 8px 12px; border-radius: 10px;">
-              <span>Open Orders Dashboard</span>
-              <i data-lucide="arrow-right" style="width: 14px;"></i>
-            </div>
-          </div>
-
-          <!-- Account Settings List -->
-          <div class="card p-0 mb-4" style="background: white; border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden;">
-            <!-- Saved Address -->
-            <div class="flex items-center justify-between p-3.5" style="border-bottom: 1px solid #f3f4f6; cursor: pointer;">
-              <div class="flex items-center gap-3">
-                <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
-                  <i data-lucide="map-pin" style="width: 18px;"></i>
-                </div>
-                <div>
-                  <div class="font-bold text-xs" style="color: var(--text-main);">Delivery Address</div>
-                  <div class="text-xs text-muted" style="font-size: 11px;">123/A, Green Valley Apartments, Bangalore</div>
+                <div class="flex justify-between items-center pt-3" style="border-top: 1px solid #f3f4f6; font-size: 11px;">
+                  <span class="text-muted">Neighborhood Tier: <b style="color: var(--primary-dark);">Greenfield Regular</b></span>
+                  <span class="text-muted">Pantry Cadence: <b style="color: #10b981;">Synced (7d)</b></span>
                 </div>
               </div>
-              <i data-lucide="chevron-right" style="width: 16px; color: var(--text-muted);"></i>
+
+              <!-- Role Switch & Logout Buttons -->
+              <div class="flex flex-col gap-2">
+                <button class="btn w-full justify-between" onclick="showView('shopkeeper-login')" style="background: white; border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 16px; border-radius: 12px; font-size: 13px; font-weight: 600;">
+                  <span class="flex items-center gap-2"><i data-lucide="store" style="width: 16px; color: var(--primary-dark);"></i> Switch to Merchant OS</span>
+                  <i data-lucide="arrow-right" style="width: 14px; color: var(--text-muted);"></i>
+                </button>
+                <button class="btn w-full justify-center" onclick="showView('landing')" style="background: #fee2e2; color: #b91c1c; border: none; padding: 14px; border-radius: 12px; font-size: 13px; font-weight: 700;">
+                  <i data-lucide="log-out" style="width: 16px; margin-right: 6px;"></i> Log Out
+                </button>
+              </div>
             </div>
 
-            <!-- Payment Methods -->
-            <div class="flex items-center justify-between p-3.5" style="border-bottom: 1px solid #f3f4f6; cursor: pointer;">
-              <div class="flex items-center gap-3">
-                <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
-                  <i data-lucide="credit-card" style="width: 18px;"></i>
+            <!-- Right Column: Orders & Preferences List -->
+            <div>
+              <!-- Prominent My Orders & Live Tracking Access Card -->
+              <div class="card p-4 mb-4" onclick="showView('orders')" style="background: linear-gradient(135deg, #074e33 0%, #065f46 100%); color: white; border-radius: 16px; box-shadow: 0 8px 24px rgba(7,78,51,0.2); cursor: pointer; transition: transform 0.15s ease;">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="badge" style="background: rgba(255,255,255,0.2); color: white; border: none; font-size: 10px; font-weight: 700;">
+                    <i data-lucide="package" style="width: 12px; margin-right: 4px;"></i> MY ORDERS & TRACKING
+                  </span>
+                  <span id="profile-orders-count" class="badge" style="background: #34d399; color: #064e3b; font-weight: 800; font-size: 10px;">View Orders</span>
                 </div>
-                <div>
-                  <div class="font-bold text-xs" style="color: var(--text-main);">Payment Methods</div>
-                  <div class="text-xs text-muted" style="font-size: 11px;">GPay UPI (arjun@okaxis) · Cash on Delivery</div>
+                <div style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">My Orders & Live Deliveries</div>
+                <div style="font-size: 12px; opacity: 0.85; margin-bottom: 12px;">Track live courier progress, itemized receipts & reorder favorites.</div>
+                <div class="flex justify-between items-center text-xs font-bold" style="background: rgba(255,255,255,0.15); padding: 8px 12px; border-radius: 10px;">
+                  <span>Open Orders Dashboard</span>
+                  <i data-lucide="arrow-right" style="width: 14px;"></i>
                 </div>
               </div>
-              <i data-lucide="chevron-right" style="width: 16px; color: var(--text-muted);"></i>
-            </div>
 
-            <!-- Pantry Cadence -->
-            <div class="flex items-center justify-between p-3.5" onclick="showView('pattern')" style="border-bottom: 1px solid #f3f4f6; cursor: pointer;">
-              <div class="flex items-center gap-3">
-                <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
-                  <i data-lucide="bar-chart-2" style="width: 18px;"></i>
+              <!-- Account Settings List -->
+              <div class="card p-0 mb-4" style="background: white; border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden;">
+                <!-- Saved Address -->
+                <div class="flex items-center justify-between p-3.5" style="border-bottom: 1px solid #f3f4f6; cursor: pointer;">
+                  <div class="flex items-center gap-3">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
+                      <i data-lucide="map-pin" style="width: 18px;"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-xs" style="color: var(--text-main);">Delivery Address</div>
+                      <div class="text-xs text-muted" style="font-size: 11px;">123/A, Green Valley Apartments, Bangalore</div>
+                    </div>
+                  </div>
+                  <i data-lucide="chevron-right" style="width: 16px; color: var(--text-muted);"></i>
                 </div>
-                <div>
-                  <div class="font-bold text-xs" style="color: var(--text-main);">Pantry Cadence Preferences</div>
-                  <div class="text-xs text-muted" style="font-size: 11px;">Weekly Milk Refill: 7 Days · Eggs: 9 Days</div>
+
+                <!-- Payment Methods -->
+                <div class="flex items-center justify-between p-3.5" style="border-bottom: 1px solid #f3f4f6; cursor: pointer;">
+                  <div class="flex items-center gap-3">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
+                      <i data-lucide="credit-card" style="width: 18px;"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-xs" style="color: var(--text-main);">Payment Methods</div>
+                      <div class="text-xs text-muted" style="font-size: 11px;">GPay UPI (arjun@okaxis) · Cash on Delivery</div>
+                    </div>
+                  </div>
+                  <i data-lucide="chevron-right" style="width: 16px; color: var(--text-muted);"></i>
+                </div>
+
+                <!-- Pantry Cadence -->
+                <div class="flex items-center justify-between p-3.5" onclick="showView('pattern')" style="border-bottom: 1px solid #f3f4f6; cursor: pointer;">
+                  <div class="flex items-center gap-3">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
+                      <i data-lucide="bar-chart-2" style="width: 18px;"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-xs" style="color: var(--text-main);">Pantry Cadence Preferences</div>
+                      <div class="text-xs text-muted" style="font-size: 11px;">Weekly Milk Refill: 7 Days · Eggs: 9 Days</div>
+                    </div>
+                  </div>
+                  <i data-lucide="chevron-right" style="width: 16px; color: var(--text-muted);"></i>
+                </div>
+
+                <!-- Preferred Store -->
+                <div class="flex items-center justify-between p-3.5" style="border-bottom: 1px solid #f3f4f6; cursor: pointer;">
+                  <div class="flex items-center gap-3">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
+                      <i data-lucide="store" style="width: 18px;"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-xs" style="color: var(--text-main);">Local Store Node</div>
+                      <div class="text-xs text-muted" style="font-size: 11px;">Sri Lakshmi Stores (0.8 km · Node #042)</div>
+                    </div>
+                  </div>
+                  <a href="tel:+919845012345" class="btn-icon" style="width: 28px; height: 28px; background: #f0fdf4; color: #047857;" title="Call Store">
+                    <i data-lucide="phone" style="width: 14px;"></i>
+                  </a>
+                </div>
+
+                <!-- Notifications -->
+                <div class="flex items-center justify-between p-3.5" style="cursor: pointer;">
+                  <div class="flex items-center gap-3">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
+                      <i data-lucide="bell" style="width: 18px;"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-xs" style="color: var(--text-main);">Order Notifications</div>
+                      <div class="text-xs text-muted" style="font-size: 11px;">WhatsApp Delivery Alerts & SMS Receipts</div>
+                    </div>
+                  </div>
+                  <span class="badge" style="background: #d1fae5; color: #047857; font-size: 9px;">ON</span>
                 </div>
               </div>
-              <i data-lucide="chevron-right" style="width: 16px; color: var(--text-muted);"></i>
             </div>
-
-            <!-- Preferred Store -->
-            <div class="flex items-center justify-between p-3.5" style="border-bottom: 1px solid #f3f4f6; cursor: pointer;">
-              <div class="flex items-center gap-3">
-                <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
-                  <i data-lucide="store" style="width: 18px;"></i>
-                </div>
-                <div>
-                  <div class="font-bold text-xs" style="color: var(--text-main);">Local Store Node</div>
-                  <div class="text-xs text-muted" style="font-size: 11px;">Sri Lakshmi Stores (0.8 km · Node #042)</div>
-                </div>
-              </div>
-              <a href="tel:+919845012345" class="btn-icon" style="width: 28px; height: 28px; background: #f0fdf4; color: #047857;" title="Call Store">
-                <i data-lucide="phone" style="width: 14px;"></i>
-              </a>
-            </div>
-
-            <!-- Notifications -->
-            <div class="flex items-center justify-between p-3.5" style="cursor: pointer;">
-              <div class="flex items-center gap-3">
-                <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center;">
-                  <i data-lucide="bell" style="width: 18px;"></i>
-                </div>
-                <div>
-                  <div class="font-bold text-xs" style="color: var(--text-main);">Order Notifications</div>
-                  <div class="text-xs text-muted" style="font-size: 11px;">WhatsApp Delivery Alerts & SMS Receipts</div>
-                </div>
-              </div>
-              <span class="badge" style="background: #d1fae5; color: #047857; font-size: 9px;">ON</span>
-            </div>
-          </div>
-
-          <!-- Role Switch & Logout Buttons -->
-          <div class="flex flex-col gap-2">
-            <button class="btn w-full justify-between" onclick="showView('shopkeeper-login')" style="background: white; border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 16px; border-radius: 12px; font-size: 13px; font-weight: 600;">
-              <span class="flex items-center gap-2"><i data-lucide="store" style="width: 16px; color: var(--primary-dark);"></i> Switch to Merchant OS</span>
-              <i data-lucide="arrow-right" style="width: 14px; color: var(--text-muted);"></i>
-            </button>
-            <button class="btn w-full justify-center" onclick="showView('landing')" style="background: #fee2e2; color: #b91c1c; border: none; padding: 14px; border-radius: 12px; font-size: 13px; font-weight: 700;">
-              <i data-lucide="log-out" style="width: 16px; margin-right: 6px;"></i> Log Out
-            </button>
           </div>
         </div>
 
@@ -4157,6 +4261,49 @@
                       if (viewId === 'orders') loadOrdersData();
                       if (viewId === 'order-tracking') loadLatestOrderTracking();
 
+                      // Splash screen top nav visibility
+                      if (viewId === 'splash') {
+                        document.body.classList.add('in-splash');
+                      } else {
+                        document.body.classList.remove('in-splash');
+                      }
+
+                      // Update Top Desktop Navigation Active States
+                      const desktopLinks = {
+                        'landing': 'nav-btn-home',
+                        'customer': 'nav-btn-home',
+                        'shopkeeper': 'nav-btn-home',
+                        'discover': 'nav-btn-products',
+                        'product': 'nav-btn-products',
+                        'inventory': 'nav-btn-inventory',
+                        'merchant': 'nav-btn-dashboard',
+                        'decision': 'nav-btn-dashboard',
+                        'demand': 'nav-btn-dashboard',
+                        'profile': 'nav-btn-profile',
+                        'orders': 'nav-btn-profile',
+                        'order-tracking': 'nav-btn-profile'
+                      };
+
+                      document.querySelectorAll('.grocify-nav-link').forEach(link => link.classList.remove('active'));
+                      const activeLinkId = desktopLinks[viewId];
+                      if (activeLinkId) {
+                        const activeEl = document.getElementById(activeLinkId);
+                        if (activeEl) activeEl.classList.add('active');
+                      }
+
+                      // Close mobile drawer if open
+                      const mobileDrawer = document.getElementById('mobile-nav-drawer');
+                      if (mobileDrawer && mobileDrawer.classList.contains('open')) {
+                        mobileDrawer.classList.remove('open');
+                      }
+
+                      // Update top nav cart badge
+                      const topCartCount = document.getElementById('top-nav-cart-count');
+                      if (topCartCount && typeof basket !== 'undefined') {
+                        const totalQty = basket.reduce((acc, item) => acc + (item.quantity || 1), 0);
+                        topCartCount.innerText = totalQty;
+                      }
+
                       // Dynamic bottom navigation highlighting
                       document.querySelectorAll('.bottom-nav').forEach(nav => {
                         nav.querySelectorAll('.nav-item').forEach(item => {
@@ -4171,6 +4318,19 @@
                       });
 
                       lucide.createIcons();
+                    }
+
+                    // Mobile Drawer Navigation Helper
+                    function toggleMobileNavDrawer() {
+                      const drawer = document.getElementById('mobile-nav-drawer');
+                      if (drawer) {
+                        drawer.classList.toggle('open');
+                      }
+                    }
+
+                    function handleDrawerNav(targetView) {
+                      toggleMobileNavDrawer();
+                      showView(targetView);
                     }
 
                     function goBack() {

@@ -26,20 +26,30 @@ body {
   background-color: var(--bg-color);
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
-  display: flex;
-  justify-content: center;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Mobile App Container to simulate the phone view */
+/* App Container - Responsive layout adapts from mobile phone up to ultra-wide desktop */
 .app-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 1280px;
+  margin: 0 auto;
   background-color: var(--bg-color);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    max-width: 100%;
+    box-shadow: none;
+  }
 }
 
 /* Typography */
@@ -177,18 +187,29 @@ p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
   color: white;
 }
 
-/* Navigation Bar (Bottom) */
+/* Navigation Bar (Bottom) - Mobile view navigation */
 .bottom-nav {
   position: fixed;
   bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
-  max-width: 400px;
-  background: white;
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
-  justify-content: space-between;
-  padding: 12px 24px;
+  justify-content: space-around;
+  padding: 10px 16px;
   border-top: 1px solid var(--border-color);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
   z-index: 100;
+}
+
+@media (min-width: 1025px) {
+  .bottom-nav {
+    display: none !important;
+  }
 }
 .nav-item {
   display: flex;
@@ -512,4 +533,457 @@ p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
   color: white;
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
 }
+
+/* ========================================================
+   DESKTOP RESPONSIVE DESIGN & PROFESSIONAL TOP NAVIGATION
+   ======================================================== */
+
+/* Main Desktop Top Navigation Bar */
+.grocify-top-navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 12px rgba(7, 78, 51, 0.05);
+  z-index: 1000;
+  padding: 0 24px;
+}
+
+.grocify-nav-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.grocify-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.grocify-brand-logo {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, #10b981 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 10px rgba(7, 78, 51, 0.2);
+}
+
+.grocify-brand-name {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.grocify-brand-badge {
+  font-size: 9px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Desktop Navigation Links */
+.grocify-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.grocify-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.grocify-nav-link:hover {
+  color: var(--primary-dark);
+  background-color: #f0fdf4;
+}
+
+.grocify-nav-link.active {
+  color: var(--primary-dark);
+  background-color: var(--primary-light);
+  border-color: #a7f3d0;
+}
+
+.grocify-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-cart-btn {
+  position: relative;
+  background: #f0fdf4;
+  border: 1px solid #d1fae5;
+  color: var(--primary-dark);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-cart-btn:hover {
+  background: var(--primary-dark);
+  color: white;
+}
+
+.nav-cart-counter {
+  background: var(--accent-red);
+  color: white;
+  border-radius: 12px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Mobile Hamburger Toggle */
+.grocify-menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: var(--primary-dark);
+  border-radius: 8px;
+}
+
+.grocify-menu-toggle:hover {
+  background-color: #f0fdf4;
+}
+
+/* Mobile Navigation Drawer & Backdrop */
+.grocify-mobile-drawer {
+  position: fixed;
+  top: 68px;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-bottom: 2px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  display: none;
+  flex-direction: column;
+  padding: 16px 20px 24px;
+  z-index: 999;
+  animation: slideDownNav 0.22s ease-out;
+}
+
+.grocify-mobile-drawer.open {
+  display: flex;
+}
+
+@keyframes slideDownNav {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.grocify-drawer-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+  text-decoration: none;
+  transition: background 0.15s ease;
+  margin-bottom: 4px;
+}
+
+.grocify-drawer-link:hover, .grocify-drawer-link.active {
+  background-color: #f0fdf4;
+  color: var(--primary-dark);
+}
+
+.grocify-drawer-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 12px 0;
+}
+
+/* Breakpoint for Mobile & Desktop Navigation */
+@media (max-width: 900px) {
+  .grocify-nav-links {
+    display: none;
+  }
+  .grocify-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .grocify-nav-container {
+    padding: 0 4px;
+    height: 60px;
+  }
+  .grocify-mobile-drawer {
+    top: 60px;
+  }
+}
+
+/* Hide desktop navbar on splash screen */
+body.in-splash .grocify-top-navbar {
+  display: none;
+}
+
+/* ========================================================
+   DESKTOP MULTI-COLUMN GRIDS & CONTENT ADAPTATIONS
+   ======================================================== */
+
+/* General Desktop Container Spacing & Layout */
+@media (min-width: 769px) {
+  /* Prevent artificial phone padding when on tablet/desktop */
+  .p-4, .p-5, .px-4 {
+    padding-left: 28px !important;
+    padding-right: 28px !important;
+  }
+  
+  /* Views spacing */
+  [id^="view-"] {
+    padding-bottom: 60px !important;
+  }
+
+  /* Landing hero enhancements */
+  .landing-hero {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 30px;
+  }
+
+  /* Landing role cards grid */
+  .landing-roles-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 24px !important;
+    margin-top: 30px;
+  }
+
+  /* Customer Home Dashboard Grid */
+  .customer-dashboard-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* Store pulse / Merchant metrics 3 & 4 column cards */
+  .desktop-grid-4 {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+  }
+
+  .desktop-grid-3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  .desktop-grid-2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  /* Tablet & Desktop grid for shopkeeper priorities and metrics */
+  #sk-metrics {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  #sk-metrics > div {
+    width: 100% !important;
+  }
+
+  #happening-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .p-4, .p-5, .px-4 {
+    padding-left: 36px !important;
+    padding-right: 36px !important;
+  }
+
+  /* Product lists & catalog grids on larger desktop */
+  #discover-products {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  #inv-products {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  #sk-priorities {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  /* Make priority cards span nicely in grid */
+  #sk-priorities .card {
+    margin-bottom: 0 !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .customer-products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+
+  /* Two column layout for checkout and cart */
+  .checkout-container-grid {
+    display: grid !important;
+    grid-template-columns: 1.4fr 1fr !important;
+    gap: 32px !important;
+    align-items: start;
+  }
+
+  /* Profile layout grid */
+  .profile-grid-desktop {
+    display: grid !important;
+    grid-template-columns: 360px 1fr !important;
+    gap: 30px !important;
+    align-items: start;
+  }
+
+  /* Pattern & Calibration analytics split */
+  .analytics-two-col {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* Customer usual products grid on desktop */
+  #customer-products-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px 24px !important;
+    padding: 20px !important;
+  }
+  #customer-products-list .item-row {
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 10px 0 !important;
+  }
+}
+
+/* ========================================================
+   MOBILE VIEW POLISH (< 768px)
+   ======================================================== */
+@media (max-width: 768px) {
+  /* Prevent horizontal scrollbars */
+  body, html, .app-container {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  /* Make sure images and inputs don't overflow */
+  img, svg {
+    max-width: 100%;
+  }
+
+  input, select, textarea {
+    max-width: 100%;
+    font-size: 14px;
+  }
+
+  /* Hide prototype panel floating button or scale it down gracefully */
+  #prototype-panel {
+    right: 12px !important;
+    top: 12px !important;
+  }
+
+  #prototype-toggle-btn {
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* Floating cart repositioning for desktop vs mobile */
+@media (min-width: 1025px) {
+  #floating-cart {
+    bottom: 30px !important;
+    right: 30px !important;
+  }
+}
+
+/* Sticky Action Bars (Basket, Checkout, Product) */
+.sticky-bottom-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1280px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-color);
+  padding: 16px 28px;
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 768px) {
+  .sticky-bottom-action-bar {
+    max-width: 100%;
+    padding: 14px 16px;
+  }
+}
+
+
 
