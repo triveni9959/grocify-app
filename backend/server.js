@@ -1485,6 +1485,18 @@ app.get('/api/pantry', (req, res) => {
   }
 });
 
+// GET day-by-day pantry ingredients addition trend analytics
+app.get('/api/pantry/analytics/day-by-day', (req, res) => {
+  try {
+    const userId = req.query.user_id || 'user_arjun';
+    const days = parseInt(req.query.days) || 7;
+    const stats = db.getPantryDayByDayStats(userId, days);
+    res.json({ success: true, days, data: stats });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET single pantry item
 app.get('/api/pantry/:id', (req, res) => {
   try {

@@ -1201,6 +1201,84 @@
           <div id="pantry-alerts-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
+        <!-- ======================================================== -->
+        <!-- DAY-BY-DAY INGREDIENTS ADDITION & INFLOW GRAPH           -->
+        <!-- ======================================================== -->
+        <div class="card mb-4" style="background: white; border: 1px solid var(--border-color); border-radius: 14px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+          <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0;">📅 Day-by-Day Ingredients Addition Trend</h3>
+                <span class="badge" style="background: #ecfdf5; color: var(--primary-dark); font-size: 10px; font-weight: 700;">PANTRY INFLOW</span>
+              </div>
+              <div class="text-xs text-muted" style="margin-top: 2px;">Visual timeline of grocery ingredients added to your personal pantry day by day</div>
+            </div>
+
+            <div class="flex items-center gap-2" style="flex-wrap: wrap;">
+              <!-- Timeframe Switcher: 7 / 14 / 30 Days -->
+              <div style="background: #f1f5f9; padding: 2px; border-radius: 10px; display: inline-flex;">
+                <button class="pantry-timeframe-btn active" id="pantry-tf-7" onclick="setPantryGraphTimeframe(7, this)">Last 7 Days</button>
+                <button class="pantry-timeframe-btn" id="pantry-tf-14" onclick="setPantryGraphTimeframe(14, this)">14 Days</button>
+                <button class="pantry-timeframe-btn" id="pantry-tf-30" onclick="setPantryGraphTimeframe(30, this)">30 Days</button>
+              </div>
+
+              <!-- Metric Mode Switcher: Items Count vs Total Volume -->
+              <div style="background: #f1f5f9; padding: 2px; border-radius: 10px; display: inline-flex;">
+                <button class="pantry-metric-btn active" id="pantry-mode-count" onclick="setPantryGraphMetricMode('count', this)" title="Show count of ingredients added per day">Items Count</button>
+                <button class="pantry-metric-btn" id="pantry-mode-qty" onclick="setPantryGraphMetricMode('qty', this)" title="Show total kg/L volume added per day">Volume (kg/L)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Period Statistics Summary Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 14px;">
+            <div>
+              <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Added in Period</div>
+              <div style="font-size: 16px; font-weight: 800; color: var(--primary-dark);" id="graph-stat-added-count">0 items</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Total Volume Added</div>
+              <div style="font-size: 16px; font-weight: 800; color: var(--text-main);" id="graph-stat-added-vol">0 kg</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Most Active Day</div>
+              <div style="font-size: 16px; font-weight: 800; color: #0284c7;" id="graph-stat-peak-day">-</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Top Added Category</div>
+              <div style="font-size: 16px; font-weight: 800; color: #b45309;" id="graph-stat-top-cat">-</div>
+            </div>
+          </div>
+
+          <!-- Day-by-Day Interactive Graph Display -->
+          <div style="position: relative; margin-bottom: 14px;">
+            <div id="pantry-day-chart-bars" class="pantry-chart-container">
+              <!-- Rendered dynamically by renderPantryDayByDayGraph() -->
+            </div>
+            <!-- Average Daily Reference Line -->
+            <div id="pantry-chart-guideline" style="position: absolute; left: 8px; right: 8px; top: 110px; border-top: 1px dashed #cbd5e1; pointer-events: none;">
+              <span id="pantry-chart-guideline-lbl" style="position: absolute; right: 4px; top: -14px; font-size: 9px; color: #94a3b8; font-weight: 600; background: white; padding: 0 4px; border-radius: 4px;">Average Inflow</span>
+            </div>
+          </div>
+
+          <!-- Selected Day Ingredients Inspector Strip -->
+          <div id="pantry-selected-day-details" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px 14px;">
+            <div class="flex items-center justify-between flex-wrap gap-2 mb-1.5">
+              <div class="flex items-center gap-2">
+                <span style="font-size: 18px;" id="selected-day-icon">📅</span>
+                <span style="font-size: 13px; font-weight: 700; color: var(--primary-dark);" id="selected-day-title">Select a day on the graph</span>
+                <span class="badge" id="selected-day-badge" style="background: #d1fae5; color: var(--primary-dark); font-size: 10px; font-weight: 700;">0 Ingredients</span>
+              </div>
+              <button class="btn btn-primary" onclick="openAddPantryModal()" style="font-size: 11px; padding: 5px 12px; border-radius: 16px;">
+                + Add Ingredient for Today
+              </button>
+            </div>
+            <div id="selected-day-items-list" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+              <span style="font-size: 11px; color: var(--text-muted);">Click any day's bar above to see exactly which ingredients and groceries you added on that date.</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Filter & Search Toolbar Card -->
         <div class="card mb-4" style="padding: 14px; background: white; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
           <div class="pantry-toolbar-row">
@@ -7735,7 +7813,7 @@ sugar: {
                       return d.toISOString().split('T')[0];
                     }
 
-                    // Initial default seed items for demo customer Arjun
+                    // Initial default seed items for demo customer Arjun spanning past 7 days
                     function getInitialSeedPantry(userId) {
                       const today = new Date().toISOString().split('T')[0];
                       return [
@@ -7747,15 +7825,15 @@ sugar: {
                           original_quantity: 5,
                           unit: 'kg',
                           original_quantity_base: 5000,
-                          current_stock_base: 1800,
-                          used_quantity_base: 3200,
-                          purchase_date: '2026-10-10',
+                          current_stock_base: 4100,
+                          used_quantity_base: 900,
+                          purchase_date: getOffsetDateString(-6),
                           expiry_date: '',
                           daily_usage_base: 150,
                           daily_usage_display: '150 g/day',
                           low_stock_threshold_base: 500,
                           threshold_display: '500 g',
-                          notes: 'Main pantry container #1',
+                          notes: 'Daawat Rozana Premium Basmati container #1',
                           last_updated_date: today
                         },
                         {
@@ -7768,17 +7846,36 @@ sugar: {
                           original_quantity_base: 2000,
                           current_stock_base: 200,
                           used_quantity_base: 1800,
-                          purchase_date: '2026-10-05',
-                          expiry_date: '2027-04-15',
+                          purchase_date: getOffsetDateString(-5),
+                          expiry_date: getOffsetDateString(180),
                           daily_usage_base: 80,
                           daily_usage_display: '80 g/day',
                           low_stock_threshold_base: 300,
                           threshold_display: '300 g',
-                          notes: 'Kitchen shelf B',
+                          notes: 'Daily protein staple - Kitchen shelf B (running low)',
                           last_updated_date: today
                         },
                         {
                           id: 'pantry_seed_3',
+                          user_id: userId,
+                          product_name: 'Chakki Fresh Whole Wheat Atta',
+                          category: 'Food & Grains',
+                          original_quantity: 5,
+                          unit: 'kg',
+                          original_quantity_base: 5000,
+                          current_stock_base: 4200,
+                          used_quantity_base: 800,
+                          purchase_date: getOffsetDateString(-4),
+                          expiry_date: getOffsetDateString(90),
+                          daily_usage_base: 200,
+                          daily_usage_display: '200 g/day',
+                          low_stock_threshold_base: 800,
+                          threshold_display: '800 g',
+                          notes: 'Aashirvaad 100% Sharbati Atta storage box',
+                          last_updated_date: today
+                        },
+                        {
+                          id: 'pantry_seed_4',
                           user_id: userId,
                           product_name: 'Sunflower Cooking Oil',
                           category: 'Cooking Oils & Ghee',
@@ -7787,17 +7884,36 @@ sugar: {
                           original_quantity_base: 2000,
                           current_stock_base: 850,
                           used_quantity_base: 1150,
-                          purchase_date: '2026-10-12',
+                          purchase_date: getOffsetDateString(-3),
                           expiry_date: getOffsetDateString(4),
                           daily_usage_base: 60,
                           daily_usage_display: '60 ml/day',
                           low_stock_threshold_base: 250,
                           threshold_display: '250 ml',
-                          notes: 'Storage cabinet near stove',
+                          notes: 'Cold-pressed sunflower oil jar (expiring soon)',
                           last_updated_date: today
                         },
                         {
-                          id: 'pantry_seed_4',
+                          id: 'pantry_seed_5',
+                          user_id: userId,
+                          product_name: 'Pure Desi Cow Ghee',
+                          category: 'Cooking Oils & Ghee',
+                          original_quantity: 1,
+                          unit: 'L',
+                          original_quantity_base: 1000,
+                          current_stock_base: 940,
+                          used_quantity_base: 60,
+                          purchase_date: getOffsetDateString(-3),
+                          expiry_date: getOffsetDateString(120),
+                          daily_usage_base: 20,
+                          daily_usage_display: '20 ml/day',
+                          low_stock_threshold_base: 150,
+                          threshold_display: '150 ml',
+                          notes: 'Amul pure cow ghee tin',
+                          last_updated_date: today
+                        },
+                        {
+                          id: 'pantry_seed_6',
                           user_id: userId,
                           product_name: 'Farmhouse Fresh Milk',
                           category: 'Dairy & Eggs',
@@ -7806,13 +7922,89 @@ sugar: {
                           original_quantity_base: 1000,
                           current_stock_base: 350,
                           used_quantity_base: 650,
-                          purchase_date: '2026-10-25',
+                          purchase_date: getOffsetDateString(-2),
                           expiry_date: getOffsetDateString(2),
                           daily_usage_base: 200,
                           daily_usage_display: '200 ml/day',
                           low_stock_threshold_base: 300,
                           threshold_display: '300 ml',
-                          notes: 'Refrigerator top shelf',
+                          notes: 'Morning pasteurised toned milk (refrigerator top shelf)',
+                          last_updated_date: today
+                        },
+                        {
+                          id: 'pantry_seed_7',
+                          user_id: userId,
+                          product_name: 'Organic Free-Range Eggs',
+                          category: 'Dairy & Eggs',
+                          original_quantity: 12,
+                          unit: 'pcs',
+                          original_quantity_base: 12,
+                          current_stock_base: 8,
+                          used_quantity_base: 4,
+                          purchase_date: getOffsetDateString(-2),
+                          expiry_date: getOffsetDateString(14),
+                          daily_usage_base: 2,
+                          daily_usage_display: '2 pcs/day',
+                          low_stock_threshold_base: 4,
+                          threshold_display: '4 pcs',
+                          notes: 'Farm fresh brown eggs crate',
+                          last_updated_date: today
+                        },
+                        {
+                          id: 'pantry_seed_8',
+                          user_id: userId,
+                          product_name: 'Taj Mahal Premium Tea Leaves',
+                          category: 'Beverages & Snacks',
+                          original_quantity: 500,
+                          unit: 'g',
+                          original_quantity_base: 500,
+                          current_stock_base: 485,
+                          used_quantity_base: 15,
+                          purchase_date: getOffsetDateString(-1),
+                          expiry_date: getOffsetDateString(240),
+                          daily_usage_base: 15,
+                          daily_usage_display: '15 g/day',
+                          low_stock_threshold_base: 50,
+                          threshold_display: '50 g',
+                          notes: 'Brooke Bond Taj Mahal aromatic tea jar',
+                          last_updated_date: today
+                        },
+                        {
+                          id: 'pantry_seed_9',
+                          user_id: userId,
+                          product_name: 'Tata Crystal Salt (Sendha Namak)',
+                          category: 'Spices & Condiments',
+                          original_quantity: 1,
+                          unit: 'kg',
+                          original_quantity_base: 1000,
+                          current_stock_base: 990,
+                          used_quantity_base: 10,
+                          purchase_date: getOffsetDateString(0),
+                          expiry_date: '',
+                          daily_usage_base: 10,
+                          daily_usage_display: '10 g/day',
+                          low_stock_threshold_base: 150,
+                          threshold_display: '150 g',
+                          notes: 'Vacuum evaporated iodized salt dispenser',
+                          last_updated_date: today
+                        },
+                        {
+                          id: 'pantry_seed_10',
+                          user_id: userId,
+                          product_name: 'Dettol Herbal Bath Soap',
+                          category: 'Personal Care',
+                          original_quantity: 4,
+                          unit: 'pcs',
+                          original_quantity_base: 4,
+                          current_stock_base: 4,
+                          used_quantity_base: 0,
+                          purchase_date: getOffsetDateString(0),
+                          expiry_date: '',
+                          daily_usage_base: 0.1,
+                          daily_usage_display: '0.1 pcs/day',
+                          low_stock_threshold_base: 1,
+                          threshold_display: '1 pcs',
+                          notes: 'Antibacterial germ defense pack (4 x 125g)',
                           last_updated_date: today
                         }
                       ];
@@ -7864,6 +8056,14 @@ sugar: {
                           const json = await res.json();
                           if (json && json.data) {
                             currentPantryItems = json.data;
+                            if (currentPantryItems.length < 8) {
+                              const seeds = getInitialSeedPantry(userId);
+                              seeds.forEach(s => {
+                                if (!currentPantryItems.some(it => (it.name === s.product_name || it.product_name === s.product_name))) {
+                                  currentPantryItems.push(s);
+                                }
+                              });
+                            }
                             computeDeviceDateDepletion(currentPantryItems);
                             localStorage.setItem(`grocify_pantry_${userId}`, JSON.stringify(currentPantryItems));
                           }
@@ -7876,6 +8076,9 @@ sugar: {
                         if (cached) {
                           try {
                             currentPantryItems = JSON.parse(cached);
+                            if (!Array.isArray(currentPantryItems) || currentPantryItems.length < 8) {
+                              currentPantryItems = getInitialSeedPantry(userId);
+                            }
                           } catch (e) {
                             currentPantryItems = getInitialSeedPantry(userId);
                           }
@@ -8132,7 +8335,316 @@ sugar: {
                         grid.innerHTML = filtered.map(item => renderPantryItemCard(item, today)).join('');
                       }
 
+                      // Update Day-by-Day Ingredients Addition Graph
+                      renderPantryDayByDayGraph();
+
                       lucide.createIcons();
+                    }
+
+                    // ========================================================
+                    // DAY-BY-DAY INGREDIENTS ADDITION GRAPH CONTROLLER
+                    // ========================================================
+                    let pantryGraphTimeframe = 7;
+                    let pantryGraphMetricMode = 'count'; // 'count' or 'qty'
+                    let pantrySelectedDay = null; // e.g. '2026-10-27'
+
+                    function setPantryGraphTimeframe(days, btn) {
+                      pantryGraphTimeframe = parseInt(days, 10) || 7;
+                      document.querySelectorAll('.pantry-timeframe-btn').forEach(b => b.classList.remove('active'));
+                      if (btn) {
+                        btn.classList.add('active');
+                      } else {
+                        const el = document.getElementById(`pantry-tf-${pantryGraphTimeframe}`);
+                        if (el) el.classList.add('active');
+                      }
+                      renderPantryDayByDayGraph();
+                    }
+
+                    function setPantryGraphMetricMode(mode, btn) {
+                      pantryGraphMetricMode = mode;
+                      document.querySelectorAll('.pantry-metric-btn').forEach(b => b.classList.remove('active'));
+                      if (btn) {
+                        btn.classList.add('active');
+                      } else {
+                        const el = document.getElementById(`pantry-mode-${mode}`);
+                        if (el) el.classList.add('active');
+                      }
+                      renderPantryDayByDayGraph();
+                    }
+
+                    function getPantryCategoryEmoji(cat) {
+                      if (!cat) return '📦';
+                      const c = String(cat).toLowerCase();
+                      if (c.includes('grain') || c.includes('rice') || c.includes('atta') || c.includes('wheat') || c.includes('flour') || c.includes('food')) return '🌾';
+                      if (c.includes('dal') || c.includes('pulse') || c.includes('lentil') || c.includes('bean')) return '🥣';
+                      if (c.includes('oil') || c.includes('ghee')) return '🫒';
+                      if (c.includes('dairy') || c.includes('milk') || c.includes('egg') || c.includes('cheese') || c.includes('butter') || c.includes('curd')) return '🥛';
+                      if (c.includes('beverage') || c.includes('tea') || c.includes('coffee') || c.includes('snack') || c.includes('biscuit')) return '☕';
+                      if (c.includes('spice') || c.includes('salt') || c.includes('masala') || c.includes('pepper') || c.includes('sugar')) return '🧂';
+                      if (c.includes('personal') || c.includes('soap') || c.includes('shampoo') || c.includes('care') || c.includes('bath')) return '🧼';
+                      if (c.includes('fruit') || c.includes('vegetable')) return '🥦';
+                      return '🥫';
+                    }
+
+                    function renderPantryDayByDayGraph() {
+                      const barsContainer = document.getElementById('pantry-day-chart-bars');
+                      if (!barsContainer) return;
+
+                      const days = pantryGraphTimeframe;
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+                      const todayStr = today.toISOString().split('T')[0];
+
+                      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+                      // Build contiguous daily slots from (days - 1) days ago to today
+                      const daySlots = [];
+                      for (let i = days - 1; i >= 0; i--) {
+                        const d = new Date(today);
+                        d.setDate(d.getDate() - i);
+                        const dateStr = d.toISOString().split('T')[0];
+                        const dateLabel = days <= 7 ? `${dayNames[d.getDay()]} ${d.getDate()}` : `${monthNames[d.getMonth()]} ${d.getDate()}`;
+                        const isToday = (i === 0);
+
+                        // Find items added on this date
+                        const items = (currentPantryItems || []).filter(it => {
+                          const pDate = it.purchase_date || '';
+                          return pDate === dateStr;
+                        });
+
+                        // Compute volume in kg/L
+                        let totalKgL = 0;
+                        items.forEach(it => {
+                          const u = (it.unit || it.display_unit || '').toLowerCase();
+                          const base = parseFloat(it.original_quantity_base || it.base_purchased_qty) || 0;
+                          const rawQty = parseFloat(it.original_quantity || it.purchased_qty) || 0;
+
+                          if (u === 'kg' || u === 'g' || u === 'gram' || u === 'grams') {
+                            totalKgL += (base > 0 ? base / 1000 : rawQty);
+                          } else if (u === 'l' || u === 'liter' || u === 'litre' || u === 'ml') {
+                            totalKgL += (base > 0 ? base / 1000 : rawQty);
+                          } else {
+                            // pcs, packs, count
+                            totalKgL += rawQty;
+                          }
+                        });
+
+                        const itemsCount = items.length;
+                        const primaryVal = (pantryGraphMetricMode === 'count') ? itemsCount : parseFloat(totalKgL.toFixed(1));
+
+                        daySlots.push({
+                          date: dateStr,
+                          dateLabel,
+                          fullLabel: `${dateLabel}, ${d.getFullYear()}`,
+                          isToday,
+                          items,
+                          itemsCount,
+                          totalKgL: parseFloat(totalKgL.toFixed(1)),
+                          primaryVal
+                        });
+                      }
+
+                      // Compute Period Aggregates
+                      const periodTotalAdded = daySlots.reduce((acc, s) => acc + s.itemsCount, 0);
+                      const periodTotalVol = daySlots.reduce((acc, s) => acc + s.totalKgL, 0);
+
+                      // Peak addition day
+                      let peakSlot = null;
+                      let maxVal = 0;
+                      daySlots.forEach(s => {
+                        if (s.primaryVal > maxVal) {
+                          maxVal = s.primaryVal;
+                          peakSlot = s;
+                        }
+                      });
+
+                      // Top added category
+                      const catCounts = {};
+                      daySlots.forEach(s => {
+                        s.items.forEach(it => {
+                          const cat = it.category || 'General Grocery';
+                          catCounts[cat] = (catCounts[cat] || 0) + 1;
+                        });
+                      });
+                      let topCat = '-';
+                      let maxCatCount = 0;
+                      for (const [cat, cnt] of Object.entries(catCounts)) {
+                        if (cnt > maxCatCount) {
+                          maxCatCount = cnt;
+                          topCat = cat;
+                        }
+                      }
+
+                      // Update Statistics Grid in DOM
+                      const statCountEl = document.getElementById('graph-stat-added-count');
+                      if (statCountEl) statCountEl.innerText = `${periodTotalAdded} item${periodTotalAdded !== 1 ? 's' : ''}`;
+
+                      const statVolEl = document.getElementById('graph-stat-added-vol');
+                      if (statVolEl) statVolEl.innerText = `${periodTotalVol.toFixed(1)} kg/L`;
+
+                      const statPeakEl = document.getElementById('graph-stat-peak-day');
+                      if (statPeakEl) {
+                        if (peakSlot && peakSlot.primaryVal > 0) {
+                          const unitDesc = (pantryGraphMetricMode === 'count') ? `${peakSlot.itemsCount} items` : `${peakSlot.totalKgL} kg/L`;
+                          statPeakEl.innerText = `${peakSlot.dateLabel} (${unitDesc})`;
+                        } else {
+                          statPeakEl.innerText = 'None logged';
+                        }
+                      }
+
+                      const statCatEl = document.getElementById('graph-stat-top-cat');
+                      if (statCatEl) statCatEl.innerText = topCat;
+
+                      // Determine selected day (if null or not in current range, default to today or peak day)
+                      if (!pantrySelectedDay || !daySlots.some(s => s.date === pantrySelectedDay)) {
+                        const dayWithItems = [...daySlots].reverse().find(s => s.itemsCount > 0);
+                        pantrySelectedDay = dayWithItems ? dayWithItems.date : todayStr;
+                      }
+
+                      // Safe scaling baseline
+                      const chartMax = Math.max(maxVal, pantryGraphMetricMode === 'count' ? 3 : 2);
+
+                      // Render Chart Column Bars
+                      barsContainer.innerHTML = daySlots.map((slot) => {
+                        const isSelected = (slot.date === pantrySelectedDay);
+                        const hasItems = slot.itemsCount > 0;
+                        const fillPct = (slot.primaryVal > 0) ? Math.min(100, Math.max(10, Math.round((slot.primaryVal / chartMax) * 85))) : 0;
+                        
+                        let valBubbleText = '';
+                        if (hasItems) {
+                          valBubbleText = (pantryGraphMetricMode === 'count') ? `+${slot.itemsCount}` : `+${slot.totalKgL}`;
+                        }
+
+                        const colClasses = ['pantry-chart-col'];
+                        if (hasItems) colClasses.push('has-items');
+                        if (slot.isToday) colClasses.push('today');
+                        if (isSelected) colClasses.push('selected');
+
+                        const tooltip = `${slot.dateLabel}: ${slot.itemsCount} items (${slot.totalKgL} kg/L added)`;
+
+                        return `
+                          <div class="${colClasses.join(' ')}" id="pantry-col-${slot.date}" onclick="selectPantryChartDay('${slot.date}')" title="${tooltip}">
+                            <div class="pantry-chart-val-bubble">${valBubbleText}</div>
+                            <div class="pantry-chart-bar-shell">
+                              <div class="pantry-chart-bar-fill" style="height: ${fillPct}%;"></div>
+                            </div>
+                            <div class="pantry-chart-date-lbl">${slot.dateLabel}</div>
+                          </div>
+                        `;
+                      }).join('');
+
+                      // Update Average Reference Guideline
+                      const guideline = document.getElementById('pantry-chart-guideline');
+                      const guidelineLbl = document.getElementById('pantry-chart-guideline-lbl');
+                      if (guideline && guidelineLbl) {
+                        const avgVal = (pantryGraphMetricMode === 'count') ? (periodTotalAdded / days) : (periodTotalVol / days);
+                        if (avgVal > 0 && chartMax > 0) {
+                          const avgPct = Math.min(85, Math.round((avgVal / chartMax) * 85));
+                          guideline.style.display = 'block';
+                          guideline.style.bottom = `${avgPct}%`;
+                          guideline.style.top = 'auto';
+                          guidelineLbl.innerText = `Avg ${avgVal.toFixed(1)} ${pantryGraphMetricMode === 'count' ? 'items/day' : 'kg/day'}`;
+                        } else {
+                          guideline.style.display = 'none';
+                        }
+                      }
+
+                      // Update Day Inspector Details
+                      const currentSlot = daySlots.find(s => s.date === pantrySelectedDay) || daySlots[daySlots.length - 1];
+                      updatePantrySelectedDayDetails(currentSlot);
+                    }
+
+                    function selectPantryChartDay(dateStr) {
+                      pantrySelectedDay = dateStr;
+                      document.querySelectorAll('.pantry-chart-col').forEach(c => c.classList.remove('selected'));
+                      const col = document.getElementById(`pantry-col-${dateStr}`);
+                      if (col) col.classList.add('selected');
+
+                      const currentSlot = (function() {
+                        const items = (currentPantryItems || []).filter(it => it.purchase_date === dateStr);
+                        const d = new Date(dateStr + 'T00:00:00');
+                        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                        const dateLabel = isNaN(d.getTime()) ? dateStr : `${dayNames[d.getDay()]}, ${monthNames[d.getMonth()]} ${d.getDate()}`;
+                        
+                        let totalKgL = 0;
+                        items.forEach(it => {
+                          const u = (it.unit || it.display_unit || '').toLowerCase();
+                          const base = parseFloat(it.original_quantity_base || it.base_purchased_qty) || 0;
+                          const rawQty = parseFloat(it.original_quantity || it.purchased_qty) || 0;
+                          if (u === 'kg' || u === 'g' || u === 'l' || u === 'ml') {
+                            totalKgL += (base > 0 ? base / 1000 : rawQty);
+                          } else {
+                            totalKgL += rawQty;
+                          }
+                        });
+
+                        return {
+                          date: dateStr,
+                          dateLabel,
+                          items,
+                          itemsCount: items.length,
+                          totalKgL: parseFloat(totalKgL.toFixed(1))
+                        };
+                      })();
+
+                      updatePantrySelectedDayDetails(currentSlot);
+                    }
+
+                    function updatePantrySelectedDayDetails(slot) {
+                      const iconEl = document.getElementById('selected-day-icon');
+                      const titleEl = document.getElementById('selected-day-title');
+                      const badgeEl = document.getElementById('selected-day-badge');
+                      const listEl = document.getElementById('selected-day-items-list');
+
+                      if (!titleEl || !badgeEl || !listEl) return;
+
+                      if (!slot || slot.itemsCount === 0) {
+                        if (iconEl) iconEl.innerText = '📅';
+                        titleEl.innerText = slot ? `No ingredients added on ${slot.dateLabel}` : 'Select a date on the graph';
+                        badgeEl.innerText = '0 Items Added';
+                        badgeEl.style.background = '#f1f5f9';
+                        badgeEl.style.color = '#64748b';
+                        const presetDate = slot ? slot.date : new Date().toISOString().split('T')[0];
+                        listEl.innerHTML = `
+                          <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span>No grocery ingredients were logged on this date.</span>
+                            <button class="btn btn-secondary" onclick="openAddPantryModal('${presetDate}')" style="font-size: 10px; padding: 3px 10px; border-radius: 12px; background: white; border: 1px dashed #cbd5e1;">
+                              + Log Purchase on ${slot ? slot.dateLabel : 'this Date'}
+                            </button>
+                          </div>
+                        `;
+                        return;
+                      }
+
+                      if (iconEl) iconEl.innerText = '🛒';
+                      titleEl.innerText = `Added on ${slot.dateLabel} (${slot.itemsCount} Ingredient${slot.itemsCount > 1 ? 's' : ''})`;
+                      badgeEl.innerText = `${slot.totalKgL} kg/L Added`;
+                      badgeEl.style.background = '#d1fae5';
+                      badgeEl.style.color = 'var(--primary-dark)';
+
+                      listEl.innerHTML = slot.items.map(it => {
+                        const emoji = getPantryCategoryEmoji(it.category);
+                        const name = it.product_name || it.name;
+                        const qty = it.original_quantity || it.purchased_qty || 1;
+                        const unit = it.unit || it.display_unit || '';
+                        const curStock = formatPantryBaseQty(it.current_stock_base, it.unit || it.display_unit);
+
+                        return `
+                          <div class="pantry-day-ingredient-pill" onclick="openEditPantryModal('${it.id}')" title="Click to edit or record consumption for ${name}">
+                            <span style="font-size: 13px;">${emoji}</span>
+                            <strong style="color: var(--text-main);">${name}</strong>
+                            <span style="color: var(--primary-dark); font-weight: 700; font-size: 11px;">+${qty} ${unit}</span>
+                            <span style="background: #e2e8f0; color: #475569; font-size: 9px; padding: 1px 5px; border-radius: 8px;">${it.category}</span>
+                            <span style="color: #64748b; font-size: 10px; margin-left: 2px;">(Stock: ${curStock})</span>
+                          </div>
+                        `;
+                      }).join('') + `
+                        <button class="btn btn-secondary" onclick="openAddPantryModal('${slot.date}')" style="font-size: 10px; padding: 3px 10px; border-radius: 12px; background: white; border: 1px dashed #059669; color: var(--primary-dark); margin-left: 4px;" title="Add another ingredient on ${slot.dateLabel}">
+                          + Add More to ${slot.dateLabel}
+                        </button>
+                      `;
                     }
 
                     // Render Individual Pantry Item Card
@@ -8488,7 +9000,7 @@ sugar: {
                     }
 
                     // Open Add Grocery Item Modal
-                    function openAddPantryModal() {
+                    function openAddPantryModal(presetDate) {
                       const modal = document.getElementById('pantry-modal');
                       const form = document.getElementById('pantry-item-form');
                       const title = document.getElementById('pantry-modal-title');
@@ -8502,10 +9014,10 @@ sugar: {
                       if (title) title.innerText = 'Add Grocery Item';
                       if (saveBtn) saveBtn.innerText = 'Save Item to Pantry';
 
-                      // Set today's date on purchase date
+                      // Set purchase date (preset or today's date)
                       const purchaseDateInput = document.getElementById('pantry-form-purchase-date');
                       if (purchaseDateInput) {
-                        purchaseDateInput.value = new Date().toISOString().split('T')[0];
+                        purchaseDateInput.value = presetDate || new Date().toISOString().split('T')[0];
                       }
 
                       modal.style.display = 'flex';

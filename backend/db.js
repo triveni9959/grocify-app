@@ -137,18 +137,17 @@ initSchema();
 function seedPantryIfEmpty() {
   try {
     const count = db.prepare('SELECT COUNT(*) as count FROM pantry_items').get().count;
-    if (count === 0) {
-      const today = new Date();
-      const formatD = (d) => d.toISOString().split('T')[0];
-      
-      const fiveDaysAgo = new Date(today);
-      fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-      
-      const inFiveDays = new Date(today);
-      inFiveDays.setDate(inFiveDays.getDate() + 5);
+    if (count < 8) {
+      // Clear older minimal seed if any to ensure complete day-by-day dataset
+      db.prepare("DELETE FROM pantry_items WHERE id LIKE 'pantry_seed_%' OR id LIKE 'pantry_rice_%' OR id LIKE 'pantry_dal_%' OR id LIKE 'pantry_oil_%' OR id LIKE 'pantry_milk_%'").run();
 
-      const inTwoMonths = new Date(today);
-      inTwoMonths.setMonth(inTwoMonths.getMonth() + 2);
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const getRelDate = (offset) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() + offset);
+        return d.toISOString().split('T')[0];
+      };
 
       const insert = db.prepare(`
         INSERT INTO pantry_items (
@@ -161,35 +160,77 @@ function seedPantryIfEmpty() {
         )
       `);
 
-      // 1. Basmati Rice (Available, normal consumption)
+      // 1. Basmati Rice (Added 6 days ago)
       insert.run(
-        'pantry_rice_01', 'user_arjun', 'Basmati Rice', 'Food & Grains', 'weight', 'kg', 5, 5000,
-        'g', formatD(fiveDaysAgo), formatD(today), formatD(inTwoMonths), 150, 150,
-        'g', 500, 500, 'g', 0, 4250, 'Daawat Rozana Premium Basmati'
+        'pantry_seed_1', 'user_arjun', 'Basmati Rice (Royal Supreme)', 'Food & Grains', 'weight', 'kg', 5, 5000,
+        'g', getRelDate(-6), getRelDate(0), null, 150, 150,
+        'g', 500, 500, 'g', 0, 4100, 'Daawat Rozana Premium Basmati'
       );
 
-      // 2. Toor Dal (Low Stock Alert: 240g remaining, threshold 300g)
+      // 2. Toor Dal (Added 5 days ago - Low Stock Alert)
       insert.run(
-        'pantry_dal_02', 'user_arjun', 'Toor Dal (Organic)', 'Dal & Pulses', 'weight', 'kg', 2, 2000,
-        'g', formatD(fiveDaysAgo), formatD(today), formatD(inTwoMonths), 80, 80,
-        'g', 300, 300, 'g', 0, 240, 'Daily household protein staple'
+        'pantry_seed_2', 'user_arjun', 'Toor Dal (Organic Unpolished)', 'Dal & Pulses', 'weight', 'kg', 2, 2000,
+        'g', getRelDate(-5), getRelDate(0), getRelDate(180), 80, 80,
+        'g', 300, 300, 'g', 0, 200, 'Daily protein staple'
       );
 
-      // 3. Sunflower Cooking Oil (Near Expiry Alert: expires in 5 days)
+      // 3. Whole Wheat Atta (Added 4 days ago)
       insert.run(
-        'pantry_oil_03', 'user_arjun', 'Sunflower Cooking Oil', 'Oils & Ghee', 'volume', 'L', 1, 1000,
-        'ml', formatD(fiveDaysAgo), formatD(today), formatD(inFiveDays), 35, 35,
-        'ml', 200, 200, 'ml', 0, 825, 'Cold-pressed sunflower oil'
+        'pantry_seed_3', 'user_arjun', 'Chakki Fresh Whole Wheat Atta', 'Food & Grains', 'weight', 'kg', 5, 5000,
+        'g', getRelDate(-4), getRelDate(0), getRelDate(90), 200, 200,
+        'g', 800, 800, 'g', 0, 4200, 'Aashirvaad 100% Sharbati Atta'
       );
 
-      // 4. Farmhouse Fresh Milk (Out of Stock Alert: 0 remaining)
+      // 4. Sunflower Cooking Oil (Added 3 days ago - Expiring in 4 days)
       insert.run(
-        'pantry_milk_04', 'user_arjun', 'Farmhouse Fresh Milk', 'Dairy', 'volume', 'L', 1, 1000,
-        'ml', formatD(fiveDaysAgo), formatD(today), formatD(fiveDaysAgo), 500, 500,
-        'ml', 250, 250, 'ml', 0, 0, 'Morning pasteurised toned milk'
+        'pantry_seed_4', 'user_arjun', 'Sunflower Cooking Oil', 'Cooking Oils & Ghee', 'volume', 'L', 2, 2000,
+        'ml', getRelDate(-3), getRelDate(0), getRelDate(4), 60, 60,
+        'ml', 250, 250, 'ml', 0, 850, 'Cold-pressed sunflower oil'
       );
 
-      console.log('[DB] Seeded default customer pantry inventory items into SQLite.');
+      // 5. Pure Cow Ghee (Added 3 days ago)
+      insert.run(
+        'pantry_seed_5', 'user_arjun', 'Pure Desi Cow Ghee', 'Cooking Oils & Ghee', 'volume', 'L', 1, 1000,
+        'ml', getRelDate(-3), getRelDate(0), getRelDate(120), 20, 20,
+        'ml', 150, 150, 'ml', 0, 940, 'Amul pure cow ghee tin'
+      );
+
+      // 6. Farmhouse Fresh Milk (Added 2 days ago - Expiring in 2 days)
+      insert.run(
+        'pantry_seed_6', 'user_arjun', 'Farmhouse Fresh Milk', 'Dairy & Eggs', 'volume', 'L', 1, 1000,
+        'ml', getRelDate(-2), getRelDate(0), getRelDate(2), 200, 200,
+        'ml', 300, 300, 'ml', 0, 350, 'Morning pasteurised toned milk'
+      );
+
+      // 7. Organic Free-Range Eggs (Added 2 days ago)
+      insert.run(
+        'pantry_seed_7', 'user_arjun', 'Organic Free-Range Eggs', 'Dairy & Eggs', 'unit', 'pcs', 12, 12,
+        'pcs', getRelDate(-2), getRelDate(0), getRelDate(14), 2, 2,
+        'pcs', 4, 4, 'pcs', 0, 8, 'Farm fresh brown eggs crate'
+      );
+
+      // 8. Taj Mahal Premium Tea (Added yesterday)
+      insert.run(
+        'pantry_seed_8', 'user_arjun', 'Taj Mahal Premium Tea Leaves', 'Beverages & Snacks', 'weight', 'g', 500, 500,
+        'g', getRelDate(-1), getRelDate(0), getRelDate(240), 15, 15,
+        'g', 50, 50, 'g', 0, 485, 'Brooke Bond Taj Mahal Tea'
+      );
+
+      // 9. Tata Crystal Salt (Added today)
+      insert.run(
+        'pantry_seed_9', 'user_arjun', 'Tata Crystal Salt (Sendha Namak)', 'Spices & Condiments', 'weight', 'kg', 1, 1000,
+        'g', getRelDate(0), getRelDate(0), null, 10, 10,
+        'g', 150, 150, 'g', 0, 990, 'Vacuum evaporated iodized salt'
+      );
+
+      // 10. Dettol Herbal Bath Soap (Added today)
+      insert.run(
+        'pantry_seed_10', 'user_arjun', 'Dettol Herbal Bath Soap', 'Personal Care', 'unit', 'pcs', 4, 4,
+        'pcs', getRelDate(0), getRelDate(0), null, 0.1, 0.1,
+        'pcs', 1, 1, 'pcs', 0, 4, 'Antibacterial germ defense pack'
+      );
+
+      console.log('[DB] Seeded comprehensive day-by-day household pantry inventory into SQLite.');
     }
   } catch (e) {
     console.warn('[DB] seedPantryIfEmpty warning:', e.message);
@@ -558,6 +599,49 @@ const dao = {
     `).run(newStock, newManualUsage, updateDate, id, userId);
 
     return dao.getPantryItemById(id, userId);
+  },
+
+  // Day-by-Day Ingredients Addition Statistics for Customer Pantry
+  getPantryDayByDayStats(userId, days = 7) {
+    if (!userId) return [];
+    const items = dao.getPantryItems(userId);
+    const dayMap = {};
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const dateLabel = `${monthNames[d.getMonth()]} ${d.getDate()}`;
+      dayMap[dateStr] = {
+        date: dateStr,
+        dateLabel,
+        isToday: i === 0,
+        itemsAdded: 0,
+        totalQtyBase: 0,
+        items: []
+      };
+    }
+
+    items.forEach(it => {
+      const pDate = it.purchase_date || '';
+      if (dayMap[pDate]) {
+        dayMap[pDate].itemsAdded++;
+        dayMap[pDate].totalQtyBase += (it.base_purchased_qty || it.original_quantity_base || 0);
+        dayMap[pDate].items.push({
+          id: it.id,
+          name: it.name || it.product_name,
+          category: it.category,
+          unit: it.display_unit || it.unit,
+          purchased_qty: it.purchased_qty || it.original_quantity,
+          current_stock_base: it.current_stock_base
+        });
+      }
+    });
+
+    return Object.values(dayMap);
   },
 
   // System Stats

@@ -1809,3 +1809,149 @@ body.in-splash .grocify-top-navbar {
   background: #dcfce7;
   transform: translateY(-1px);
 }
+
+/* ======================================================== */
+/* PANTRY DAY-BY-DAY INGREDIENTS ADDITION GRAPH STYLES      */
+/* ======================================================== */
+
+.pantry-timeframe-btn, .pantry-metric-btn {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pantry-timeframe-btn:hover, .pantry-metric-btn:hover {
+  color: var(--primary-dark);
+}
+
+.pantry-timeframe-btn.active, .pantry-metric-btn.active {
+  background: white;
+  color: var(--primary-dark);
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.pantry-chart-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 200px;
+  padding: 24px 8px 12px;
+  border-bottom: 2px solid #e2e8f0;
+  position: relative;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+.pantry-chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 32px;
+}
+
+.pantry-chart-col:hover {
+  transform: translateY(-3px);
+}
+
+.pantry-chart-col:hover .pantry-chart-bar-fill {
+  filter: brightness(1.1);
+}
+
+.pantry-chart-col.selected .pantry-chart-bar-shell {
+  outline: 2.5px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+.pantry-chart-bar-shell {
+  width: 100%;
+  max-width: 44px;
+  background: #f1f5f9;
+  border-radius: 10px 10px 4px 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.pantry-chart-bar-fill {
+  width: 100%;
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  border-radius: 8px 8px 0 0;
+  transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.pantry-chart-col.has-items .pantry-chart-bar-fill {
+  background: linear-gradient(180deg, #34d399 0%, #047857 100%);
+}
+
+.pantry-chart-col.today .pantry-chart-bar-fill {
+  background: linear-gradient(180deg, #10b981 0%, #064e3b 100%);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.pantry-chart-val-bubble {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.pantry-chart-date-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 8px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.pantry-chart-col.today .pantry-chart-date-lbl {
+  color: var(--primary-dark);
+  font-weight: 800;
+}
+
+.pantry-chart-col.today .pantry-chart-date-lbl::after {
+  content: ' (Today)';
+  font-size: 8px;
+  display: block;
+  color: #059669;
+}
+
+.pantry-day-ingredient-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: white;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--text-main);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
