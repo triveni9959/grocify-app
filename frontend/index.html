@@ -653,7 +653,10 @@
             <i data-lucide="shopping-bag" style="width: 20px;"></i>
             <span id="cart-badge" style="position: absolute; top: -5px; right: -5px; background: var(--accent-red); color: white; border-radius: 50%; padding: 2px 5px; font-size: 8px; font-weight: bold; display: none;">0</span>
           </div>
-          <i data-lucide="bell" style="width: 20px;"></i>
+          <div style="position: relative; cursor: pointer;" onclick="showPantryAlertsToast()" title="View Stock & Expiry Alerts">
+            <i data-lucide="bell" style="width: 20px;"></i>
+            <span id="pantry-bell-badge" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 5px; font-size: 8px; font-weight: bold; display: none;">0</span>
+          </div>
           <div
             style="width: 32px; height: 32px; background: var(--primary-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
             <i data-lucide="user" style="width: 16px;"></i>
@@ -754,6 +757,9 @@
               </div>
             </div>
             <div class="flex items-center gap-2">
+              <button class="btn" onclick="showPantryAlertsToast()" id="cust-home-alerts-btn" style="background: rgba(254,243,199,0.25); color: #fde68a; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 16px; border: 1px solid rgba(253,230,138,0.4); display: none;">
+                🔔 <span id="cust-home-alerts-btn-count">0</span> Alerts
+              </button>
               <button class="btn" onclick="openAddPantryModal()" style="background: rgba(255,255,255,0.2); color: white; font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.3);">
                 + Add Item
               </button>
@@ -8377,6 +8383,27 @@ sugar: {
                       if (expEl) expEl.innerText = expCount;
                       if (outEl) outEl.innerText = outCount;
 
+                      // Update Bell Badge and Alerts Count Button
+                      const bellBadge = document.getElementById('pantry-bell-badge');
+                      if (bellBadge) {
+                        if (previewAlerts.length > 0) {
+                          bellBadge.style.display = 'inline-block';
+                          bellBadge.innerText = previewAlerts.length;
+                        } else {
+                          bellBadge.style.display = 'none';
+                        }
+                      }
+                      const alertBtn = document.getElementById('cust-home-alerts-btn');
+                      const alertBtnCount = document.getElementById('cust-home-alerts-btn-count');
+                      if (alertBtn && alertBtnCount) {
+                        if (previewAlerts.length > 0) {
+                          alertBtn.style.display = 'inline-flex';
+                          alertBtnCount.innerText = previewAlerts.length;
+                        } else {
+                          alertBtn.style.display = 'none';
+                        }
+                      }
+
                       if (alertsContainer) {
                         if (previewAlerts.length > 0) {
                           alertsContainer.innerHTML = previewAlerts.slice(0, 3).map(al => `
@@ -8398,6 +8425,65 @@ sugar: {
                           `;
                         }
                         lucide.createIcons();
+                      }
+                    }
+
+                    // Toast / Notification Trigger for Active Alerts
+                    function showPantryAlertsToast() {
+                      const userId = getPantryUserId();
+                      let items = currentPantryItems;
+                      if (!items || items.length === 0) {
+                        const cached = localStorage.getItem(`grocify_pantry_${userId}`);
+                        if (cached) {
+                          try { items = JSON.parse(cached); } catch (e) {}
+                        }
+                        if (!items || items.length === 0) {
+                          items = getInitialSeedPantry(userId);
+                        }
+                      }
+
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+                      const alerts = [];
+
+                      items.forEach(it => {
+                        const stock = Math.max(0, it.current_stock_base || 0);
+                        const threshold = it.low_stock_threshold_base || 0;
+                        const dailyRate = it.daily_usage_base || 0;
+                        const runwayDays = dailyRate > 0 ? Math.floor(stock / dailyRate) : null;
+
+                        let expiryDays = null;
+                        if (it.expiry_date) {
+                          const expDate = new Date(it.expiry_date);
+                          expDate.setHours(0,0,0,0);
+                          expiryDays = Math.round((expDate - today) / (1000 * 60 * 60 * 24));
+                        }
+
+                        if (stock <= 0) {
+                          alerts.push(`🔴 ${it.product_name} is out of stock!`);
+                        } else if (stock <= threshold) {
+                          alerts.push(`⚠️ Your ${it.product_name} stock is running low. Only ${formatPantryBaseQty(stock, it.unit)} remains.`);
+                        } else if (runwayDays !== null && runwayDays <= 2) {
+                          alerts.push(`⚠️ Your ${it.product_name} may run out in ${runwayDays === 1 ? '1 day' : runwayDays + ' days'}.`);
+                        }
+
+                        if (expiryDays !== null) {
+                          if (expiryDays < 0) {
+                            alerts.push(`❌ Your ${it.product_name} expired ${Math.abs(expiryDays)} day(s) ago.`);
+                          } else if (expiryDays <= 5) {
+                            alerts.push(`⏳ Your ${it.product_name} expires in ${expiryDays === 0 ? 'today' : (expiryDays === 1 ? '1 day' : expiryDays + ' days')}.`);
+                          }
+                        }
+                      });
+
+                      if (alerts.length > 0) {
+                        showToast(alerts[0], 'warning');
+                        const target = document.getElementById('cust-home-pantry-alerts') || document.getElementById('pantry-alerts-wrapper');
+                        if (target && target.offsetParent !== null) {
+                          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                      } else {
+                        showToast('All pantry grocery items are well-stocked! No active alerts. 🌱', 'success');
                       }
                     }
 
