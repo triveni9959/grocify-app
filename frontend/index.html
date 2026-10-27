@@ -39,6 +39,7 @@
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('landing')">🏠 Landing Page</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('customer-login')">👤 Customer Login</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('customer')">🛒 Customer Home</button>
+        <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px; background: #ecfdf5; border-color: #a7f3d0; color: var(--primary-dark); font-weight: 700;" onclick="showView('pantry')">🥫 My Pantry & Consumption</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('discover')">🔍 Discover Store</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('product')">🥛 Product Detail</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('cart')">🛍️ Basket</button>
@@ -100,6 +101,10 @@
         <a class="grocify-nav-link" id="nav-btn-products" onclick="showView('discover')">
           <i data-lucide="shopping-bag" style="width: 17px; height: 17px;"></i>
           <span>Products</span>
+        </a>
+        <a class="grocify-nav-link" id="nav-btn-pantry" onclick="showView('pantry')">
+          <i data-lucide="archive" style="width: 17px; height: 17px;"></i>
+          <span>My Pantry</span>
         </a>
         <a class="grocify-nav-link" id="nav-btn-inventory" onclick="showView('inventory')">
           <i data-lucide="boxes" style="width: 17px; height: 17px;"></i>
@@ -168,6 +173,10 @@
     <a class="grocify-drawer-link" onclick="handleDrawerNav('discover')">
       <i data-lucide="shopping-bag" style="width: 18px; color: var(--primary-dark);"></i>
       <span>Products & Store</span>
+    </a>
+    <a class="grocify-drawer-link" onclick="handleDrawerNav('pantry')">
+      <i data-lucide="archive" style="width: 18px; color: var(--primary-dark);"></i>
+      <span style="font-weight: 600;">🥫 My Pantry (Grocery Stock)</span>
     </a>
     <a class="grocify-drawer-link" onclick="handleDrawerNav('inventory')">
       <i data-lucide="boxes" style="width: 18px; color: var(--primary-dark);"></i>
@@ -729,6 +738,59 @@
           </div>
         </div>
 
+        <!-- Dedicated Customer Pantry & Daily Consumption Monitor Card -->
+        <div class="card mb-6" style="background: white; border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+          <div style="background: linear-gradient(135deg, #064e3b 0%, #0a3a2a 100%); padding: 14px 18px; color: white; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div class="flex items-center gap-2.5">
+              <div style="background: rgba(255,255,255,0.18); border-radius: 8px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                🥫
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px;">
+                  My Grocery Inventory
+                  <span class="badge" style="background: #10b981; color: white; font-size: 9px; padding: 2px 6px;">LIVE TRACKER</span>
+                </div>
+                <div style="font-size: 11px; opacity: 0.85;">Daily consumption tracker & personal stock monitor</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="btn" onclick="openAddPantryModal()" style="background: rgba(255,255,255,0.2); color: white; font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.3);">
+                + Add Item
+              </button>
+              <button class="btn" onclick="showView('pantry')" style="background: white; color: var(--primary-dark); font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 20px; border: none; display: flex; align-items: center; gap: 4px;">
+                Manage Pantry <i data-lucide="arrow-right" style="width: 14px;"></i>
+              </button>
+            </div>
+          </div>
+
+          <div style="padding: 14px 18px;">
+            <!-- Quick Pantry KPIs -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 12px;" id="cust-home-pantry-kpi-row">
+              <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer;" onclick="showView('pantry')">
+                <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Tracked</div>
+                <div style="font-size: 18px; font-weight: 800; color: var(--text-main);" id="cust-home-pantry-total">0</div>
+              </div>
+              <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer;" onclick="showView('pantry')">
+                <div style="font-size: 10px; font-weight: 700; color: #b45309; text-transform: uppercase;">Low Stock</div>
+                <div style="font-size: 18px; font-weight: 800; color: #b45309;" id="cust-home-pantry-low">0</div>
+              </div>
+              <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer;" onclick="showView('pantry')">
+                <div style="font-size: 10px; font-weight: 700; color: #c2410c; text-transform: uppercase;">Expiring</div>
+                <div style="font-size: 18px; font-weight: 800; color: #c2410c;" id="cust-home-pantry-expiring">0</div>
+              </div>
+              <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer;" onclick="showView('pantry')">
+                <div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-transform: uppercase;">Out of Stock</div>
+                <div style="font-size: 18px; font-weight: 800; color: #b91c1c;" id="cust-home-pantry-out">0</div>
+              </div>
+            </div>
+
+            <!-- Home Alert Preview Strip -->
+            <div id="cust-home-pantry-alerts" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamic alert banners injected here -->
+            </div>
+          </div>
+        </div>
+
         <div class="flex justify-between items-end mb-4 mt-6">
           <div>
             <div class="text-xs font-bold text-muted flex items-center gap-2 uppercase tracking-wide mb-1">
@@ -1026,6 +1088,401 @@
           <i data-lucide="user" class="nav-icon"></i>
           Profile
         </a>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- CUSTOMER ROLE ONLY: MY GROCERY INVENTORY (MY PANTRY) VIEW      -->
+    <!-- ============================================================== -->
+    <div id="view-pantry" style="display: none; background: #f8fafc; min-height: 100vh; padding-bottom: 90px;">
+      <!-- Sticky Navigation Bar Header -->
+      <div class="header" style="background: white; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 50;">
+        <div class="flex items-center gap-3">
+          <button class="btn-icon" onclick="goBack()" style="background: #f3f4f6;" title="Back">
+            <i data-lucide="arrow-left" style="width: 18px;"></i>
+          </button>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 style="font-size: 18px; margin: 0; font-weight: 700; color: var(--text-main);">My Grocery Inventory</h1>
+              <span class="badge" style="background: #d1fae5; color: var(--primary-dark); font-size: 10px; font-weight: 700;">Customer Pantry</span>
+            </div>
+            <div class="text-xs text-muted flex items-center gap-1.5">
+              <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%;"></span>
+              <span>Daily consumption & smart runway tracker</span>
+              <span class="text-muted">·</span>
+              <span id="pantry-sync-status-text">Client clock synced</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn btn-primary" onclick="openAddPantryModal()" style="font-size: 12px; padding: 7px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">
+            <i data-lucide="plus-circle" style="width: 15px;"></i>
+            <span>Add Item</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-4" style="max-width: 1100px; margin: 0 auto;">
+        <!-- Proactive Top Household Banner -->
+        <div class="pantry-header-banner mb-4">
+          <div style="flex: 1;">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="badge" style="background: rgba(255,255,255,0.2); color: white; font-size: 11px;">🌱 SMART PANTRY OS</span>
+              <span id="pantry-customer-name-tag" style="font-size: 12px; opacity: 0.95;">Arjun's Kitchen</span>
+            </div>
+            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px; color: white;">Daily Consumption & Stock Tracker</h2>
+            <p style="font-size: 12px; opacity: 0.9; margin: 0; max-width: 650px; line-height: 1.4;">
+              Tracks purchased quantities, calculates daily depletion from your device date, and sends low-stock & expiry warnings before you run out.
+            </p>
+          </div>
+          <div class="flex items-center gap-2" style="flex-wrap: wrap;">
+            <button class="btn" onclick="openAddPantryModal()" style="background: white; color: var(--primary-dark); font-weight: 700; font-size: 12px; padding: 8px 16px; border-radius: 20px; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <i data-lucide="plus" style="width: 14px; margin-right: 4px;"></i> Add Grocery Item
+            </button>
+            <button class="btn" onclick="syncPantryTodayConsumption()" style="background: rgba(255,255,255,0.16); color: white; font-weight: 600; font-size: 12px; padding: 8px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);" title="Recalculate usage for today's date">
+              <i data-lucide="refresh-cw" style="width: 13px; margin-right: 4px;"></i> Recalculate Today
+            </button>
+          </div>
+        </div>
+
+        <!-- 4-KPI Metric Cards Grid -->
+        <div class="pantry-kpi-grid mb-4">
+          <div class="pantry-kpi-card" onclick="setPantryStatusFilter('all')">
+            <div class="pantry-kpi-top">
+              <span class="pantry-kpi-label">TOTAL ITEMS</span>
+              <div class="pantry-kpi-icon" style="background: #ecfdf5; color: var(--primary-dark);"><i data-lucide="boxes" style="width: 14px;"></i></div>
+            </div>
+            <div class="pantry-kpi-value" id="pantry-kpi-total">0</div>
+            <div class="pantry-kpi-sub" id="pantry-kpi-total-sub">Across household stock</div>
+          </div>
+
+          <div class="pantry-kpi-card" onclick="setPantryStatusFilter('low')">
+            <div class="pantry-kpi-top">
+              <span class="pantry-kpi-label" style="color: #b45309;">RUNNING LOW</span>
+              <div class="pantry-kpi-icon" style="background: #fef3c7; color: #b45309;"><i data-lucide="alert-triangle" style="width: 14px;"></i></div>
+            </div>
+            <div class="pantry-kpi-value" id="pantry-kpi-low" style="color: #b45309;">0</div>
+            <div class="pantry-kpi-sub">Below safety threshold</div>
+          </div>
+
+          <div class="pantry-kpi-card" onclick="setPantryStatusFilter('expiry')">
+            <div class="pantry-kpi-top">
+              <span class="pantry-kpi-label" style="color: #c2410c;">NEARING EXPIRY</span>
+              <div class="pantry-kpi-icon" style="background: #ffedd5; color: #c2410c;"><i data-lucide="clock" style="width: 14px;"></i></div>
+            </div>
+            <div class="pantry-kpi-value" id="pantry-kpi-expiring" style="color: #c2410c;">0</div>
+            <div class="pantry-kpi-sub">Within 5 days or past date</div>
+          </div>
+
+          <div class="pantry-kpi-card" onclick="setPantryStatusFilter('out')">
+            <div class="pantry-kpi-top">
+              <span class="pantry-kpi-label" style="color: #b91c1c;">OUT OF STOCK</span>
+              <div class="pantry-kpi-icon" style="background: #fee2e2; color: #b91c1c;"><i data-lucide="x-circle" style="width: 14px;"></i></div>
+            </div>
+            <div class="pantry-kpi-value" id="pantry-kpi-out" style="color: #b91c1c;">0</div>
+            <div class="pantry-kpi-sub">Needs immediate refill</div>
+          </div>
+        </div>
+
+        <!-- Proactive Smart Alerts Ticker Container -->
+        <div id="pantry-alerts-wrapper" class="mb-4" style="display: none;">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-xs font-bold text-muted flex items-center gap-1.5 uppercase tracking-wide">
+              <i data-lucide="bell-ring" style="width: 13px; color: #f59e0b;"></i> Low Stock & Expiry Telemetry
+            </div>
+            <span class="badge" id="pantry-alerts-count" style="background: #fef3c7; color: #92400e; font-size: 10px;">0 Alerts</span>
+          </div>
+          <div id="pantry-alerts-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- Filter & Search Toolbar Card -->
+        <div class="card mb-4" style="padding: 14px; background: white; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+          <div class="pantry-toolbar-row">
+            <div class="pantry-search-box">
+              <i data-lucide="search" style="width: 16px; color: var(--text-muted);"></i>
+              <input type="text" id="pantry-search-box-input" placeholder="Search pantry items (Rice, Dal, Soap, Oil...)" oninput="filterPantryItems()">
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <select id="pantry-filter-status" class="pantry-select" onchange="filterPantryItems()">
+                <option value="all">All Statuses</option>
+                <option value="available">Available (In Stock)</option>
+                <option value="low">Low Stock Alert</option>
+                <option value="expiry">Nearing Expiry / Expired</option>
+                <option value="out">Out of Stock</option>
+              </select>
+
+              <select id="pantry-sort-by" class="pantry-select" onchange="filterPantryItems()">
+                <option value="urgency">Sort by: Urgency & Runway</option>
+                <option value="expiry">Sort by: Expiry Date (Soonest)</option>
+                <option value="name">Sort by: Product Name (A-Z)</option>
+                <option value="remaining">Sort by: Remaining % (Lowest)</option>
+                <option value="recent">Sort by: Recently Purchased</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Category Filter Pills -->
+          <div class="pantry-filter-pills" id="pantry-filter-pills-bar">
+            <button class="pantry-pill active" onclick="setPantryCategoryFilter('All', this)">All Items</button>
+            <button class="pantry-pill" onclick="setPantryCategoryFilter('Food & Grains', this)">🌾 Food & Grains</button>
+            <button class="pantry-pill" onclick="setPantryCategoryFilter('Dal & Pulses', this)">🍲 Dal & Pulses</button>
+            <button class="pantry-pill" onclick="setPantryCategoryFilter('Cooking Oils & Ghee', this)">🌻 Oils & Ghee</button>
+            <button class="pantry-pill" onclick="setPantryCategoryFilter('Dairy & Eggs', this)">🥛 Dairy & Eggs</button>
+            <button class="pantry-pill" onclick="setPantryCategoryFilter('Spices & Condiments', this)">🌶️ Spices</button>
+            <button class="pantry-pill" onclick="setPantryCategoryFilter('Personal Care', this)">🧴 Personal Care</button>
+            <button class="pantry-pill" onclick="setPantryCategoryFilter('Household Essentials', this)">🧼 Household</button>
+            <button class="pantry-pill" onclick="setPantryCategoryFilter('Beverages & Snacks', this)">☕ Beverages</button>
+          </div>
+        </div>
+
+        <!-- Pantry Item Cards Grid Container -->
+        <div id="pantry-items-grid" class="pantry-items-grid">
+          <!-- Rendered via JavaScript -->
+        </div>
+
+        <!-- Empty State Container -->
+        <div id="pantry-empty-state" style="display: none; text-align: center; padding: 60px 20px; background: white; border-radius: 16px; border: 1px dashed var(--border-color);">
+          <div style="width: 60px; height: 60px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; color: var(--primary-dark);">
+            <i data-lucide="archive" style="width: 28px; height: 28px;"></i>
+          </div>
+          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">No Grocery Items Found</h3>
+          <p style="font-size: 13px; color: var(--text-muted); max-width: 440px; margin: 0 auto 18px; line-height: 1.4;">
+            Keep track of the groceries you purchase for your home. Grocify will monitor your daily usage rates, alert you when stock is low, and warn you of expiring items.
+          </p>
+          <button class="btn btn-primary" onclick="openAddPantryModal()" style="padding: 10px 20px; border-radius: 20px; font-weight: 600;">
+            <i data-lucide="plus-circle" style="width: 15px; margin-right: 6px;"></i> Add First Grocery Item
+          </button>
+        </div>
+      </div>
+
+      <!-- Standard Customer Bottom Nav -->
+      <div class="bottom-nav">
+        <a href="javascript:void(0)" class="nav-item" onclick="showView('customer')">
+          <i data-lucide="home" class="nav-icon"></i>
+          Home
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="showView('discover')">
+          <i data-lucide="compass" class="nav-icon"></i>
+          Discover
+        </a>
+        <a href="javascript:void(0)" class="nav-item active" onclick="showView('pantry')">
+          <i data-lucide="archive" class="nav-icon"></i>
+          My Pantry
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="showView('smart-offer')">
+          <i data-lucide="tag" class="nav-icon"></i>
+          Offers
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="showView('profile')">
+          <i data-lucide="user" class="nav-icon"></i>
+          Profile
+        </a>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- PANTRY MODAL: ADD / EDIT GROCERY ITEM                          -->
+    <!-- ============================================================== -->
+    <div id="pantry-modal" class="pantry-modal-backdrop" style="display: none;">
+      <div class="pantry-modal-content">
+        <div class="pantry-modal-header">
+          <div>
+            <h3 style="font-size: 17px; font-weight: 700; margin: 0; color: var(--text-main);" id="pantry-modal-title">Add Grocery Item</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 2px 0 0;">Enter details of groceries purchased for household use</p>
+          </div>
+          <button class="btn-icon" onclick="closePantryModal()" style="border: none; background: #f1f5f9;" title="Close">
+            <i data-lucide="x" style="width: 16px;"></i>
+          </button>
+        </div>
+
+        <form id="pantry-item-form" onsubmit="handleSavePantryItem(event)">
+          <input type="hidden" id="pantry-edit-id" value="">
+
+          <!-- Product Name -->
+          <div class="pantry-form-group">
+            <label class="pantry-form-label">Product Name <span style="color: #ef4444;">*</span></label>
+            <input type="text" id="pantry-form-name" class="pantry-form-input" placeholder="e.g. Basmati Rice, Toor Dal, Sunflower Oil, Bath Soap" required>
+          </div>
+
+          <!-- Category -->
+          <div class="pantry-form-group">
+            <label class="pantry-form-label">Category <span style="color: #ef4444;">*</span></label>
+            <select id="pantry-form-category" class="pantry-form-select" required>
+              <option value="Food & Grains">🌾 Food & Grains (Rice, Wheat, Atta, Rava)</option>
+              <option value="Dal & Pulses">🍲 Dal & Pulses (Toor, Moong, Chana, Urad)</option>
+              <option value="Cooking Oils & Ghee">🌻 Cooking Oils & Ghee (Sunflower, Mustard, Ghee)</option>
+              <option value="Dairy & Eggs">🥛 Dairy & Eggs (Milk, Paneer, Curd, Eggs)</option>
+              <option value="Spices & Condiments">🌶️ Spices & Condiments (Turmeric, Salt, Chilli, Masalas)</option>
+              <option value="Personal Care">🧴 Personal Care (Soap, Shampoo, Toothpaste)</option>
+              <option value="Household Essentials">🧼 Household Essentials (Detergent, Dishwash, Cleaners)</option>
+              <option value="Beverages & Snacks">☕ Beverages & Snacks (Tea, Coffee, Biscuits)</option>
+              <option value="Fresh Produce">🥬 Fresh Vegetables & Fruits</option>
+              <option value="Other Essentials">📦 Other Essentials</option>
+            </select>
+          </div>
+
+          <!-- Purchased Quantity & Unit -->
+          <div class="pantry-form-group">
+            <label class="pantry-form-label">Purchased Quantity <span style="color: #ef4444;">*</span></label>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+              <input type="number" id="pantry-form-qty" class="pantry-form-input" step="any" min="0.01" placeholder="e.g. 5" required>
+              <select id="pantry-form-unit" class="pantry-form-select">
+                <option value="kg">kg</option>
+                <option value="g">grams</option>
+                <option value="L">Litres (L)</option>
+                <option value="ml">ml</option>
+                <option value="pcs">pieces (pcs)</option>
+                <option value="packs">packs</option>
+                <option value="bottles">bottles</option>
+              </select>
+            </div>
+            <span class="pantry-form-help">Enter total purchased amount (e.g., 5 kg, 500 g, 1 L, 3 pieces).</span>
+          </div>
+
+          <!-- Purchase Date & Expiry Date -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="pantry-form-group">
+              <label class="pantry-form-label">Purchase Date <span style="color: #ef4444;">*</span></label>
+              <input type="date" id="pantry-form-purchase-date" class="pantry-form-input" required>
+              <span class="pantry-form-help">Defaults to device date.</span>
+            </div>
+
+            <div class="pantry-form-group">
+              <label class="pantry-form-label">Expiry Date <span style="color: var(--text-muted); font-weight: normal;">(Optional)</span></label>
+              <input type="date" id="pantry-form-expiry-date" class="pantry-form-input">
+              <span class="pantry-form-help">Leave empty if non-perishable.</span>
+            </div>
+          </div>
+
+          <!-- Average Daily Usage & Unit -->
+          <div class="pantry-form-group">
+            <label class="pantry-form-label">Average Daily Usage <span style="color: #ef4444;">*</span></label>
+            <div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 8px;">
+              <input type="number" id="pantry-form-usage" class="pantry-form-input" step="any" min="0" placeholder="e.g. 150" required>
+              <select id="pantry-form-usage-unit" class="pantry-form-select">
+                <option value="g">grams / day</option>
+                <option value="kg">kg / day</option>
+                <option value="ml">ml / day</option>
+                <option value="L">Litres / day</option>
+                <option value="pcs">pcs / day</option>
+              </select>
+            </div>
+            <span class="pantry-form-help">Used to calculate daily consumption automatically (e.g., 100 grams of rice per day).</span>
+          </div>
+
+          <!-- Low-Stock Alert Threshold -->
+          <div class="pantry-form-group">
+            <label class="pantry-form-label">Low-Stock Alert Threshold <span style="color: #ef4444;">*</span></label>
+            <div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 8px;">
+              <input type="number" id="pantry-form-threshold" class="pantry-form-input" step="any" min="0" placeholder="e.g. 500" required>
+              <select id="pantry-form-threshold-unit" class="pantry-form-select">
+                <option value="g">grams (g)</option>
+                <option value="kg">kg</option>
+                <option value="ml">ml</option>
+                <option value="L">Litres (L)</option>
+                <option value="pcs">pieces (pcs)</option>
+              </select>
+            </div>
+            <span class="pantry-form-help">Triggers low-stock alert when remaining stock reaches this level (e.g., 200 grams).</span>
+          </div>
+
+          <!-- Notes / Storage location -->
+          <div class="pantry-form-group">
+            <label class="pantry-form-label">Notes & Storage Location <span style="color: var(--text-muted); font-weight: normal;">(Optional)</span></label>
+            <input type="text" id="pantry-form-notes" class="pantry-form-input" placeholder="e.g. Kitchen top cabinet container #3">
+          </div>
+
+          <!-- Modal Action Buttons -->
+          <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
+            <button type="button" class="btn btn-secondary" onclick="closePantryModal()" style="padding: 9px 18px; border-radius: 20px; font-size: 13px;">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="pantry-save-btn" style="padding: 9px 22px; border-radius: 20px; font-size: 13px; font-weight: 700;">
+              Save Item to Pantry
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- PANTRY USAGE MODAL: RECORD DAILY CONSUMPTION                   -->
+    <!-- ============================================================== -->
+    <div id="pantry-usage-modal" class="pantry-modal-backdrop" style="display: none;">
+      <div class="pantry-modal-content" style="max-width: 440px;">
+        <div class="pantry-modal-header">
+          <div>
+            <h3 style="font-size: 17px; font-weight: 700; margin: 0; color: var(--text-main);">Record Daily Usage</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 2px 0 0;" id="usage-item-subtitle">Deduct quantity consumed today</p>
+          </div>
+          <button class="btn-icon" onclick="closePantryUsageModal()" style="border: none; background: #f1f5f9;" title="Close">
+            <i data-lucide="x" style="width: 16px;"></i>
+          </button>
+        </div>
+
+        <form id="pantry-usage-form" onsubmit="handleRecordUsageSubmit(event)">
+          <input type="hidden" id="usage-item-id" value="">
+
+          <!-- Current Stock Summary Card -->
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 14px; font-weight: 700; color: var(--primary-dark);" id="usage-item-name">Product Name</div>
+              <div style="font-size: 11px; color: var(--text-muted);" id="usage-item-daily-rate">Daily rate: 100 g/day</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Current Remaining</div>
+              <div style="font-size: 16px; font-weight: 800; color: var(--primary-dark);" id="usage-item-remaining">1.8 kg</div>
+            </div>
+          </div>
+
+          <!-- Quick Increment/Decrement Preset Chips -->
+          <div class="pantry-form-group">
+            <label class="pantry-form-label">Quick Usage Presets</label>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="usage-preset-chips-container">
+              <!-- Dynamically populated chips like -50g, -100g, -250g, -500g -->
+            </div>
+          </div>
+
+          <!-- Quantity Used Input -->
+          <div class="pantry-form-group">
+            <label class="pantry-form-label">Quantity Used Today <span style="color: #ef4444;">*</span></label>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+              <input type="number" id="usage-input-qty" class="pantry-form-input" step="any" min="0.01" placeholder="e.g. 200" required oninput="previewUsageCalculation()">
+              <select id="usage-input-unit" class="pantry-form-select" onchange="previewUsageCalculation()">
+                <option value="g">grams (g)</option>
+                <option value="kg">kg</option>
+                <option value="ml">ml</option>
+                <option value="L">L</option>
+                <option value="pcs">pcs</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Consumption Date -->
+          <div class="pantry-form-group">
+            <label class="pantry-form-label">Usage Date</label>
+            <input type="date" id="usage-input-date" class="pantry-form-input" required>
+            <span class="pantry-form-help">Defaults to device date today.</span>
+          </div>
+
+          <!-- Projected Result Preview -->
+          <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; font-size: 12px;">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-muted">Estimated Remaining After:</span>
+              <span style="font-weight: 700; color: var(--text-main);" id="usage-preview-remaining">-</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-muted">Estimated Days Left:</span>
+              <span style="font-weight: 700; color: var(--primary-dark);" id="usage-preview-runway">-</span>
+            </div>
+          </div>
+
+          <!-- Modal Action Buttons -->
+          <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" class="btn btn-secondary" onclick="closePantryUsageModal()" style="padding: 8px 16px; border-radius: 20px; font-size: 13px;">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="usage-submit-btn" style="padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 700;">
+              Record Usage
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -4976,6 +5433,7 @@
 
                       // Load corresponding view data
                       if (viewId === 'customer') loadCustomerData();
+                      if (viewId === 'pantry') loadPantryData();
                       if (viewId === 'merchant') loadMerchantData();
                       if (viewId === 'pattern') loadPatternData();
                       if (viewId === 'product') loadProductData();
@@ -5008,6 +5466,7 @@
                         'shopkeeper': 'nav-btn-home',
                         'discover': 'nav-btn-products',
                         'product': 'nav-btn-products',
+                        'pantry': 'nav-btn-pantry',
                         'inventory': 'nav-btn-inventory',
                         'merchant': 'nav-btn-dashboard',
                         'decision': 'nav-btn-dashboard',
@@ -5613,8 +6072,12 @@ sugar: {
                           const name = currentUser ? currentUser.name : (data && data.user ? data.user.name : 'Arjun');
                           greetingEl.innerHTML = `Good evening, ${name} 🌱`;
                         }
+
+                        // Refresh Customer Home Pantry Widget
+                        updateCustomerHomePantry();
                       } catch (err) {
                         console.error('Error fetching customer data:', err);
+                        updateCustomerHomePantry();
                       }
                     }
 
@@ -7190,6 +7653,1192 @@ sugar: {
                         console.error('Reorder error:', err);
                       }
                     }
+
+                    // =========================================================================
+                    // CUSTOMER ROLE ONLY: MY GROCERY INVENTORY & DAILY CONSUMPTION TRACKER
+                    // =========================================================================
+                    let currentPantryItems = [];
+                    let pantryActiveCategory = 'All';
+                    let pantryActiveStatus = 'all';
+                    let pantrySearchTerm = '';
+                    let pantrySelectedSort = 'urgency';
+                    let activeUsageItem = null;
+
+                    // Get current customer's ID for data isolation
+                    function getPantryUserId() {
+                      const user = getCurrentUser();
+                      if (user && user.id) return user.id;
+                      return 'user_arjun'; // default demo customer
+                    }
+
+                    // Convert any mass/volume/count to standard base unit
+                    // Mass -> grams (g), Volume -> millilitres (ml), Count -> pieces (pcs)
+                    function convertToPantryBase(qty, unit) {
+                      const q = parseFloat(qty) || 0;
+                      const u = (unit || '').toLowerCase().trim();
+                      if (u === 'kg' || u === 'kilogram' || u === 'kilograms') return q * 1000;
+                      if (u === 'g' || u === 'gram' || u === 'grams') return q;
+                      if (u === 'l' || u === 'litre' || u === 'litres' || u === 'liter') return q * 1000;
+                      if (u === 'ml' || u === 'millilitre' || u === 'millilitres') return q;
+                      return q;
+                    }
+
+                    // Format base unit quantity back into clean human-friendly text
+                    function formatPantryBaseQty(baseVal, origUnit) {
+                      const b = Math.max(0, parseFloat(baseVal) || 0);
+                      const u = (origUnit || '').toLowerCase().trim();
+                      
+                      if (u === 'kg' || u === 'g' || u === 'gram' || u === 'grams') {
+                        if (b >= 1000) {
+                          const kgVal = b / 1000;
+                          return (Number.isInteger(kgVal) ? kgVal : kgVal.toFixed(2).replace(/\.?0+$/, '')) + ' kg';
+                        }
+                        return Math.round(b) + ' g';
+                      }
+                      
+                      if (u === 'l' || u === 'ml' || u === 'litre' || u === 'litres') {
+                        if (b >= 1000) {
+                          const lVal = b / 1000;
+                          return (Number.isInteger(lVal) ? lVal : lVal.toFixed(2).replace(/\.?0+$/, '')) + ' L';
+                        }
+                        return Math.round(b) + ' ml';
+                      }
+                      
+                      const cleanCount = Number.isInteger(b) ? b : b.toFixed(1);
+                      return cleanCount + ' ' + (origUnit || 'pcs');
+                    }
+
+                    // Category icons
+                    function getPantryCategoryIcon(cat) {
+                      const c = (cat || '').toLowerCase();
+                      if (c.includes('grain') || c.includes('rice') || c.includes('flour') || c.includes('atta')) return '🌾';
+                      if (c.includes('dal') || c.includes('pulse')) return '🍲';
+                      if (c.includes('oil') || c.includes('ghee')) return '🌻';
+                      if (c.includes('dairy') || c.includes('milk') || c.includes('egg') || c.includes('paneer')) return '🥛';
+                      if (c.includes('spice') || c.includes('masala')) return '🌶️';
+                      if (c.includes('personal') || c.includes('soap') || c.includes('shampoo')) return '🧴';
+                      if (c.includes('house') || c.includes('clean') || c.includes('detergent')) return '🧼';
+                      if (c.includes('beverage') || c.includes('tea') || c.includes('snack')) return '☕';
+                      if (c.includes('produce') || c.includes('veg') || c.includes('fruit')) return '🥬';
+                      return '📦';
+                    }
+
+                    function getOffsetDateString(offsetDays) {
+                      const d = new Date();
+                      d.setDate(d.getDate() + offsetDays);
+                      return d.toISOString().split('T')[0];
+                    }
+
+                    // Initial default seed items for demo customer Arjun
+                    function getInitialSeedPantry(userId) {
+                      const today = new Date().toISOString().split('T')[0];
+                      return [
+                        {
+                          id: 'pantry_seed_1',
+                          user_id: userId,
+                          product_name: 'Basmati Rice (Royal Supreme)',
+                          category: 'Food & Grains',
+                          original_quantity: 5,
+                          unit: 'kg',
+                          original_quantity_base: 5000,
+                          current_stock_base: 1800,
+                          used_quantity_base: 3200,
+                          purchase_date: '2026-10-10',
+                          expiry_date: '',
+                          daily_usage_base: 150,
+                          daily_usage_display: '150 g/day',
+                          low_stock_threshold_base: 500,
+                          threshold_display: '500 g',
+                          notes: 'Main pantry container #1',
+                          last_updated_date: today
+                        },
+                        {
+                          id: 'pantry_seed_2',
+                          user_id: userId,
+                          product_name: 'Toor Dal (Organic Unpolished)',
+                          category: 'Dal & Pulses',
+                          original_quantity: 2,
+                          unit: 'kg',
+                          original_quantity_base: 2000,
+                          current_stock_base: 200,
+                          used_quantity_base: 1800,
+                          purchase_date: '2026-10-05',
+                          expiry_date: '2027-04-15',
+                          daily_usage_base: 80,
+                          daily_usage_display: '80 g/day',
+                          low_stock_threshold_base: 300,
+                          threshold_display: '300 g',
+                          notes: 'Kitchen shelf B',
+                          last_updated_date: today
+                        },
+                        {
+                          id: 'pantry_seed_3',
+                          user_id: userId,
+                          product_name: 'Sunflower Cooking Oil',
+                          category: 'Cooking Oils & Ghee',
+                          original_quantity: 2,
+                          unit: 'L',
+                          original_quantity_base: 2000,
+                          current_stock_base: 850,
+                          used_quantity_base: 1150,
+                          purchase_date: '2026-10-12',
+                          expiry_date: getOffsetDateString(4),
+                          daily_usage_base: 60,
+                          daily_usage_display: '60 ml/day',
+                          low_stock_threshold_base: 250,
+                          threshold_display: '250 ml',
+                          notes: 'Storage cabinet near stove',
+                          last_updated_date: today
+                        },
+                        {
+                          id: 'pantry_seed_4',
+                          user_id: userId,
+                          product_name: 'Farmhouse Fresh Milk',
+                          category: 'Dairy & Eggs',
+                          original_quantity: 1,
+                          unit: 'L',
+                          original_quantity_base: 1000,
+                          current_stock_base: 350,
+                          used_quantity_base: 650,
+                          purchase_date: '2026-10-25',
+                          expiry_date: getOffsetDateString(2),
+                          daily_usage_base: 200,
+                          daily_usage_display: '200 ml/day',
+                          low_stock_threshold_base: 300,
+                          threshold_display: '300 ml',
+                          notes: 'Refrigerator top shelf',
+                          last_updated_date: today
+                        }
+                      ];
+                    }
+
+                    // Auto Daily Depletion Calculation using Client Device Date
+                    function computeDeviceDateDepletion(items) {
+                      const today = new Date();
+                      const todayStr = today.toISOString().split('T')[0];
+                      let changed = false;
+
+                      items.forEach(item => {
+                        const refDateStr = item.last_updated_date || item.purchase_date || todayStr;
+                        const diffMs = (new Date(todayStr).getTime()) - (new Date(refDateStr).getTime());
+                        const elapsedDays = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+
+                        if (elapsedDays > 0 && (item.daily_usage_base > 0)) {
+                          const autoUsed = elapsedDays * item.daily_usage_base;
+                          const prevStock = item.current_stock_base;
+                          item.current_stock_base = Math.max(0, item.current_stock_base - autoUsed);
+                          const actualDeducted = prevStock - item.current_stock_base;
+                          item.used_quantity_base = (item.used_quantity_base || 0) + actualDeducted;
+                          item.last_updated_date = todayStr;
+                          changed = true;
+                        }
+                      });
+
+                      return changed;
+                    }
+
+                    // Load Pantry Data from Backend API with localStorage sync
+                    async function loadPantryData() {
+                      const userId = getPantryUserId();
+                      const user = getCurrentUser();
+                      const userNameTag = document.getElementById('pantry-customer-name-tag');
+                      if (userNameTag) {
+                        userNameTag.innerText = (user && user.name ? user.name : 'Arjun') + "'s Kitchen";
+                      }
+
+                      const syncStatus = document.getElementById('pantry-sync-status-text');
+                      if (syncStatus) {
+                        const now = new Date();
+                        syncStatus.innerText = `Device clock synced · ${now.toLocaleDateString()}`;
+                      }
+
+                      try {
+                        const res = await fetch(`${API_BASE}/pantry?user_id=${encodeURIComponent(userId)}`);
+                        if (res.ok) {
+                          const json = await res.json();
+                          if (json && json.data) {
+                            currentPantryItems = json.data;
+                            computeDeviceDateDepletion(currentPantryItems);
+                            localStorage.setItem(`grocify_pantry_${userId}`, JSON.stringify(currentPantryItems));
+                          }
+                        } else {
+                          throw new Error('API returned ' + res.status);
+                        }
+                      } catch (err) {
+                        console.warn('[Pantry] Server fetch error, using local storage cache:', err);
+                        const cached = localStorage.getItem(`grocify_pantry_${userId}`);
+                        if (cached) {
+                          try {
+                            currentPantryItems = JSON.parse(cached);
+                          } catch (e) {
+                            currentPantryItems = getInitialSeedPantry(userId);
+                          }
+                        } else {
+                          currentPantryItems = getInitialSeedPantry(userId);
+                          localStorage.setItem(`grocify_pantry_${userId}`, JSON.stringify(currentPantryItems));
+                        }
+                        computeDeviceDateDepletion(currentPantryItems);
+                        localStorage.setItem(`grocify_pantry_${userId}`, JSON.stringify(currentPantryItems));
+                      }
+
+                      renderPantryUI();
+                      updateCustomerHomePantry();
+                    }
+
+                    // Manual recalculation trigger for device date
+                    function syncPantryTodayConsumption() {
+                      computeDeviceDateDepletion(currentPantryItems);
+                      const userId = getPantryUserId();
+                      localStorage.setItem(`grocify_pantry_${userId}`, JSON.stringify(currentPantryItems));
+                      renderPantryUI();
+                      updateCustomerHomePantry();
+                      showToast('Pantry consumption recalculated for today!', 'success');
+                    }
+
+                    // Filter Category Pill Switcher
+                    function setPantryCategoryFilter(cat, btn) {
+                      pantryActiveCategory = cat;
+                      document.querySelectorAll('#pantry-filter-pills-bar .pantry-pill').forEach(b => b.classList.remove('active'));
+                      if (btn) btn.classList.add('active');
+                      filterPantryItems();
+                    }
+
+                    // Filter Status Pill Switcher
+                    function setPantryStatusFilter(st) {
+                      pantryActiveStatus = st;
+                      const select = document.getElementById('pantry-filter-status');
+                      if (select) select.value = st;
+                      filterPantryItems();
+                    }
+
+                    // Filter & Search handler
+                    function filterPantryItems() {
+                      const searchInput = document.getElementById('pantry-search-box-input');
+                      pantrySearchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+                      const statusSelect = document.getElementById('pantry-filter-status');
+                      pantryActiveStatus = statusSelect ? statusSelect.value : 'all';
+
+                      const sortSelect = document.getElementById('pantry-sort-by');
+                      pantrySelectedSort = sortSelect ? sortSelect.value : 'urgency';
+
+                      renderPantryUI();
+                    }
+
+                    // Render Full Pantry View
+                    function renderPantryUI() {
+                      const grid = document.getElementById('pantry-items-grid');
+                      const emptyState = document.getElementById('pantry-empty-state');
+                      const alertsContainer = document.getElementById('pantry-alerts-container');
+                      const alertsWrapper = document.getElementById('pantry-alerts-wrapper');
+                      const alertsCountBadge = document.getElementById('pantry-alerts-count');
+
+                      if (!grid) return;
+
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+
+                      let totalCount = currentPantryItems.length;
+                      let lowCount = 0;
+                      let expCount = 0;
+                      let outCount = 0;
+                      const activeAlerts = [];
+
+                      // Analyze items for telemetry metrics & alerts
+                      currentPantryItems.forEach(item => {
+                        const stock = Math.max(0, item.current_stock_base || 0);
+                        const threshold = item.low_stock_threshold_base || 0;
+                        const dailyRate = item.daily_usage_base || 0;
+
+                        // Runway calculation
+                        let runwayDays = null;
+                        if (dailyRate > 0) {
+                          runwayDays = Math.floor(stock / dailyRate);
+                        }
+
+                        // Expiry calculation
+                        let expiryDays = null;
+                        if (item.expiry_date) {
+                          const expDate = new Date(item.expiry_date);
+                          expDate.setHours(0,0,0,0);
+                          expiryDays = Math.round((expDate - today) / (1000 * 60 * 60 * 24));
+                        }
+
+                        // Status classification
+                        if (stock <= 0) {
+                          outCount++;
+                          activeAlerts.push({
+                            type: 'danger',
+                            icon: 'x-circle',
+                            title: `Your ${item.product_name} is out of stock!`,
+                            msg: `Household stock is completely depleted. Reorder or update your stock balance.`,
+                            itemId: item.id
+                          });
+                        } else if (stock <= threshold) {
+                          lowCount++;
+                          activeAlerts.push({
+                            type: 'warning',
+                            icon: 'alert-triangle',
+                            title: `Your ${item.product_name} stock is running low.`,
+                            msg: `Only ${formatPantryBaseQty(stock, item.unit)} remains (Threshold: ${formatPantryBaseQty(threshold, item.unit)}).`,
+                            itemId: item.id
+                          });
+                        } else if (runwayDays !== null && runwayDays <= 2) {
+                          lowCount++;
+                          const daysMsg = runwayDays === 1 ? '1 day' : `${runwayDays} days`;
+                          activeAlerts.push({
+                            type: 'warning',
+                            icon: 'clock',
+                            title: `Your ${item.product_name} may run out in ${daysMsg}.`,
+                            msg: `Based on your daily usage rate of ${item.daily_usage_display || (dailyRate + ' / day')}.`,
+                            itemId: item.id
+                          });
+                        }
+
+                        if (expiryDays !== null) {
+                          if (expiryDays < 0) {
+                            expCount++;
+                            activeAlerts.push({
+                              type: 'danger',
+                              icon: 'alert-circle',
+                              title: `Your ${item.product_name} has expired!`,
+                              msg: `Expired ${Math.abs(expiryDays)} day(s) ago (${item.expiry_date}). Check before consuming.`,
+                              itemId: item.id
+                            });
+                          } else if (expiryDays <= 5) {
+                            expCount++;
+                            const expDaysMsg = expiryDays === 0 ? 'today' : (expiryDays === 1 ? 'in 1 day' : `in ${expiryDays} days`);
+                            activeAlerts.push({
+                              type: 'warning',
+                              icon: 'clock',
+                              title: `Your ${item.product_name} expires ${expDaysMsg}.`,
+                              msg: `Approaching expiry date (${item.expiry_date}). Plan usage soon.`,
+                              itemId: item.id
+                            });
+                          }
+                        }
+                      });
+
+                      // Update KPI Counters
+                      const kpiTotal = document.getElementById('pantry-kpi-total');
+                      const kpiLow = document.getElementById('pantry-kpi-low');
+                      const kpiExp = document.getElementById('pantry-kpi-expiring');
+                      const kpiOut = document.getElementById('pantry-kpi-out');
+
+                      if (kpiTotal) kpiTotal.innerText = totalCount;
+                      if (kpiLow) kpiLow.innerText = lowCount;
+                      if (kpiExp) kpiExp.innerText = expCount;
+                      if (kpiOut) kpiOut.innerText = outCount;
+
+                      // Render Telemetry Alerts
+                      if (alertsContainer && alertsWrapper) {
+                        if (activeAlerts.length > 0) {
+                          alertsWrapper.style.display = 'block';
+                          if (alertsCountBadge) alertsCountBadge.innerText = `${activeAlerts.length} Active`;
+                          alertsContainer.innerHTML = activeAlerts.slice(0, 4).map(al => `
+                            <div class="pantry-alert-card ${al.type}">
+                              <i data-lucide="${al.icon}" style="width: 18px; flex-shrink: 0;"></i>
+                              <div style="flex: 1;">
+                                <div class="pantry-alert-title">${al.title}</div>
+                                <div class="pantry-alert-desc">${al.msg}</div>
+                              </div>
+                              <button class="btn btn-secondary" onclick="openRecordUsageModal('${al.itemId}')" style="font-size: 11px; padding: 5px 10px; background: white; border-radius: 14px; flex-shrink: 0;">
+                                Record Usage
+                              </button>
+                            </div>
+                          `).join('');
+                        } else {
+                          alertsWrapper.style.display = 'none';
+                        }
+                      }
+
+                      // Apply Category and Status Filters
+                      let filtered = currentPantryItems.filter(item => {
+                        // Category filter
+                        if (pantryActiveCategory !== 'All' && item.category !== pantryActiveCategory) {
+                          return false;
+                        }
+
+                        // Search filter
+                        if (pantrySearchTerm) {
+                          const matchName = (item.product_name || '').toLowerCase().includes(pantrySearchTerm);
+                          const matchCat = (item.category || '').toLowerCase().includes(pantrySearchTerm);
+                          const matchNotes = (item.notes || '').toLowerCase().includes(pantrySearchTerm);
+                          if (!matchName && !matchCat && !matchNotes) return false;
+                        }
+
+                        // Status filter
+                        const stock = Math.max(0, item.current_stock_base || 0);
+                        const threshold = item.low_stock_threshold_base || 0;
+                        const dailyRate = item.daily_usage_base || 0;
+                        const runwayDays = dailyRate > 0 ? Math.floor(stock / dailyRate) : 999;
+                        
+                        let expiryDays = 999;
+                        if (item.expiry_date) {
+                          const expDate = new Date(item.expiry_date);
+                          expDate.setHours(0,0,0,0);
+                          expiryDays = Math.round((expDate - today) / (1000 * 60 * 60 * 24));
+                        }
+
+                        if (pantryActiveStatus === 'out') return stock <= 0;
+                        if (pantryActiveStatus === 'low') return (stock <= threshold && stock > 0) || (runwayDays <= 2 && stock > 0);
+                        if (pantryActiveStatus === 'expiry') return expiryDays <= 5;
+                        if (pantryActiveStatus === 'available') return stock > threshold && (expiryDays > 5) && stock > 0;
+
+                        return true;
+                      });
+
+                      // Apply Sorting
+                      filtered.sort((a, b) => {
+                        const stockA = Math.max(0, a.current_stock_base || 0);
+                        const stockB = Math.max(0, b.current_stock_base || 0);
+                        const origA = Math.max(1, a.original_quantity_base || 1);
+                        const origB = Math.max(1, b.original_quantity_base || 1);
+                        const pctA = stockA / origA;
+                        const pctB = stockB / origB;
+
+                        if (pantrySelectedSort === 'name') {
+                          return (a.product_name || '').localeCompare(b.product_name || '');
+                        }
+                        if (pantrySelectedSort === 'remaining') {
+                          return pctA - pctB;
+                        }
+                        if (pantrySelectedSort === 'recent') {
+                          return new Date(b.purchase_date || 0) - new Date(a.purchase_date || 0);
+                        }
+                        if (pantrySelectedSort === 'expiry') {
+                          const expA = a.expiry_date ? new Date(a.expiry_date).getTime() : 9999999999999;
+                          const expB = b.expiry_date ? new Date(b.expiry_date).getTime() : 9999999999999;
+                          return expA - expB;
+                        }
+                        // Default: Urgency (out of stock, then low stock, then remaining %)
+                        if (stockA <= 0 && stockB > 0) return -1;
+                        if (stockB <= 0 && stockA > 0) return 1;
+                        return pctA - pctB;
+                      });
+
+                      // Render items or empty state
+                      if (filtered.length === 0) {
+                        grid.innerHTML = '';
+                        if (emptyState) emptyState.style.display = 'block';
+                      } else {
+                        if (emptyState) emptyState.style.display = 'none';
+                        grid.innerHTML = filtered.map(item => renderPantryItemCard(item, today)).join('');
+                      }
+
+                      lucide.createIcons();
+                    }
+
+                    // Render Individual Pantry Item Card
+                    function renderPantryItemCard(item, today) {
+                      const stock = Math.max(0, item.current_stock_base || 0);
+                      const orig = Math.max(1, item.original_quantity_base || 1);
+                      const used = Math.max(0, item.used_quantity_base || (orig - stock));
+                      const pct = Math.min(100, Math.max(0, Math.round((stock / orig) * 100)));
+                      const threshold = item.low_stock_threshold_base || 0;
+                      const dailyRate = item.daily_usage_base || 0;
+
+                      // Runway calculation
+                      let runwayText = 'No daily rate';
+                      let runwayBadgeClass = '';
+                      let runwayDays = null;
+                      if (dailyRate > 0) {
+                        runwayDays = Math.floor(stock / dailyRate);
+                        if (stock <= 0) {
+                          runwayText = 'Depleted';
+                          runwayBadgeClass = 'color: #b91c1c; font-weight: 700;';
+                        } else if (runwayDays === 0) {
+                          runwayText = 'Runs out today!';
+                          runwayBadgeClass = 'color: #c2410c; font-weight: 700;';
+                        } else if (runwayDays === 1) {
+                          runwayText = '~1 day left';
+                          runwayBadgeClass = 'color: #c2410c; font-weight: 700;';
+                        } else {
+                          runwayText = `~${runwayDays} days left`;
+                          if (runwayDays <= 3) runwayBadgeClass = 'color: #b45309; font-weight: 700;';
+                        }
+                      }
+
+                      // Expiry calculation
+                      let expiryText = 'Non-perishable';
+                      let expiryClass = 'text-muted';
+                      let isExpired = false;
+                      let isNearExpiry = false;
+
+                      if (item.expiry_date) {
+                        const expDate = new Date(item.expiry_date);
+                        expDate.setHours(0,0,0,0);
+                        const diffDays = Math.round((expDate - today) / (1000 * 60 * 60 * 24));
+                        if (diffDays < 0) {
+                          isExpired = true;
+                          expiryText = `Expired ${Math.abs(diffDays)}d ago (${item.expiry_date})`;
+                          expiryClass = 'color: #b91c1c; font-weight: 700;';
+                        } else if (diffDays === 0) {
+                          isNearExpiry = true;
+                          expiryText = `Expires today! (${item.expiry_date})`;
+                          expiryClass = 'color: #c2410c; font-weight: 700;';
+                        } else if (diffDays <= 5) {
+                          isNearExpiry = true;
+                          expiryText = `Expires in ${diffDays} days (${item.expiry_date})`;
+                          expiryClass = 'color: #b45309; font-weight: 700;';
+                        } else {
+                          expiryText = `Expires ${item.expiry_date} (~${diffDays}d)`;
+                        }
+                      }
+
+                      // Status Badge Determination
+                      let statusBadge = '<span class="pantry-status-badge available"><span class="pantry-status-dot"></span> Available</span>';
+                      let fillClass = 'good';
+
+                      if (stock <= 0) {
+                        statusBadge = '<span class="pantry-status-badge out"><span class="pantry-status-dot"></span> Out of Stock</span>';
+                        fillClass = 'empty';
+                      } else if (isExpired) {
+                        statusBadge = '<span class="pantry-status-badge expired"><span class="pantry-status-dot"></span> Expired</span>';
+                        fillClass = 'danger';
+                      } else if (isNearExpiry) {
+                        statusBadge = '<span class="pantry-status-badge near-expiry"><span class="pantry-status-dot"></span> Near Expiry</span>';
+                        fillClass = 'danger';
+                      } else if (stock <= threshold || (runwayDays !== null && runwayDays <= 2)) {
+                        statusBadge = '<span class="pantry-status-badge low"><span class="pantry-status-dot"></span> Low Stock</span>';
+                        fillClass = 'low';
+                      }
+
+                      const categoryIcon = getPantryCategoryIcon(item.category);
+
+                      return `
+                        <div class="pantry-item-card" id="pantry-card-${item.id}">
+                          <!-- Card Header -->
+                          <div class="pantry-item-header">
+                            <div class="pantry-item-icon">${categoryIcon}</div>
+                            <div class="pantry-item-title-box">
+                              <div class="pantry-item-name" title="${item.product_name}">${item.product_name}</div>
+                              <div class="pantry-item-cat">${item.category}</div>
+                            </div>
+                            <div>${statusBadge}</div>
+                          </div>
+
+                          <!-- Visual Depletion Progress Bar -->
+                          <div class="pantry-stock-track">
+                            <div class="pantry-stock-fill ${fillClass}" style="width: ${pct}%;"></div>
+                          </div>
+                          <div class="pantry-stock-labels">
+                            <span>Remaining: <b>${pct}%</b></span>
+                            <span style="${runwayBadgeClass}">${runwayText}</span>
+                          </div>
+
+                          <!-- 3-Column Stock Balance Metrics -->
+                          <div class="pantry-metrics-grid">
+                            <div class="pantry-metric-cell">
+                              <span class="pantry-metric-cell-label">REMAINING</span>
+                              <span class="pantry-metric-cell-val" style="color: ${stock <= threshold ? '#b45309' : 'var(--primary-dark)'};">${formatPantryBaseQty(stock, item.unit)}</span>
+                            </div>
+                            <div class="pantry-metric-cell">
+                              <span class="pantry-metric-cell-label">PURCHASED</span>
+                              <span class="pantry-metric-cell-val">${formatPantryBaseQty(orig, item.unit)}</span>
+                            </div>
+                            <div class="pantry-metric-cell">
+                              <span class="pantry-metric-cell-label">TOTAL USED</span>
+                              <span class="pantry-metric-cell-val">${formatPantryBaseQty(used, item.unit)}</span>
+                            </div>
+                          </div>
+
+                          <!-- Telemetry Details Strip -->
+                          <div class="pantry-info-row">
+                            <span class="pantry-info-key"><i data-lucide="calendar" style="width: 12px; display: inline;"></i> Purchased:</span>
+                            <span class="pantry-info-val">${item.purchase_date || 'Recent'}</span>
+                          </div>
+                          <div class="pantry-info-row">
+                            <span class="pantry-info-key"><i data-lucide="clock" style="width: 12px; display: inline;"></i> Expiry Date:</span>
+                            <span class="pantry-info-val" style="${expiryClass}">${expiryText}</span>
+                          </div>
+                          <div class="pantry-info-row">
+                            <span class="pantry-info-key"><i data-lucide="trending-down" style="width: 12px; display: inline;"></i> Daily Usage:</span>
+                            <span class="pantry-info-val">${item.daily_usage_display || (dailyRate + ' / day')}</span>
+                          </div>
+                          <div class="pantry-info-row">
+                            <span class="pantry-info-key"><i data-lucide="bell" style="width: 12px; display: inline;"></i> Alert At:</span>
+                            <span class="pantry-info-val">${item.threshold_display || formatPantryBaseQty(threshold, item.unit)}</span>
+                          </div>
+
+                          ${item.notes ? `
+                            <div class="pantry-info-row" style="background: #f8fafc; padding: 4px 6px; border-radius: 6px; margin-top: 4px;">
+                              <span class="pantry-info-key"><i data-lucide="map-pin" style="width: 12px; display: inline;"></i> Location:</span>
+                              <span class="pantry-info-val" style="font-style: italic;">${item.notes}</span>
+                            </div>
+                          ` : ''}
+
+                          <!-- Action Buttons Toolbar -->
+                          <div class="pantry-actions-bar">
+                            <button class="btn btn-primary pantry-btn-usage" onclick="openRecordUsageModal('${item.id}')">
+                              <i data-lucide="zap" style="width: 13px;"></i> Record Usage
+                            </button>
+                            <button class="btn btn-secondary pantry-btn-edit" onclick="openEditPantryModal('${item.id}')" title="Edit Item Details">
+                              <i data-lucide="edit-3" style="width: 13px;"></i> Edit
+                            </button>
+                            <button class="btn btn-secondary pantry-btn-delete" onclick="deletePantryItem('${item.id}')" title="Delete from Pantry">
+                              <i data-lucide="trash-2" style="width: 13px;"></i>
+                            </button>
+                            <button class="btn btn-secondary" onclick="reorderPantryItemToCart('${item.id}')" title="Add to Grocify Shopping Basket" style="padding: 7px 10px; border-radius: 14px; background: #ecfdf5; color: var(--primary-dark); border-color: #a7f3d0;">
+                              <i data-lucide="shopping-cart" style="width: 13px;"></i> Refill
+                            </button>
+                          </div>
+                        </div>
+                      `;
+                    }
+
+                    // Update Customer Home Dashboard Pantry Widget
+                    function updateCustomerHomePantry() {
+                      const totalEl = document.getElementById('cust-home-pantry-total');
+                      const lowEl = document.getElementById('cust-home-pantry-low');
+                      const expEl = document.getElementById('cust-home-pantry-expiring');
+                      const outEl = document.getElementById('cust-home-pantry-out');
+                      const alertsContainer = document.getElementById('cust-home-pantry-alerts');
+
+                      if (!totalEl) return;
+
+                      const userId = getPantryUserId();
+                      let items = currentPantryItems;
+                      if (!items || items.length === 0) {
+                        const cached = localStorage.getItem(`grocify_pantry_${userId}`);
+                        if (cached) {
+                          try { items = JSON.parse(cached); } catch (e) {}
+                        }
+                        if (!items || items.length === 0) {
+                          items = getInitialSeedPantry(userId);
+                        }
+                      }
+
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+
+                      let lowCount = 0;
+                      let expCount = 0;
+                      let outCount = 0;
+                      const previewAlerts = [];
+
+                      items.forEach(it => {
+                        const stock = Math.max(0, it.current_stock_base || 0);
+                        const threshold = it.low_stock_threshold_base || 0;
+                        const dailyRate = it.daily_usage_base || 0;
+                        const runwayDays = dailyRate > 0 ? Math.floor(stock / dailyRate) : null;
+
+                        let expiryDays = null;
+                        if (it.expiry_date) {
+                          const expDate = new Date(it.expiry_date);
+                          expDate.setHours(0,0,0,0);
+                          expiryDays = Math.round((expDate - today) / (1000 * 60 * 60 * 24));
+                        }
+
+                        if (stock <= 0) {
+                          outCount++;
+                          previewAlerts.push({
+                            type: 'danger',
+                            icon: 'x-circle',
+                            text: `<b>${it.product_name}</b> is out of stock!`
+                          });
+                        } else if (stock <= threshold) {
+                          lowCount++;
+                          previewAlerts.push({
+                            type: 'warning',
+                            icon: 'alert-triangle',
+                            text: `Your ${it.product_name} stock is running low. Only ${formatPantryBaseQty(stock, it.unit)} remains.`
+                          });
+                        } else if (runwayDays !== null && runwayDays <= 2) {
+                          lowCount++;
+                          previewAlerts.push({
+                            type: 'warning',
+                            icon: 'clock',
+                            text: `Your ${it.product_name} may run out in ${runwayDays === 1 ? '1 day' : runwayDays + ' days'}.`
+                          });
+                        }
+
+                        if (expiryDays !== null) {
+                          if (expiryDays < 0) {
+                            expCount++;
+                            previewAlerts.push({
+                              type: 'danger',
+                              icon: 'alert-circle',
+                              text: `Your ${it.product_name} expired ${Math.abs(expiryDays)} day(s) ago.`
+                            });
+                          } else if (expiryDays <= 5) {
+                            expCount++;
+                            previewAlerts.push({
+                              type: 'warning',
+                              icon: 'clock',
+                              text: `Your ${it.product_name} expires in ${expiryDays === 0 ? 'today' : (expiryDays === 1 ? '1 day' : expiryDays + ' days')}.`
+                            });
+                          }
+                        }
+                      });
+
+                      totalEl.innerText = items.length;
+                      if (lowEl) lowEl.innerText = lowCount;
+                      if (expEl) expEl.innerText = expCount;
+                      if (outEl) outEl.innerText = outCount;
+
+                      if (alertsContainer) {
+                        if (previewAlerts.length > 0) {
+                          alertsContainer.innerHTML = previewAlerts.slice(0, 3).map(al => `
+                            <div class="pantry-alert-card ${al.type}" style="padding: 8px 12px; margin-bottom: 0; font-size: 12px; cursor: pointer;" onclick="showView('pantry')">
+                              <i data-lucide="${al.icon}" style="width: 15px; flex-shrink: 0;"></i>
+                              <span style="flex: 1;">${al.text}</span>
+                              <span style="font-size: 11px; font-weight: 700; color: inherit;">View &rarr;</span>
+                            </div>
+                          `).join('');
+                        } else {
+                          alertsContainer.innerHTML = `
+                            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+                              <div style="display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="check-circle" style="width: 16px; color: #10b981;"></i>
+                                <span style="font-size: 12px; color: #064e3b; font-weight: 500;">All grocery stock is sufficient. No low-stock or expiry risks detected.</span>
+                              </div>
+                              <button class="btn btn-secondary" onclick="showView('pantry')" style="font-size: 11px; padding: 4px 10px; border-radius: 12px;">View Pantry</button>
+                            </div>
+                          `;
+                        }
+                        lucide.createIcons();
+                      }
+                    }
+
+                    // Open Add Grocery Item Modal
+                    function openAddPantryModal() {
+                      const modal = document.getElementById('pantry-modal');
+                      const form = document.getElementById('pantry-item-form');
+                      const title = document.getElementById('pantry-modal-title');
+                      const editId = document.getElementById('pantry-edit-id');
+                      const saveBtn = document.getElementById('pantry-save-btn');
+
+                      if (!modal || !form) return;
+
+                      form.reset();
+                      if (editId) editId.value = '';
+                      if (title) title.innerText = 'Add Grocery Item';
+                      if (saveBtn) saveBtn.innerText = 'Save Item to Pantry';
+
+                      // Set today's date on purchase date
+                      const purchaseDateInput = document.getElementById('pantry-form-purchase-date');
+                      if (purchaseDateInput) {
+                        purchaseDateInput.value = new Date().toISOString().split('T')[0];
+                      }
+
+                      modal.style.display = 'flex';
+                      lucide.createIcons();
+                    }
+
+                    // Open Edit Grocery Item Modal
+                    function openEditPantryModal(itemId) {
+                      const item = currentPantryItems.find(i => String(i.id) === String(itemId));
+                      if (!item) return;
+
+                      const modal = document.getElementById('pantry-modal');
+                      const title = document.getElementById('pantry-modal-title');
+                      const editId = document.getElementById('pantry-edit-id');
+                      const saveBtn = document.getElementById('pantry-save-btn');
+
+                      if (!modal) return;
+
+                      if (editId) editId.value = item.id;
+                      if (title) title.innerText = 'Edit Grocery Item';
+                      if (saveBtn) saveBtn.innerText = 'Update Item';
+
+                      document.getElementById('pantry-form-name').value = item.product_name || '';
+                      document.getElementById('pantry-form-category').value = item.category || 'Food & Grains';
+                      document.getElementById('pantry-form-qty').value = item.original_quantity || 1;
+                      document.getElementById('pantry-form-unit').value = item.unit || 'kg';
+                      document.getElementById('pantry-form-purchase-date').value = item.purchase_date || new Date().toISOString().split('T')[0];
+                      document.getElementById('pantry-form-expiry-date').value = item.expiry_date || '';
+
+                      // Daily usage
+                      const dailyRate = item.daily_usage_base || 0;
+                      if (item.unit === 'kg' && dailyRate >= 1000) {
+                        document.getElementById('pantry-form-usage').value = dailyRate / 1000;
+                        document.getElementById('pantry-form-usage-unit').value = 'kg';
+                      } else if (item.unit === 'L' && dailyRate >= 1000) {
+                        document.getElementById('pantry-form-usage').value = dailyRate / 1000;
+                        document.getElementById('pantry-form-usage-unit').value = 'L';
+                      } else {
+                        document.getElementById('pantry-form-usage').value = dailyRate;
+                        document.getElementById('pantry-form-usage-unit').value = item.unit === 'L' ? 'ml' : (item.unit === 'kg' ? 'g' : (item.unit || 'pcs'));
+                      }
+
+                      // Threshold
+                      const threshRate = item.low_stock_threshold_base || 0;
+                      if (item.unit === 'kg' && threshRate >= 1000) {
+                        document.getElementById('pantry-form-threshold').value = threshRate / 1000;
+                        document.getElementById('pantry-form-threshold-unit').value = 'kg';
+                      } else if (item.unit === 'L' && threshRate >= 1000) {
+                        document.getElementById('pantry-form-threshold').value = threshRate / 1000;
+                        document.getElementById('pantry-form-threshold-unit').value = 'L';
+                      } else {
+                        document.getElementById('pantry-form-threshold').value = threshRate;
+                        document.getElementById('pantry-form-threshold-unit').value = item.unit === 'L' ? 'ml' : (item.unit === 'kg' ? 'g' : (item.unit || 'pcs'));
+                      }
+
+                      document.getElementById('pantry-form-notes').value = item.notes || '';
+
+                      modal.style.display = 'flex';
+                      lucide.createIcons();
+                    }
+
+                    function closePantryModal() {
+                      const modal = document.getElementById('pantry-modal');
+                      if (modal) modal.style.display = 'none';
+                    }
+
+                    // Handle Save Item (Add or Edit)
+                    async function handleSavePantryItem(event) {
+                      if (event) event.preventDefault();
+
+                      const userId = getPantryUserId();
+                      const editId = document.getElementById('pantry-edit-id').value;
+                      const name = (document.getElementById('pantry-form-name').value || '').trim();
+                      const category = document.getElementById('pantry-form-category').value;
+                      const qty = parseFloat(document.getElementById('pantry-form-qty').value) || 0;
+                      const unit = document.getElementById('pantry-form-unit').value;
+                      const purchaseDate = document.getElementById('pantry-form-purchase-date').value || new Date().toISOString().split('T')[0];
+                      const expiryDate = document.getElementById('pantry-form-expiry-date').value || '';
+                      
+                      const usageVal = parseFloat(document.getElementById('pantry-form-usage').value) || 0;
+                      const usageUnit = document.getElementById('pantry-form-usage-unit').value;
+                      const threshVal = parseFloat(document.getElementById('pantry-form-threshold').value) || 0;
+                      const threshUnit = document.getElementById('pantry-form-threshold-unit').value;
+                      const notes = (document.getElementById('pantry-form-notes').value || '').trim();
+
+                      if (!name) {
+                        showToast('Please enter a product name.', 'error');
+                        return;
+                      }
+
+                      if (qty <= 0) {
+                        showToast('Please enter a purchased quantity greater than 0.', 'error');
+                        return;
+                      }
+
+                      // Unit conversions to base
+                      const origBase = convertToPantryBase(qty, unit);
+                      const dailyUsageBase = convertToPantryBase(usageVal, usageUnit);
+                      const thresholdBase = convertToPantryBase(threshVal, threshUnit);
+
+                      const dailyUsageDisplay = `${usageVal} ${usageUnit}/day`;
+                      const thresholdDisplay = `${threshVal} ${threshUnit}`;
+
+                      const payload = {
+                        user_id: userId,
+                        product_name: name,
+                        category: category,
+                        original_quantity: qty,
+                        unit: unit,
+                        original_quantity_base: origBase,
+                        current_stock_base: origBase, // for new items, initial stock equals purchased base
+                        used_quantity_base: 0,
+                        purchase_date: purchaseDate,
+                        expiry_date: expiryDate,
+                        daily_usage_base: dailyUsageBase,
+                        daily_usage_display: dailyUsageDisplay,
+                        low_stock_threshold_base: thresholdBase,
+                        threshold_display: thresholdDisplay,
+                        notes: notes,
+                        last_updated_date: purchaseDate
+                      };
+
+                      const saveBtn = document.getElementById('pantry-save-btn');
+                      if (saveBtn) saveBtn.disabled = true;
+
+                      try {
+                        if (editId) {
+                          // Keep existing used and current stock proportion if updated
+                          const existing = currentPantryItems.find(i => String(i.id) === String(editId));
+                          if (existing) {
+                            payload.current_stock_base = Math.min(origBase, existing.current_stock_base || origBase);
+                            payload.used_quantity_base = Math.max(0, origBase - payload.current_stock_base);
+                            payload.last_updated_date = existing.last_updated_date || purchaseDate;
+                          }
+
+                          // Send PUT to backend
+                          fetch(`${API_BASE}/pantry/${encodeURIComponent(editId)}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                          }).catch(err => console.warn('Pantry PUT network error:', err));
+
+                          // Local state update
+                          const idx = currentPantryItems.findIndex(i => String(i.id) === String(editId));
+                          if (idx !== -1) {
+                            currentPantryItems[idx] = { ...currentPantryItems[idx], ...payload, id: editId };
+                          }
+                          showToast(`Updated "${name}" successfully! ✨`, 'success');
+                        } else {
+                          // Add new item
+                          const newId = 'pantry_' + Date.now();
+                          payload.id = newId;
+
+                          // Send POST to backend
+                          fetch(`${API_BASE}/pantry`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                          }).catch(err => console.warn('Pantry POST network error:', err));
+
+                          currentPantryItems.unshift(payload);
+                          showToast(`Added "${name}" to your pantry! 🥫`, 'success');
+                        }
+
+                        // Persist to localStorage
+                        localStorage.setItem(`grocify_pantry_${userId}`, JSON.stringify(currentPantryItems));
+                        closePantryModal();
+                        renderPantryUI();
+                        updateCustomerHomePantry();
+                      } finally {
+                        if (saveBtn) saveBtn.disabled = false;
+                      }
+                    }
+
+                    // Open Record Usage Modal
+                    function openRecordUsageModal(itemId) {
+                      const item = currentPantryItems.find(i => String(i.id) === String(itemId));
+                      if (!item) return;
+
+                      activeUsageItem = item;
+                      const modal = document.getElementById('pantry-usage-modal');
+                      if (!modal) return;
+
+                      document.getElementById('usage-item-id').value = item.id;
+                      document.getElementById('usage-item-name').innerText = item.product_name;
+                      document.getElementById('usage-item-subtitle').innerText = `Deduct consumption for ${item.category}`;
+                      document.getElementById('usage-item-daily-rate').innerText = `Daily rate: ${item.daily_usage_display || (item.daily_usage_base + ' / day')}`;
+                      document.getElementById('usage-item-remaining').innerText = formatPantryBaseQty(item.current_stock_base, item.unit);
+
+                      // Consumption date defaults to today
+                      document.getElementById('usage-input-date').value = new Date().toISOString().split('T')[0];
+
+                      // Default unit in usage select
+                      const unitSelect = document.getElementById('usage-input-unit');
+                      if (unitSelect) {
+                        if (item.unit === 'kg' || item.unit === 'g') unitSelect.value = 'g';
+                        else if (item.unit === 'L' || item.unit === 'ml') unitSelect.value = 'ml';
+                        else unitSelect.value = 'pcs';
+                      }
+
+                      // Generate dynamic quick preset chips based on unit
+                      const chipsContainer = document.getElementById('usage-preset-chips-container');
+                      if (chipsContainer) {
+                        let presets = [];
+                        if (item.unit === 'kg' || item.unit === 'g') {
+                          presets = [
+                            { label: '-50 g', val: 50, u: 'g' },
+                            { label: '-100 g', val: 100, u: 'g' },
+                            { label: '-250 g', val: 250, u: 'g' },
+                            { label: '-500 g', val: 500, u: 'g' },
+                            { label: '-1 kg', val: 1, u: 'kg' }
+                          ];
+                        } else if (item.unit === 'L' || item.unit === 'ml') {
+                          presets = [
+                            { label: '-100 ml', val: 100, u: 'ml' },
+                            { label: '-200 ml', val: 200, u: 'ml' },
+                            { label: '-250 ml', val: 250, u: 'ml' },
+                            { label: '-500 ml', val: 500, u: 'ml' },
+                            { label: '-1 L', val: 1, u: 'L' }
+                          ];
+                        } else {
+                          presets = [
+                            { label: '-1 pc', val: 1, u: 'pcs' },
+                            { label: '-2 pcs', val: 2, u: 'pcs' },
+                            { label: '-3 pcs', val: 3, u: 'pcs' }
+                          ];
+                        }
+
+                        chipsContainer.innerHTML = presets.map(p => `
+                          <button type="button" class="pantry-preset-chip" onclick="applyUsagePreset(${p.val}, '${p.u}')">
+                            ${p.label}
+                          </button>
+                        `).join('');
+                      }
+
+                      // Set default usage value from daily rate
+                      const inputQty = document.getElementById('usage-input-qty');
+                      if (inputQty) {
+                        if (item.daily_usage_base > 0) {
+                          if (item.unit === 'kg' && item.daily_usage_base < 1000) {
+                            inputQty.value = item.daily_usage_base;
+                            if (unitSelect) unitSelect.value = 'g';
+                          } else {
+                            inputQty.value = item.daily_usage_base;
+                          }
+                        } else {
+                          inputQty.value = 1;
+                        }
+                      }
+
+                      previewUsageCalculation();
+                      modal.style.display = 'flex';
+                      lucide.createIcons();
+                    }
+
+                    function closePantryUsageModal() {
+                      const modal = document.getElementById('pantry-usage-modal');
+                      if (modal) modal.style.display = 'none';
+                      activeUsageItem = null;
+                    }
+
+                    // Apply Quick Preset Chip
+                    function applyUsagePreset(val, unit) {
+                      const inputQty = document.getElementById('usage-input-qty');
+                      const unitSelect = document.getElementById('usage-input-unit');
+                      if (inputQty) inputQty.value = val;
+                      if (unitSelect) unitSelect.value = unit;
+                      previewUsageCalculation();
+                    }
+
+                    // Live calculation preview in usage modal
+                    function previewUsageCalculation() {
+                      if (!activeUsageItem) return;
+
+                      const inputQty = parseFloat(document.getElementById('usage-input-qty').value) || 0;
+                      const unit = document.getElementById('usage-input-unit').value;
+                      const usedBase = convertToPantryBase(inputQty, unit);
+
+                      const currentStock = Math.max(0, activeUsageItem.current_stock_base || 0);
+                      const projectedRemaining = Math.max(0, currentStock - usedBase);
+
+                      const remEl = document.getElementById('usage-preview-remaining');
+                      const runEl = document.getElementById('usage-preview-runway');
+
+                      if (remEl) {
+                        remEl.innerText = formatPantryBaseQty(projectedRemaining, activeUsageItem.unit);
+                        remEl.style.color = projectedRemaining <= (activeUsageItem.low_stock_threshold_base || 0) ? '#b45309' : '#059669';
+                      }
+
+                      if (runEl) {
+                        if (activeUsageItem.daily_usage_base > 0) {
+                          const daysLeft = Math.floor(projectedRemaining / activeUsageItem.daily_usage_base);
+                          runEl.innerText = projectedRemaining <= 0 ? 'Out of stock' : `~${daysLeft} days remaining`;
+                        } else {
+                          runEl.innerText = 'No daily rate set';
+                        }
+                      }
+                    }
+
+                    // Handle Usage Submission
+                    async function handleRecordUsageSubmit(event) {
+                      if (event) event.preventDefault();
+                      if (!activeUsageItem) return;
+
+                      const userId = getPantryUserId();
+                      const inputQty = parseFloat(document.getElementById('usage-input-qty').value) || 0;
+                      const unit = document.getElementById('usage-input-unit').value;
+                      const date = document.getElementById('usage-input-date').value || new Date().toISOString().split('T')[0];
+
+                      if (inputQty <= 0) {
+                        showToast('Please enter a usage quantity greater than 0.', 'error');
+                        return;
+                      }
+
+                      const usedBase = convertToPantryBase(inputQty, unit);
+                      const prevStock = Math.max(0, activeUsageItem.current_stock_base || 0);
+                      const newStock = Math.max(0, prevStock - usedBase);
+                      const actualDeducted = prevStock - newStock;
+
+                      const submitBtn = document.getElementById('usage-submit-btn');
+                      if (submitBtn) submitBtn.disabled = true;
+
+                      try {
+                        // Send POST usage to backend
+                        fetch(`${API_BASE}/pantry/${encodeURIComponent(activeUsageItem.id)}/usage`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            user_id: userId,
+                            used_quantity_base: usedBase,
+                            usage_date: date
+                          })
+                        }).catch(err => console.warn('Pantry usage API error:', err));
+
+                        // Local update
+                        activeUsageItem.current_stock_base = newStock;
+                        activeUsageItem.used_quantity_base = (activeUsageItem.used_quantity_base || 0) + actualDeducted;
+                        activeUsageItem.last_updated_date = date;
+
+                        const idx = currentPantryItems.findIndex(i => String(i.id) === String(activeUsageItem.id));
+                        if (idx !== -1) {
+                          currentPantryItems[idx] = activeUsageItem;
+                        }
+
+                        // Persist to localStorage
+                        localStorage.setItem(`grocify_pantry_${userId}`, JSON.stringify(currentPantryItems));
+
+                        showToast(`Recorded consumption of ${formatPantryBaseQty(usedBase, unit)} for "${activeUsageItem.product_name}".`, 'success');
+                        closePantryUsageModal();
+                        renderPantryUI();
+                        updateCustomerHomePantry();
+                      } finally {
+                        if (submitBtn) submitBtn.disabled = false;
+                      }
+                    }
+
+                    // Delete Pantry Item
+                    async function deletePantryItem(itemId) {
+                      const item = currentPantryItems.find(i => String(i.id) === String(itemId));
+                      const itemName = item ? item.product_name : 'this item';
+
+                      if (!confirm(`Are you sure you want to delete "${itemName}" from your pantry?`)) {
+                        return;
+                      }
+
+                      const userId = getPantryUserId();
+
+                      // Delete from backend API
+                      fetch(`${API_BASE}/pantry/${encodeURIComponent(itemId)}?user_id=${encodeURIComponent(userId)}`, {
+                        method: 'DELETE'
+                      }).catch(err => console.warn('Pantry DELETE error:', err));
+
+                      // Delete from local memory & storage
+                      currentPantryItems = currentPantryItems.filter(i => String(i.id) !== String(itemId));
+                      localStorage.setItem(`grocify_pantry_${userId}`, JSON.stringify(currentPantryItems));
+
+                      showToast(`Removed "${itemName}" from your pantry.`, 'success');
+                      renderPantryUI();
+                      updateCustomerHomePantry();
+                    }
+
+                    // 1-Click Reorder / Add to Basket from Pantry
+                    function reorderPantryItemToCart(itemId) {
+                      const item = currentPantryItems.find(i => String(i.id) === String(itemId));
+                      if (!item) return;
+
+                      // Map pantry item into Grocify shopping basket format
+                      const cartItem = {
+                        id: 'cart_' + item.id,
+                        name: item.product_name,
+                        brand: 'Personal Pantry Refill',
+                        price: '₹120',
+                        quantity: 1,
+                        desc: `Refill for household ${item.category}`
+                      };
+
+                      if (typeof basket === 'undefined') {
+                        window.basket = [];
+                      }
+                      basket.push(cartItem);
+
+                      if (typeof updateCartUI === 'function') updateCartUI();
+
+                      // Update top cart badge
+                      const topCount = document.getElementById('top-nav-cart-count');
+                      if (topCount) {
+                        const total = basket.reduce((acc, it) => acc + (it.quantity || 1), 0);
+                        topCount.innerText = total;
+                      }
+
+                      showToast(`Added "${item.product_name}" to your basket! 🛒`, 'success');
+                    }
+
+                    // Auto-sync pantry on page load
+                    window.addEventListener('DOMContentLoaded', () => {
+                      setTimeout(() => {
+                        updateCustomerHomePantry();
+                      }, 400);
+                    });
 
 </script>
 </body>

@@ -1470,6 +1470,135 @@ app.get('/api/users', (req, res) => {
   }
 });
 
+// ==========================================
+// CUSTOMER PANTRY & CONSUMPTION TRACKER API
+// ==========================================
+
+// GET customer pantry items
+app.get('/api/pantry', (req, res) => {
+  try {
+    const userId = req.query.user_id || 'user_arjun';
+    const items = db.getPantryItems(userId);
+    res.json({ success: true, count: items.length, data: items });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET single pantry item
+app.get('/api/pantry/:id', (req, res) => {
+  try {
+    const userId = req.query.user_id || 'user_arjun';
+    const item = db.getPantryItemById(req.params.id, userId);
+    if (!item) return res.status(404).json({ success: false, error: 'Pantry item not found' });
+    res.json({ success: true, data: item });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST add new pantry item
+app.post('/api/pantry', (req, res) => {
+  try {
+    const {
+      user_id, name, category, unit_type, display_unit, purchased_qty,
+      base_purchased_qty, base_unit, purchase_date, expiry_date,
+      daily_usage_base, daily_usage_display, daily_usage_unit,
+      low_stock_threshold_base, low_stock_threshold_display, low_stock_threshold_unit,
+      current_stock_base, notes
+    } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ success: false, error: 'Product name is required.' });
+    }
+
+    const userId = user_id || 'user_arjun';
+    const pQty = parseFloat(purchased_qty) || 0;
+    const basePQty = parseFloat(base_purchased_qty) || pQty;
+    const curStock = (current_stock_base !== undefined && current_stock_base !== null) 
+      ? parseFloat(current_stock_base) 
+      : basePQty;
+
+    const newItem = db.addPantryItem({
+      user_id: userId,
+      name: name.trim(),
+      category: category || 'Food & Grains',
+      unit_type: unit_type || 'weight',
+      display_unit: display_unit || 'kg',
+      purchased_qty: pQty,
+      base_purchased_qty: basePQty,
+      base_unit: base_unit || 'g',
+      purchase_date: purchase_date || new Date().toISOString().split('T')[0],
+      last_updated_date: new Date().toISOString().split('T')[0],
+      expiry_date: expiry_date || null,
+      daily_usage_base: parseFloat(daily_usage_base) || 0,
+      daily_usage_display: parseFloat(daily_usage_display) || 0,
+      daily_usage_unit: daily_usage_unit || 'g',
+      low_stock_threshold_base: parseFloat(low_stock_threshold_base) || 0,
+      low_stock_threshold_display: parseFloat(low_stock_threshold_display) || 0,
+      low_stock_threshold_unit: low_stock_threshold_unit || 'g',
+      manual_usage_total_base: 0,
+      current_stock_base: curStock,
+      notes: notes || ''
+    });
+
+    console.log(`[Pantry] Item added for ${userId}: ${newItem.name} (Stock: ${newItem.current_stock_base}${newItem.base_unit})`);
+    res.status(201).json({ success: true, message: 'Item added to personal pantry', data: newItem });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PUT update pantry item
+app.put('/api/pantry/:id', (req, res) => {
+  try {
+    const userId = req.body.user_id || req.query.user_id || 'user_arjun';
+    const updated = db.updatePantryItem(req.params.id, userId, req.body);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Item not found or unauthorized' });
+    }
+    res.json({ success: true, message: 'Pantry item updated', data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST record consumption/usage for pantry item
+app.post('/api/pantry/:id/usage', (req, res) => {
+  try {
+    const userId = req.body.user_id || req.query.user_id || 'user_arjun';
+    const { used_base, date } = req.body;
+    
+    if (used_base === undefined || used_base === null || parseFloat(used_base) <= 0) {
+      return res.status(400).json({ success: false, error: 'Valid usage quantity is required.' });
+    }
+
+    const updated = db.recordPantryUsage(req.params.id, userId, parseFloat(used_base), date);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Item not found or unauthorized' });
+    }
+
+    console.log(`[Pantry] Recorded usage for ${updated.name}: -${used_base}${updated.base_unit}. Remaining: ${updated.current_stock_base}${updated.base_unit}`);
+    res.json({ success: true, message: 'Daily usage recorded', data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE pantry item
+app.delete('/api/pantry/:id', (req, res) => {
+  try {
+    const userId = req.query.user_id || (req.body && req.body.user_id) || 'user_arjun';
+    const deleted = db.deletePantryItem(req.params.id, userId);
+    if (!deleted) {
+      return res.status(404).json({ success: false, error: 'Item not found or unauthorized' });
+    }
+    res.json({ success: true, message: 'Pantry item removed' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET SQLite Database Status & Telemetry
 app.get('/api/db/stats', (req, res) => {
   try {

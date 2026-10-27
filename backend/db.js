@@ -102,10 +102,100 @@ function initSchema() {
       address TEXT DEFAULT '123/A, Green Valley Apartments, Bangalore',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    -- Customer Personal Pantry Inventory & Daily Consumption Table
+    CREATE TABLE IF NOT EXISTS pantry_items (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      category TEXT DEFAULT 'Grocery',
+      unit_type TEXT DEFAULT 'weight',
+      display_unit TEXT DEFAULT 'kg',
+      purchased_qty REAL NOT NULL,
+      base_purchased_qty REAL NOT NULL,
+      base_unit TEXT DEFAULT 'g',
+      purchase_date TEXT NOT NULL,
+      last_updated_date TEXT NOT NULL,
+      expiry_date TEXT,
+      daily_usage_base REAL DEFAULT 0,
+      daily_usage_display REAL DEFAULT 0,
+      daily_usage_unit TEXT DEFAULT 'g',
+      low_stock_threshold_base REAL DEFAULT 0,
+      low_stock_threshold_display REAL DEFAULT 0,
+      low_stock_threshold_unit TEXT DEFAULT 'g',
+      manual_usage_total_base REAL DEFAULT 0,
+      current_stock_base REAL NOT NULL,
+      notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 }
 
 initSchema();
+
+// Helper: Seed Default Pantry Items for demo customer (user_arjun)
+function seedPantryIfEmpty() {
+  try {
+    const count = db.prepare('SELECT COUNT(*) as count FROM pantry_items').get().count;
+    if (count === 0) {
+      const today = new Date();
+      const formatD = (d) => d.toISOString().split('T')[0];
+      
+      const fiveDaysAgo = new Date(today);
+      fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+      
+      const inFiveDays = new Date(today);
+      inFiveDays.setDate(inFiveDays.getDate() + 5);
+
+      const inTwoMonths = new Date(today);
+      inTwoMonths.setMonth(inTwoMonths.getMonth() + 2);
+
+      const insert = db.prepare(`
+        INSERT INTO pantry_items (
+          id, user_id, name, category, unit_type, display_unit, purchased_qty, base_purchased_qty,
+          base_unit, purchase_date, last_updated_date, expiry_date, daily_usage_base, daily_usage_display,
+          daily_usage_unit, low_stock_threshold_base, low_stock_threshold_display, low_stock_threshold_unit,
+          manual_usage_total_base, current_stock_base, notes
+        ) VALUES (
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        )
+      `);
+
+      // 1. Basmati Rice (Available, normal consumption)
+      insert.run(
+        'pantry_rice_01', 'user_arjun', 'Basmati Rice', 'Food & Grains', 'weight', 'kg', 5, 5000,
+        'g', formatD(fiveDaysAgo), formatD(today), formatD(inTwoMonths), 150, 150,
+        'g', 500, 500, 'g', 0, 4250, 'Daawat Rozana Premium Basmati'
+      );
+
+      // 2. Toor Dal (Low Stock Alert: 240g remaining, threshold 300g)
+      insert.run(
+        'pantry_dal_02', 'user_arjun', 'Toor Dal (Organic)', 'Dal & Pulses', 'weight', 'kg', 2, 2000,
+        'g', formatD(fiveDaysAgo), formatD(today), formatD(inTwoMonths), 80, 80,
+        'g', 300, 300, 'g', 0, 240, 'Daily household protein staple'
+      );
+
+      // 3. Sunflower Cooking Oil (Near Expiry Alert: expires in 5 days)
+      insert.run(
+        'pantry_oil_03', 'user_arjun', 'Sunflower Cooking Oil', 'Oils & Ghee', 'volume', 'L', 1, 1000,
+        'ml', formatD(fiveDaysAgo), formatD(today), formatD(inFiveDays), 35, 35,
+        'ml', 200, 200, 'ml', 0, 825, 'Cold-pressed sunflower oil'
+      );
+
+      // 4. Farmhouse Fresh Milk (Out of Stock Alert: 0 remaining)
+      insert.run(
+        'pantry_milk_04', 'user_arjun', 'Farmhouse Fresh Milk', 'Dairy', 'volume', 'L', 1, 1000,
+        'ml', formatD(fiveDaysAgo), formatD(today), formatD(fiveDaysAgo), 500, 500,
+        'ml', 250, 250, 'ml', 0, 0, 'Morning pasteurised toned milk'
+      );
+
+      console.log('[DB] Seeded default customer pantry inventory items into SQLite.');
+    }
+  } catch (e) {
+    console.warn('[DB] seedPantryIfEmpty warning:', e.message);
+  }
+}
+seedPantryIfEmpty();
 
 // Helper: Seed Default Users (Customer Arjun & Merchant Sri Lakshmi)
 function seedUsersIfEmpty() {
@@ -313,11 +403,169 @@ const dao = {
     return dao.getUserById(id);
   },
 
+  // ========================================================
+  // CUSTOMER PANTRY INVENTORY & CONSUMPTION DAO METHODS
+  // ========================================================
+
+  _formatPantryRow(row) {
+    if (!row) return null;
+    return {
+      ...row,
+      product_name: row.name,
+      unit: row.display_unit,
+      original_quantity: row.purchased_qty,
+      original_quantity_base: row.base_purchased_qty,
+      used_quantity_base: Math.max(0, row.base_purchased_qty - row.current_stock_base)
+    };
+  },
+
+  getPantryItems(userId) {
+    if (!userId) return [];
+    const rows = db.prepare('SELECT * FROM pantry_items WHERE user_id = ? ORDER BY current_stock_base ASC').all(userId);
+    return rows.map(r => dao._formatPantryRow(r));
+  },
+
+  getPantryItemById(id, userId) {
+    const row = db.prepare('SELECT * FROM pantry_items WHERE id = ? AND user_id = ?').get(id, userId);
+    return dao._formatPantryRow(row);
+  },
+
+  addPantryItem(item) {
+    const id = item.id || ('pantry_' + Date.now());
+    const name = item.name || item.product_name;
+    const category = item.category || 'Food & Grains';
+    const unitType = item.unit_type || 'weight';
+    const displayUnit = item.display_unit || item.unit || 'kg';
+    const pQty = item.purchased_qty !== undefined ? parseFloat(item.purchased_qty) : (parseFloat(item.original_quantity) || 1);
+    const basePQty = item.base_purchased_qty !== undefined ? parseFloat(item.base_purchased_qty) : (parseFloat(item.original_quantity_base) || pQty);
+    const baseUnit = item.base_unit || (displayUnit === 'L' || displayUnit === 'ml' ? 'ml' : (displayUnit === 'pcs' ? 'pcs' : 'g'));
+    const curStock = item.current_stock_base !== undefined ? Math.max(0, parseFloat(item.current_stock_base)) : basePQty;
+    const purchaseDate = item.purchase_date || new Date().toISOString().split('T')[0];
+
+    const stmt = db.prepare(`
+      INSERT INTO pantry_items (
+        id, user_id, name, category, unit_type, display_unit, purchased_qty, base_purchased_qty,
+        base_unit, purchase_date, last_updated_date, expiry_date, daily_usage_base, daily_usage_display,
+        daily_usage_unit, low_stock_threshold_base, low_stock_threshold_display, low_stock_threshold_unit,
+        manual_usage_total_base, current_stock_base, notes
+      ) VALUES (
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+      )
+    `);
+
+    stmt.run(
+      id,
+      item.user_id || 'user_arjun',
+      name,
+      category,
+      unitType,
+      displayUnit,
+      pQty,
+      basePQty,
+      baseUnit,
+      purchaseDate,
+      item.last_updated_date || purchaseDate,
+      item.expiry_date || null,
+      parseFloat(item.daily_usage_base) || 0,
+      parseFloat(item.daily_usage_display) || 0,
+      item.daily_usage_unit || baseUnit,
+      parseFloat(item.low_stock_threshold_base) || 0,
+      parseFloat(item.low_stock_threshold_display) || 0,
+      item.low_stock_threshold_unit || baseUnit,
+      parseFloat(item.manual_usage_total_base) || parseFloat(item.used_quantity_base) || 0,
+      curStock,
+      item.notes || ''
+    );
+
+    return dao.getPantryItemById(id, item.user_id || 'user_arjun');
+  },
+
+  updatePantryItem(id, userId, updates) {
+    const existing = dao.getPantryItemById(id, userId);
+    if (!existing) return null;
+
+    const merged = { ...existing, ...updates };
+
+    db.prepare(`
+      UPDATE pantry_items SET
+        name = ?,
+        category = ?,
+        unit_type = ?,
+        display_unit = ?,
+        purchased_qty = ?,
+        base_purchased_qty = ?,
+        base_unit = ?,
+        purchase_date = ?,
+        last_updated_date = ?,
+        expiry_date = ?,
+        daily_usage_base = ?,
+        daily_usage_display = ?,
+        daily_usage_unit = ?,
+        low_stock_threshold_base = ?,
+        low_stock_threshold_display = ?,
+        low_stock_threshold_unit = ?,
+        manual_usage_total_base = ?,
+        current_stock_base = ?,
+        notes = ?
+      WHERE id = ? AND user_id = ?
+    `).run(
+      merged.name,
+      merged.category,
+      merged.unit_type,
+      merged.display_unit,
+      parseFloat(merged.purchased_qty) || 0,
+      parseFloat(merged.base_purchased_qty) || 0,
+      merged.base_unit,
+      merged.purchase_date,
+      merged.last_updated_date,
+      merged.expiry_date || null,
+      parseFloat(merged.daily_usage_base) || 0,
+      parseFloat(merged.daily_usage_display) || 0,
+      merged.daily_usage_unit,
+      parseFloat(merged.low_stock_threshold_base) || 0,
+      parseFloat(merged.low_stock_threshold_display) || 0,
+      merged.low_stock_threshold_unit,
+      parseFloat(merged.manual_usage_total_base) || 0,
+      Math.max(0, parseFloat(merged.current_stock_base) || 0),
+      merged.notes || '',
+      id,
+      userId
+    );
+
+    return dao.getPantryItemById(id, userId);
+  },
+
+  deletePantryItem(id, userId) {
+    const res = db.prepare('DELETE FROM pantry_items WHERE id = ? AND user_id = ?').run(id, userId);
+    return res.changes > 0;
+  },
+
+  recordPantryUsage(id, userId, usedBase, date) {
+    const existing = dao.getPantryItemById(id, userId);
+    if (!existing) return null;
+
+    const used = parseFloat(usedBase) || 0;
+    const newStock = Math.max(0, (existing.current_stock_base || 0) - used);
+    const newManualUsage = (existing.manual_usage_total_base || 0) + used;
+    const updateDate = date || new Date().toISOString().split('T')[0];
+
+    db.prepare(`
+      UPDATE pantry_items SET
+        current_stock_base = ?,
+        manual_usage_total_base = ?,
+        last_updated_date = ?
+      WHERE id = ? AND user_id = ?
+    `).run(newStock, newManualUsage, updateDate, id, userId);
+
+    return dao.getPantryItemById(id, userId);
+  },
+
   // System Stats
   getStats() {
     const productCount = db.prepare('SELECT COUNT(*) as count FROM products').get().count;
     const orderCount = db.prepare('SELECT COUNT(*) as count FROM orders').get().count;
     const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
+    const pantryCount = db.prepare('SELECT COUNT(*) as count FROM pantry_items').get().count;
     const logCount = db.prepare('SELECT COUNT(*) as count FROM inventory_logs').get().count;
     const sectionCount = db.prepare('SELECT COUNT(*) as count FROM ecosystem_data').get().count;
 
@@ -337,6 +585,7 @@ const dao = {
         products: productCount,
         orders: orderCount,
         users: userCount,
+        pantry_items: pantryCount,
         inventory_logs: logCount,
         ecosystem_sections: sectionCount
       },
@@ -344,6 +593,7 @@ const dao = {
     };
   },
 
+  seedPantryIfEmpty,
   seedUsersIfEmpty,
   seedProductsIfEmpty,
   seedEcosystemIfEmpty,
