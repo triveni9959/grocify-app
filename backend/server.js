@@ -1322,6 +1322,154 @@ app.post('/api/orders', (req, res) => {
   }
 });
 
+// ==========================================
+// AUTHENTICATION & USER MANAGEMENT ENDPOINTS
+// ==========================================
+
+// POST Register new user (Customer or Merchant)
+app.post('/api/auth/register', (req, res) => {
+  try {
+    const { name, email, phone, password, role, store_name, address } = req.body;
+    
+    if (!name || (!email && !phone)) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Full name and at least a phone number or email are required.' 
+      });
+    }
+
+    // Check duplicate phone
+    if (phone) {
+      const existingByPhone = db.findUser(phone.trim());
+      if (existingByPhone) {
+        return res.status(409).json({ 
+          success: false, 
+          error: 'An account with this phone number already exists. Please sign in instead.' 
+        });
+      }
+    }
+
+    // Check duplicate email
+    if (email) {
+      const existingByEmail = db.findUser(email.trim());
+      if (existingByEmail) {
+        return res.status(409).json({ 
+          success: false, 
+          error: 'An account with this email address already exists. Please sign in instead.' 
+        });
+      }
+    }
+
+    const newUser = db.registerUser({
+      name: name.trim(),
+      email: email ? email.trim() : null,
+      phone: phone ? phone.trim() : null,
+      password: password || '123456',
+      role: role || 'customer',
+      store_name: store_name || 'Sri Lakshmi Stores',
+      address: address || '123/A, Green Valley Apartments, Bangalore'
+    });
+
+    console.log(`[DB] Successfully registered new user: ${newUser.name} (${newUser.role})`);
+    
+    res.status(201).json({
+      success: true,
+      message: 'Account created successfully! Welcome to Grocify.',
+      token: 'jwt_' + Date.now(),
+      user: newUser
+    });
+  } catch (err) {
+    console.error('[Auth] Register error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST Sign in user (Customer or Merchant)
+app.post('/api/auth/login', (req, res) => {
+  try {
+    const { identifier, password, role } = req.body;
+    
+    if (!identifier) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Phone number, email, or merchant ID is required.' 
+      });
+    }
+
+    const trimmedId = identifier.trim();
+    const user = db.findUser(trimmedId);
+
+    if (!user) {
+      // Demo credentials fallback
+      if (trimmedId === '9876543210' || trimmedId === 'arjun@example.com' || trimmedId === 'MERCH-04') {
+        const isMerchant = (trimmedId === 'MERCH-04' || role === 'merchant');
+        const fallback = {
+          id: isMerchant ? 'user_merchant_04' : 'user_arjun',
+          name: isMerchant ? 'Ramesh Patel' : 'Arjun Sharma',
+          role: isMerchant ? 'merchant' : 'customer',
+          phone: trimmedId,
+          store_name: 'Sri Lakshmi Stores',
+          address: isMerchant ? 'Shop #4, Main Bazaar, Bangalore' : '123/A, Green Valley Apartments, Bangalore'
+        };
+        return res.json({
+          success: true,
+          message: 'Welcome back to Grocify!',
+          token: 'jwt_demo_' + Date.now(),
+          user: fallback
+        });
+      }
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Account not found. Please check your credentials or register a new account.' 
+      });
+    }
+
+    if (password && user.password && user.password !== password) {
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Invalid password. Please check your password and try again.' 
+      });
+    }
+
+    const { password: _, ...safeUser } = user;
+    res.json({
+      success: true,
+      message: 'Welcome back to Grocify!',
+      token: 'jwt_' + Date.now(),
+      user: safeUser
+    });
+  } catch (err) {
+    console.error('[Auth] Login error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET current authenticated user profile
+app.get('/api/auth/me', (req, res) => {
+  res.json({
+    success: true,
+    user: {
+      id: 'user_arjun',
+      name: 'Arjun Sharma',
+      email: 'arjun@example.com',
+      phone: '9876543210',
+      role: 'customer',
+      store_name: 'Sri Lakshmi Stores',
+      address: '123/A, Green Valley Apartments, Bangalore'
+    }
+  });
+});
+
+// GET all registered users list
+app.get('/api/users', (req, res) => {
+  try {
+    const users = db.getAllUsers();
+    res.json({ success: true, count: users.length, data: users });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET SQLite Database Status & Telemetry
 app.get('/api/db/stats', (req, res) => {
   try {

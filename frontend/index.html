@@ -12,6 +12,12 @@
 </head>
 
 <body>
+    <!-- Floating Notification Toast -->
+    <div id="auth-toast" class="auth-toast">
+      <i data-lucide="check-circle" id="auth-toast-icon" style="width: 18px;"></i>
+      <span id="auth-toast-msg">Welcome to Grocify!</span>
+    </div>
+
     <!-- Floating View Basket Button -->
     <div id="floating-cart" onclick="showView('cart')" style="display: none; position: fixed; bottom: 80px; right: 20px; z-index: 9999; background: var(--primary-dark); color: white; padding: 12px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; align-items: center; gap: 10px;">
       <i data-lucide="shopping-bag" style="width: 18px;"></i>
@@ -28,6 +34,8 @@
       <div id="prototype-menu" style="margin-top: 8px; width: 230px; max-height: calc(100vh - 80px); overflow-y: auto; background: white; padding: 14px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.18); border: 1px solid var(--border-color); display: none;">
         <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Customer App</div>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('splash')">✨ Splash Screen</button>
+        <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px; background: #ecfdf5; border-color: #86efac; color: var(--primary-dark); font-weight: 700;" onclick="openAuthPage('signup')">📝 Register / Sign Up</button>
+        <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px; background: #f0fdf4; border-color: #bbf7d0; color: var(--primary-dark); font-weight: 600;" onclick="openAuthPage('signin')">🔑 Sign In / Login</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('landing')">🏠 Landing Page</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('customer-login')">👤 Customer Login</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('customer')">🛒 Customer Home</button>
@@ -107,8 +115,20 @@
         </a>
       </nav>
 
-      <!-- Right Nav Actions: Cart & Mobile Hamburger Toggle -->
+      <!-- Right Nav Actions: Auth Status, Cart & Mobile Hamburger Toggle -->
       <div class="grocify-nav-actions">
+        <!-- Desktop Auth Action / User Profile Chip -->
+        <div id="top-nav-auth-container" style="display: flex; align-items: center;">
+          <button class="nav-auth-btn" id="nav-login-btn" onclick="openAuthPage('signin')" title="Sign In or Create Account">
+            <i data-lucide="user-check" style="width: 14px; height: 14px;"></i>
+            <span>Sign In / Register</span>
+          </button>
+          <div class="nav-user-chip" id="nav-user-chip" onclick="showView('profile')" style="display: none;" title="View Your Profile">
+            <div class="nav-user-avatar" id="nav-user-avatar">AS</div>
+            <span class="nav-user-name" id="nav-user-name">Arjun</span>
+          </div>
+        </div>
+
         <button class="nav-cart-btn" onclick="showView('cart')" title="View Shopping Basket">
           <i data-lucide="shopping-cart" style="width: 17px; height: 17px;"></i>
           <span class="desktop-only-text">Basket</span>
@@ -125,6 +145,22 @@
 
   <!-- Mobile Dropdown Navigation Drawer -->
   <div class="grocify-mobile-drawer" id="mobile-nav-drawer">
+    <!-- Mobile Auth Header Card -->
+    <div id="drawer-auth-card" style="padding: 12px 14px; margin-bottom: 10px; background: #f0fdf4; border-radius: 14px; border: 1px solid #bbf7d0; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="nav-user-avatar" id="drawer-user-avatar" style="width: 34px; height: 34px; font-size: 13px;">AS</div>
+        <div>
+          <div style="font-weight: 700; font-size: 13px; color: var(--primary-dark);" id="drawer-user-name">Guest Shopper</div>
+          <div style="font-size: 10px; color: var(--text-muted);" id="drawer-user-sub">Click to Sign In / Register</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="drawer-auth-action-btn" onclick="handleDrawerNav('auth')" style="font-size: 11px; padding: 6px 12px; border-radius: 16px;">Sign In</button>
+    </div>
+
+    <a class="grocify-drawer-link" onclick="handleDrawerNav('auth-signup')">
+      <i data-lucide="user-plus" style="width: 18px; color: var(--primary-dark);"></i>
+      <span style="font-weight: 600;">Create Account (Sign Up)</span>
+    </a>
     <a class="grocify-drawer-link" onclick="handleDrawerNav('landing')">
       <i data-lucide="home" style="width: 18px; color: var(--primary-dark);"></i>
       <span>Home (Overview)</span>
@@ -190,63 +226,279 @@
         </div>
       </div>
 
-      <!-- Bottom Continue Action -->
-      <div style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
-        <button class="btn-primary w-full justify-center" onclick="showView('landing')" style="padding: 16px; font-size: 16px; font-weight: 700; border-radius: 16px; background: linear-gradient(135deg, #074e33 0%, #0d6d48 100%); color: white; border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(7, 78, 51, 0.3); display: flex; align-items: center; gap: 8px;">
-          <span>Continue</span>
-          <i data-lucide="arrow-right" style="width: 20px; height: 20px;"></i>
+      <!-- Bottom Onboarding / Auth Action -->
+      <div style="width: 100%; display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn-primary w-full justify-center" onclick="openAuthPage('signup')" style="padding: 16px; font-size: 15px; font-weight: 700; border-radius: 16px; background: linear-gradient(135deg, #074e33 0%, #10b981 100%); color: white; border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(7, 78, 51, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i data-lucide="user-plus" style="width: 18px; height: 18px;"></i>
+          <span>Create Account (Sign Up)</span>
         </button>
-        <div style="font-size: 11px; color: var(--text-muted); font-weight: 500;">
-          Version 3.4 · Live Telemetry Enabled
+        <button class="w-full justify-center" onclick="openAuthPage('signin')" style="padding: 14px; font-size: 14px; font-weight: 600; border-radius: 14px; background: white; color: var(--primary-dark); border: 1.5px solid #a7f3d0; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i data-lucide="log-in" style="width: 16px; height: 16px;"></i>
+          <span>Already Registered? Sign In</span>
+        </button>
+        <button onclick="showView('landing')" style="background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+          <span>Explore Platform as Guest</span>
+          <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+        </button>
+        <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 2px;">
+          Version 3.4 · Live SQLite Telemetry Active
         </div>
       </div>
     </div>
 
-    <!-- CUSTOMER LOGIN VIEW -->
-    <div id="view-customer-login" style="display: none; position: relative;">
-      <button class="btn-icon" onclick="showView('landing')" style="position: absolute; top: 20px; left: 20px; background: white; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" title="Back to Dashboard"><i data-lucide="arrow-left" style="width: 18px;"></i></button>
-      <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 24px;">
-        <div style="text-align: center; margin-bottom: 32px;">
-          <div class="logo-icon" style="width: 48px; height: 48px; border-radius: 12px; margin: 0 auto 16px;"><i data-lucide="leaf" style="width: 24px; height: 24px;"></i></div>
-          <h1 style="font-size: 28px; margin-bottom: 8px;">Customer Login</h1>
-          <p class="text-muted">Welcome back to your neighborhood grocer.</p>
-        </div>
-        <div class="card" style="background: white; padding: 24px;">
-          <div style="margin-bottom: 16px;">
-            <label style="font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; display: block;">Phone Number</label>
-            <input type="tel" value="9876543210" style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px;" />
+    <!-- AUTHENTICATION & REGISTRATION VIEW (Sign Up & Sign In) -->
+    <div id="view-auth" style="display: none; position: relative;">
+      <div class="auth-wrapper">
+        <!-- Back Navigation Button -->
+        <button class="btn-icon" onclick="showView('splash')" style="position: absolute; top: 20px; left: 20px; background: white; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid var(--border-color);" title="Back to Welcome Screen">
+          <i data-lucide="arrow-left" style="width: 18px;"></i>
+        </button>
+
+        <div class="auth-card">
+          <!-- Auth Card Header -->
+          <div class="auth-header">
+            <div class="auth-logo-badge">
+              <i data-lucide="leaf" style="width: 28px; height: 28px;"></i>
+            </div>
+            <h1 class="auth-title" id="auth-main-title">Create Account</h1>
+            <p class="auth-subtitle" id="auth-main-subtitle">Join Grocify to connect with your neighborhood store and access zero-waste fresh groceries.</p>
           </div>
-          <div style="margin-bottom: 24px;">
-            <label style="font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; display: block;">OTP / Password</label>
-            <input type="password" value="123456" style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px;" />
+
+          <!-- Segmented Tab Switcher: Sign Up vs Sign In -->
+          <div class="auth-segmented-tabs">
+            <button class="auth-tab-btn active" id="tab-btn-signup" onclick="switchAuthTab('signup')">
+              <i data-lucide="user-plus" style="width: 14px;"></i>
+              <span>Sign Up (Register)</span>
+            </button>
+            <button class="auth-tab-btn" id="tab-btn-signin" onclick="switchAuthTab('signin')">
+              <i data-lucide="log-in" style="width: 14px;"></i>
+              <span>Sign In</span>
+            </button>
           </div>
-          <button class="btn-primary w-full justify-center" style="padding: 14px; font-size: 14px; font-weight: 600;" onclick="showView('customer')">Login to Customer App</button>
+
+          <!-- Role Selector: Customer vs Merchant -->
+          <div class="auth-role-selector">
+            <button class="auth-role-btn active" id="role-btn-customer" onclick="switchAuthRole('customer')">
+              <i data-lucide="shopping-basket" style="width: 14px;"></i>
+              <span>Shopper / Customer</span>
+            </button>
+            <button class="auth-role-btn" id="role-btn-merchant" onclick="switchAuthRole('merchant')">
+              <i data-lucide="store" style="width: 14px;"></i>
+              <span>Kirana Merchant OS</span>
+            </button>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- SIGN UP / REGISTRATION FORM                    -->
+          <!-- ============================================== -->
+          <form id="auth-signup-form" onsubmit="handleRegister(event)" style="display: block;">
+            <!-- Full Name -->
+            <div class="auth-field-group">
+              <label class="auth-label" for="reg-name">Full Name <span style="color: #ef4444;">*</span></label>
+              <div class="auth-input-wrapper">
+                <i data-lucide="user" class="auth-input-icon"></i>
+                <input type="text" id="reg-name" class="auth-input" placeholder="e.g. Arjun Sharma" required />
+              </div>
+            </div>
+
+            <!-- Mobile Phone Number with Flag & +91 -->
+            <div class="auth-field-group">
+              <label class="auth-label" for="reg-phone">Phone Number <span style="color: #ef4444;">*</span></label>
+              <div class="auth-input-wrapper">
+                <span style="position: absolute; left: 12px; font-size: 13px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; pointer-events: none;">
+                  🇮🇳 +91
+                </span>
+                <input type="tel" id="reg-phone" class="auth-input" style="padding-left: 68px;" placeholder="98765 43210" pattern="[0-9]{10}" maxlength="10" required />
+              </div>
+            </div>
+
+            <!-- Email Address -->
+            <div class="auth-field-group">
+              <label class="auth-label" for="reg-email">Email Address <span style="font-size: 10px; color: var(--text-muted); font-weight: 400;">(Optional)</span></label>
+              <div class="auth-input-wrapper">
+                <i data-lucide="mail" class="auth-input-icon"></i>
+                <input type="email" id="reg-email" class="auth-input" placeholder="e.g. arjun@example.com" />
+              </div>
+            </div>
+
+            <!-- Customer-Specific: Neighborhood Store & Address -->
+            <div id="reg-customer-fields">
+              <div class="auth-field-group">
+                <label class="auth-label" for="reg-store">Neighborhood Kirana Store</label>
+                <div class="auth-input-wrapper">
+                  <i data-lucide="store" class="auth-input-icon"></i>
+                  <select id="reg-store" class="auth-input" style="padding-left: 42px; background: white; cursor: pointer;">
+                    <option value="Sri Lakshmi Stores">Sri Lakshmi Stores · Indiranagar (0.8 km)</option>
+                    <option value="Ganesh Provisions">Ganesh Provisions · Koramangala (1.2 km)</option>
+                    <option value="Kavitha Supermarket">Kavitha Supermarket · HSR Layout (1.5 km)</option>
+                    <option value="Balaji Daily Fresh">Balaji Daily Fresh · Whitefield (2.1 km)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="auth-field-group">
+                <label class="auth-label" for="reg-address">Delivery Address / Flat Number</label>
+                <div class="auth-input-wrapper">
+                  <i data-lucide="map-pin" class="auth-input-icon"></i>
+                  <input type="text" id="reg-address" class="auth-input" placeholder="Flat 302, Green Valley Apartments, Bangalore" value="123/A, Green Valley Apartments, Bangalore" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Merchant-Specific: Store Name & Category -->
+            <div id="reg-merchant-fields" style="display: none;">
+              <div class="auth-field-group">
+                <label class="auth-label" for="reg-merchant-store">Store Name <span style="color: #ef4444;">*</span></label>
+                <div class="auth-input-wrapper">
+                  <i data-lucide="store" class="auth-input-icon"></i>
+                  <input type="text" id="reg-merchant-store" class="auth-input" placeholder="e.g. Sri Lakshmi Stores" />
+                </div>
+              </div>
+
+              <div class="auth-field-group">
+                <label class="auth-label" for="reg-merchant-category">Store Type / Category</label>
+                <div class="auth-input-wrapper">
+                  <i data-lucide="tag" class="auth-input-icon"></i>
+                  <select id="reg-merchant-category" class="auth-input" style="padding-left: 42px; background: white; cursor: pointer;">
+                    <option value="General Kirana & Provisions">General Kirana & Provisions</option>
+                    <option value="Dairy, Milk & Fresh Bakery">Dairy, Milk & Fresh Bakery</option>
+                    <option value="Vegetables, Fruits & Organic">Vegetables, Fruits & Organic</option>
+                    <option value="Supermarket & FMCG">Supermarket & FMCG</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Password with Show/Hide -->
+            <div class="auth-field-group">
+              <label class="auth-label" for="reg-password">Password <span style="color: #ef4444;">*</span></label>
+              <div class="auth-input-wrapper">
+                <i data-lucide="lock" class="auth-input-icon"></i>
+                <input type="password" id="reg-password" class="auth-input" placeholder="Create password (min 6 characters)" required minlength="6" oninput="checkPasswordStrength(this.value)" />
+                <button type="button" class="auth-toggle-pwd" onclick="togglePasswordVisibility('reg-password', this)">
+                  <i data-lucide="eye" style="width: 16px;"></i>
+                </button>
+              </div>
+              <!-- Strength Meter -->
+              <div class="auth-strength-container">
+                <div class="auth-strength-bar" id="pwd-bar-1"></div>
+                <div class="auth-strength-bar" id="pwd-bar-2"></div>
+                <div class="auth-strength-bar" id="pwd-bar-3"></div>
+                <span class="auth-strength-text" id="pwd-strength-label">Password strength</span>
+              </div>
+            </div>
+
+            <!-- Terms & Conditions Checkbox -->
+            <div style="display: flex; align-items: flex-start; gap: 8px; margin: 14px 0 6px;">
+              <input type="checkbox" id="reg-terms" required checked style="margin-top: 3px; accent-color: var(--primary);" />
+              <label for="reg-terms" style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+                I agree to the Grocify <a href="#" style="color: var(--primary-dark); font-weight: 600; text-decoration: underline;" onclick="alert('Grocify Terms: Dedicated to 100% data privacy and zero spam.'); return false;">Terms of Service</a> & <a href="#" style="color: var(--primary-dark); font-weight: 600; text-decoration: underline;" onclick="alert('Privacy Guarantee: Your phone number and shopping patterns are kept encrypted with your neighborhood store.'); return false;">Privacy Policy</a>.
+              </label>
+            </div>
+
+            <!-- Register CTA Button -->
+            <button type="submit" class="auth-cta-btn" id="reg-submit-btn">
+              <i data-lucide="sparkles" style="width: 17px;"></i>
+              <span id="reg-submit-text">Create Grocify Account</span>
+            </button>
+
+            <!-- Switch to Sign In -->
+            <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
+              Already have an account? <a href="#" style="color: var(--primary-dark); font-weight: 700; text-decoration: underline;" onclick="switchAuthTab('signin'); return false;">Sign In</a>
+            </div>
+          </form>
+
+          <!-- ============================================== -->
+          <!-- SIGN IN / LOGIN FORM                           -->
+          <!-- ============================================== -->
+          <form id="auth-signin-form" onsubmit="handleLogin(event)" style="display: none;">
+            <!-- Identifier -->
+            <div class="auth-field-group">
+              <label class="auth-label" for="login-identifier" id="login-identifier-label">Phone Number or Email</label>
+              <div class="auth-input-wrapper">
+                <i data-lucide="user-check" class="auth-input-icon"></i>
+                <input type="text" id="login-identifier" class="auth-input" placeholder="e.g. 9876543210 or arjun@example.com" value="9876543210" required />
+              </div>
+            </div>
+
+            <!-- Password / OTP / PIN -->
+            <div class="auth-field-group">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <label class="auth-label" for="login-password" id="login-pwd-label" style="margin-bottom: 0;">Password / OTP</label>
+                <a href="#" style="font-size: 11px; color: var(--primary-dark); font-weight: 600;" onclick="forgotPasswordNotice(); return false;">Forgot Password?</a>
+              </div>
+              <div class="auth-input-wrapper">
+                <i data-lucide="key" class="auth-input-icon"></i>
+                <input type="password" id="login-password" class="auth-input" placeholder="Enter password or OTP" value="123456" required />
+                <button type="button" class="auth-toggle-pwd" onclick="togglePasswordVisibility('login-password', this)">
+                  <i data-lucide="eye" style="width: 16px;"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Remember Me -->
+            <div style="display: flex; align-items: center; gap: 8px; margin: 10px 0 16px;">
+              <input type="checkbox" id="login-remember" checked style="accent-color: var(--primary);" />
+              <label for="login-remember" style="font-size: 12px; color: var(--text-muted); cursor: pointer;">Keep me signed in on this device</label>
+            </div>
+
+            <!-- Sign In CTA Button -->
+            <button type="submit" class="auth-cta-btn" id="login-submit-btn">
+              <i data-lucide="log-in" style="width: 17px;"></i>
+              <span id="login-submit-text">Sign In to Grocify</span>
+            </button>
+
+            <!-- Quick Demo 1-Click Login Section -->
+            <div class="auth-demo-section">
+              <div class="auth-demo-title">
+                <i data-lucide="zap" style="width: 13px; color: #059669;"></i>
+                <span>1-Click Instant Demo Access</span>
+              </div>
+              <div class="auth-demo-pills">
+                <button type="button" class="auth-demo-pill" onclick="quickDemoLogin('customer')">
+                  <span>👤 Arjun (Shopper)</span>
+                </button>
+                <button type="button" class="auth-demo-pill" onclick="quickDemoLogin('merchant')">
+                  <span>🏪 Sri Lakshmi (Merchant)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Switch to Sign Up -->
+            <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
+              New to Grocify? <a href="#" style="color: var(--primary-dark); font-weight: 700; text-decoration: underline;" onclick="switchAuthTab('signup'); return false;">Create Free Account</a>
+            </div>
+          </form>
+
+          <!-- Divider -->
+          <div class="auth-divider">
+            <span>Or continue with</span>
+          </div>
+
+          <!-- Social Buttons -->
+          <div class="auth-social-grid">
+            <button type="button" class="auth-social-btn" onclick="quickSocialAuth('Google')">
+              <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+              <span>Google</span>
+            </button>
+            <button type="button" class="auth-social-btn" onclick="quickSocialAuth('Phone OTP')">
+              <i data-lucide="message-square" style="width: 14px; color: var(--primary);"></i>
+              <span>Mobile OTP</span>
+            </button>
+          </div>
+
+          <!-- Trust & Security Badges -->
+          <div class="auth-trust-footer">
+            <i data-lucide="shield-check" style="width: 14px; color: #10b981;"></i>
+            <span>256-Bit SSL · Local Kirana Privacy Guarantee</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- SHOPKEEPER LOGIN VIEW -->
-    <div id="view-shopkeeper-login" style="display: none; background: #eef8f2; position: relative;">
-      <button class="btn-icon" onclick="showView('landing')" style="position: absolute; top: 20px; left: 20px; background: white; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" title="Back to Dashboard"><i data-lucide="arrow-left" style="width: 18px;"></i></button>
-      <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 24px;">
-        <div style="text-align: center; margin-bottom: 32px;">
-          <div class="logo-icon" style="width: 48px; height: 48px; border-radius: 12px; margin: 0 auto 16px; background: var(--primary-dark); color: white;"><i data-lucide="store" style="width: 24px; height: 24px;"></i></div>
-          <h1 style="font-size: 28px; margin-bottom: 8px;">Merchant OS Login</h1>
-          <p class="text-muted">Sri Lakshmi Stores · Grocify Node #04</p>
-        </div>
-        <div class="card" style="background: white; padding: 24px;">
-          <div style="margin-bottom: 16px;">
-            <label style="font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; display: block;">Merchant ID</label>
-            <input type="text" value="MERCH-04" style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px;" />
-          </div>
-          <div style="margin-bottom: 24px;">
-            <label style="font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; display: block;">PIN Code</label>
-            <input type="password" value="0000" style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px;" />
-          </div>
-          <button class="btn-primary w-full justify-center" style="padding: 14px; font-size: 14px; font-weight: 600; background: var(--primary-dark);" onclick="showView('merchant')">Access Merchant OS</button>
-        </div>
-      </div>
-    </div>
+    <!-- Legacy compatibility aliases for existing buttons -->
+    <div id="view-customer-login" style="display: none;"></div>
+    <div id="view-shopkeeper-login" style="display: none;"></div>
 
     <!-- LANDING VIEW -->
     <div id="view-landing" style="display: none;">
@@ -296,9 +548,23 @@
         <h1 style="font-size: 28px; line-height: 1.2; margin-top: 60px; margin-bottom: 16px;">
           Your shopping helps your local store stock smarter.
         </h1>
-        <p style="font-size: 16px; margin-bottom: 40px;">
+        <p style="font-size: 16px; margin-bottom: 24px;">
           Shop locally while your purchase patterns help stores understand what customers actually need.
         </p>
+
+        <!-- New Member Quick Register Card -->
+        <div class="card flex justify-between items-center" style="background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%); border: 1.5px solid #a7f3d0; padding: 14px 20px; border-radius: 16px; margin-bottom: 28px;">
+          <div class="flex items-center gap-3">
+            <div style="width: 38px; height: 38px; border-radius: 12px; background: var(--primary-dark); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <i data-lucide="user-plus" style="width: 20px; height: 20px;"></i>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 14px; color: var(--primary-dark);">New to Grocify?</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Create your free customer or merchant account today</div>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="openAuthPage('signup')" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; white-space: nowrap;">Register Now</button>
+        </div>
 
         <div class="landing-roles-grid">
           <div class="role-card" onclick="showView('customer-login')">
@@ -1885,19 +2151,19 @@
               <!-- User Profile Identity Card -->
               <div class="card p-4 mb-4" style="background: white; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
                 <div class="flex items-center gap-3 mb-3">
-                  <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #074e33 0%, #10b981 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; box-shadow: 0 4px 12px rgba(7,78,51,0.2);">
+                  <div id="profile-user-avatar" style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #074e33 0%, #10b981 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; box-shadow: 0 4px 12px rgba(7,78,51,0.2);">
                     AS
                   </div>
                   <div style="flex: 1;">
                     <div class="flex items-center gap-2">
-                      <h2 style="font-size: 17px; font-weight: 700; margin: 0;">Arjun Sharma</h2>
-                      <span class="badge" style="background: #ecfdf5; color: #047857; font-size: 9px; padding: 2px 6px;">PLUS</span>
+                      <h2 id="profile-user-name" style="font-size: 17px; font-weight: 700; margin: 0;">Arjun Sharma</h2>
+                      <span class="badge" id="profile-user-badge" style="background: #ecfdf5; color: #047857; font-size: 9px; padding: 2px 6px;">MEMBER</span>
                     </div>
-                    <div class="text-xs text-muted mt-0.5">+91 98765 43210</div>
-                    <div class="text-xs text-muted">arjun.sharma@example.com</div>
+                    <div class="text-xs text-muted mt-0.5" id="profile-user-phone">+91 98765 43210</div>
+                    <div class="text-xs text-muted" id="profile-user-email">arjun.sharma@example.com</div>
                   </div>
-                  <button class="btn-icon" style="background: #f3f4f6;" title="Edit Profile">
-                    <i data-lucide="edit-3" style="width: 14px;"></i>
+                  <button class="btn-icon" onclick="openAuthPage('signup')" style="background: #f3f4f6;" title="Edit Profile / Switch Account">
+                    <i data-lucide="user-plus" style="width: 14px;"></i>
                   </button>
                 </div>
                 <div class="flex justify-between items-center pt-3" style="border-top: 1px solid #f3f4f6; font-size: 11px;">
@@ -1908,11 +2174,11 @@
 
               <!-- Role Switch & Logout Buttons -->
               <div class="flex flex-col gap-2">
-                <button class="btn w-full justify-between" onclick="showView('shopkeeper-login')" style="background: white; border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 16px; border-radius: 12px; font-size: 13px; font-weight: 600;">
+                <button class="btn w-full justify-between" onclick="openAuthPage('signin', 'merchant')" style="background: white; border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 16px; border-radius: 12px; font-size: 13px; font-weight: 600;">
                   <span class="flex items-center gap-2"><i data-lucide="store" style="width: 16px; color: var(--primary-dark);"></i> Switch to Merchant OS</span>
                   <i data-lucide="arrow-right" style="width: 14px; color: var(--text-muted);"></i>
                 </button>
-                <button class="btn w-full justify-center" onclick="showView('landing')" style="background: #fee2e2; color: #b91c1c; border: none; padding: 14px; border-radius: 12px; font-size: 13px; font-weight: 700;">
+                <button class="btn w-full justify-center" onclick="handleLogout()" style="background: #fee2e2; color: #b91c1c; border: none; padding: 14px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer;">
                   <i data-lucide="log-out" style="width: 16px; margin-right: 6px;"></i> Log Out
                 </button>
               </div>
@@ -4102,9 +4368,15 @@
                         .catch(err => {});
                     }
 
-                    // Auto-sync SQLite stats on load
-                    window.addEventListener('DOMContentLoaded', updateDbBadge);
-                    setTimeout(updateDbBadge, 1000);
+                    // Auto-sync SQLite stats & Auth state on load
+                    window.addEventListener('DOMContentLoaded', () => {
+                      updateDbBadge();
+                      updateNavAuthState();
+                    });
+                    setTimeout(() => {
+                      updateDbBadge();
+                      updateNavAuthState();
+                    }, 500);
 
 
                     
@@ -4216,7 +4488,468 @@
                       }
                     });
 
+                    // ==========================================
+                    // AUTHENTICATION & USER MANAGEMENT LOGIC
+                    // ==========================================
+                    let currentAuthTab = 'signup';
+                    let currentAuthRole = 'customer';
+
+                    function getCurrentUser() {
+                      try {
+                        const raw = localStorage.getItem('grocify_user');
+                        return raw ? JSON.parse(raw) : null;
+                      } catch (e) {
+                        return null;
+                      }
+                    }
+
+                    function setCurrentUser(user) {
+                      if (user) {
+                        localStorage.setItem('grocify_user', JSON.stringify(user));
+                      } else {
+                        localStorage.removeItem('grocify_user');
+                      }
+                      updateNavAuthState();
+                    }
+
+                    function updateNavAuthState() {
+                      const user = getCurrentUser();
+                      const loginBtn = document.getElementById('nav-login-btn');
+                      const userChip = document.getElementById('nav-user-chip');
+                      const userName = document.getElementById('nav-user-name');
+                      const userAvatar = document.getElementById('nav-user-avatar');
+
+                      // Mobile drawer elements
+                      const drawerName = document.getElementById('drawer-user-name');
+                      const drawerSub = document.getElementById('drawer-user-sub');
+                      const drawerAvatar = document.getElementById('drawer-user-avatar');
+                      const drawerActionBtn = document.getElementById('drawer-auth-action-btn');
+
+                      if (user) {
+                        const parts = (user.name || 'Shopper').trim().split(' ');
+                        const initials = (parts.length > 1) ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].substring(0, 2).toUpperCase();
+                        const shortName = parts[0];
+
+                        if (loginBtn) loginBtn.style.display = 'none';
+                        if (userChip) userChip.style.display = 'flex';
+                        if (userName) userName.innerText = shortName;
+                        if (userAvatar) userAvatar.innerText = initials;
+
+                        if (drawerName) drawerName.innerText = user.name;
+                        if (drawerSub) drawerSub.innerText = user.role === 'merchant' ? 'Store Merchant' : (user.phone ? `+91 ${user.phone}` : 'Shopper Account');
+                        if (drawerAvatar) drawerAvatar.innerText = initials;
+                        if (drawerActionBtn) {
+                          drawerActionBtn.innerText = 'Log Out';
+                          drawerActionBtn.onclick = handleLogout;
+                          drawerActionBtn.style.background = '#fee2e2';
+                          drawerActionBtn.style.color = '#b91c1c';
+                          drawerActionBtn.style.border = 'none';
+                        }
+                      } else {
+                        if (loginBtn) loginBtn.style.display = 'flex';
+                        if (userChip) userChip.style.display = 'none';
+
+                        if (drawerName) drawerName.innerText = 'Guest Shopper';
+                        if (drawerSub) drawerSub.innerText = 'Click to Sign In / Register';
+                        if (drawerAvatar) drawerAvatar.innerText = '👤';
+                        if (drawerActionBtn) {
+                          drawerActionBtn.innerText = 'Sign In';
+                          drawerActionBtn.onclick = () => handleDrawerNav('auth');
+                          drawerActionBtn.style.background = '';
+                          drawerActionBtn.style.color = '';
+                          drawerActionBtn.style.border = '';
+                        }
+                      }
+                      lucide.createIcons();
+                    }
+
+                    // Toast Notification System
+                    function showToast(msg, type = 'success') {
+                      const toast = document.getElementById('auth-toast');
+                      const msgEl = document.getElementById('auth-toast-msg');
+                      const iconEl = document.getElementById('auth-toast-icon');
+                      if (!toast || !msgEl) return;
+
+                      msgEl.innerText = msg;
+                      toast.className = `auth-toast show ${type}`;
+
+                      if (iconEl) {
+                        if (type === 'error') {
+                          iconEl.setAttribute('data-lucide', 'alert-circle');
+                        } else {
+                          iconEl.setAttribute('data-lucide', 'check-circle');
+                        }
+                        lucide.createIcons();
+                      }
+
+                      setTimeout(() => {
+                        toast.classList.remove('show');
+                      }, 3500);
+                    }
+
+                    function openAuthPage(tab = 'signup', role = 'customer') {
+                      showView('auth');
+                      switchAuthTab(tab);
+                      switchAuthRole(role);
+                    }
+
+                    function switchAuthTab(tab) {
+                      currentAuthTab = tab;
+                      const signupBtn = document.getElementById('tab-btn-signup');
+                      const signinBtn = document.getElementById('tab-btn-signin');
+                      const signupForm = document.getElementById('auth-signup-form');
+                      const signinForm = document.getElementById('auth-signin-form');
+                      const title = document.getElementById('auth-main-title');
+                      const subtitle = document.getElementById('auth-main-subtitle');
+
+                      if (tab === 'signup') {
+                        if (signupBtn) signupBtn.classList.add('active');
+                        if (signinBtn) signinBtn.classList.remove('active');
+                        if (signupForm) signupForm.style.display = 'block';
+                        if (signinForm) signinForm.style.display = 'none';
+
+                        if (title) title.innerText = currentAuthRole === 'merchant' ? 'Register Store Partner' : 'Create Grocify Account';
+                        if (subtitle) subtitle.innerText = currentAuthRole === 'merchant' 
+                          ? 'Empower your kirana store with predictive replenishment and zero-waste demand intelligence.' 
+                          : 'Connect with your local kirana and get fresh, demand-synced groceries delivered.';
+                      } else {
+                        if (signupBtn) signupBtn.classList.remove('active');
+                        if (signinBtn) signinBtn.classList.add('active');
+                        if (signupForm) signupForm.style.display = 'none';
+                        if (signinForm) signinForm.style.display = 'block';
+
+                        if (title) title.innerText = 'Welcome Back';
+                        if (subtitle) subtitle.innerText = 'Sign in to access your pantry patterns, orders, and neighborhood kirana network.';
+                      }
+                      lucide.createIcons();
+                    }
+
+                    function switchAuthRole(role) {
+                      currentAuthRole = role;
+                      const custBtn = document.getElementById('role-btn-customer');
+                      const merchBtn = document.getElementById('role-btn-merchant');
+                      const custFields = document.getElementById('reg-customer-fields');
+                      const merchFields = document.getElementById('reg-merchant-fields');
+                      const idLabel = document.getElementById('login-identifier-label');
+                      const idInput = document.getElementById('login-identifier');
+                      const pwdLabel = document.getElementById('login-pwd-label');
+                      const pwdInput = document.getElementById('login-password');
+                      const regBtnText = document.getElementById('reg-submit-text');
+                      const loginBtnText = document.getElementById('login-submit-text');
+
+                      if (role === 'customer') {
+                        if (custBtn) custBtn.classList.add('active');
+                        if (merchBtn) merchBtn.classList.remove('active');
+                        if (custFields) custFields.style.display = 'block';
+                        if (merchFields) merchFields.style.display = 'none';
+
+                        if (idLabel) idLabel.innerText = 'Phone Number or Email';
+                        if (idInput) {
+                          idInput.placeholder = 'e.g. 9876543210 or arjun@example.com';
+                          if (idInput.value === 'MERCH-04') idInput.value = '9876543210';
+                        }
+                        if (pwdLabel) pwdLabel.innerText = 'Password / OTP';
+                        if (pwdInput && pwdInput.value === '0000') pwdInput.value = '123456';
+
+                        if (regBtnText) regBtnText.innerText = 'Create Grocify Account';
+                        if (loginBtnText) loginBtnText.innerText = 'Sign In to Grocify';
+                      } else {
+                        if (custBtn) custBtn.classList.remove('active');
+                        if (merchBtn) merchBtn.classList.add('active');
+                        if (custFields) custFields.style.display = 'none';
+                        if (merchFields) merchFields.style.display = 'block';
+
+                        if (idLabel) idLabel.innerText = 'Merchant ID or Phone';
+                        if (idInput) {
+                          idInput.placeholder = 'e.g. MERCH-04';
+                          if (idInput.value === '9876543210') idInput.value = 'MERCH-04';
+                        }
+                        if (pwdLabel) pwdLabel.innerText = 'Security PIN Code';
+                        if (pwdInput && pwdInput.value === '123456') pwdInput.value = '0000';
+
+                        if (regBtnText) regBtnText.innerText = 'Register Kirana Store';
+                        if (loginBtnText) loginBtnText.innerText = 'Access Merchant OS';
+                      }
+
+                      // Update header text based on active tab and role
+                      switchAuthTab(currentAuthTab);
+                    }
+
+                    // Password Visibility Toggle
+                    function togglePasswordVisibility(inputId, btn) {
+                      const input = document.getElementById(inputId);
+                      if (!input) return;
+                      const isPwd = input.type === 'password';
+                      input.type = isPwd ? 'text' : 'password';
+                      btn.innerHTML = isPwd 
+                        ? '<i data-lucide="eye-off" style="width: 16px;"></i>' 
+                        : '<i data-lucide="eye" style="width: 16px;"></i>';
+                      lucide.createIcons();
+                    }
+
+                    // Dynamic Password Strength Meter
+                    function checkPasswordStrength(val) {
+                      const bar1 = document.getElementById('pwd-bar-1');
+                      const bar2 = document.getElementById('pwd-bar-2');
+                      const bar3 = document.getElementById('pwd-bar-3');
+                      const label = document.getElementById('pwd-strength-label');
+                      if (!bar1 || !bar2 || !bar3 || !label) return;
+
+                      let strength = 0;
+                      if (val.length >= 6) strength++;
+                      if (val.length >= 8 && /[0-9]/.test(val)) strength++;
+                      if (val.length >= 10 && /[^A-Za-z0-9]/.test(val)) strength++;
+
+                      bar1.style.background = '#e2e8f0';
+                      bar2.style.background = '#e2e8f0';
+                      bar3.style.background = '#e2e8f0';
+
+                      if (strength === 0) {
+                        label.innerText = 'Too short';
+                        label.style.color = '#94a3b8';
+                      } else if (strength === 1) {
+                        bar1.style.background = '#ef4444';
+                        label.innerText = 'Basic';
+                        label.style.color = '#ef4444';
+                      } else if (strength === 2) {
+                        bar1.style.background = '#f59e0b';
+                        bar2.style.background = '#f59e0b';
+                        label.innerText = 'Good';
+                        label.style.color = '#f59e0b';
+                      } else {
+                        bar1.style.background = '#10b981';
+                        bar2.style.background = '#10b981';
+                        bar3.style.background = '#10b981';
+                        label.innerText = 'Strong & secure';
+                        label.style.color = '#10b981';
+                      }
+                    }
+
+                    // 1-Click Instant Demo Login
+                    function quickDemoLogin(role) {
+                      switchAuthRole(role);
+                      switchAuthTab('signin');
+                      if (role === 'customer') {
+                        document.getElementById('login-identifier').value = '9876543210';
+                        document.getElementById('login-password').value = '123456';
+                      } else {
+                        document.getElementById('login-identifier').value = 'MERCH-04';
+                        document.getElementById('login-password').value = '0000';
+                      }
+                      handleLogin(new Event('submit'));
+                    }
+
+                    // Social Quick Auth Simulation
+                    function quickSocialAuth(provider) {
+                      const mockUser = {
+                        id: 'usr_' + Date.now(),
+                        name: 'Priya Sharma',
+                        email: 'priya.sharma@gmail.com',
+                        phone: '9845012345',
+                        role: 'customer',
+                        store_name: 'Sri Lakshmi Stores',
+                        address: 'Flat 402, Green Valley Apartments, Bangalore'
+                      };
+                      setCurrentUser(mockUser);
+                      showToast(`Authenticated with ${provider}! Welcome, Priya.`);
+                      setTimeout(() => {
+                        showView('customer');
+                      }, 600);
+                    }
+
+                    function forgotPasswordNotice() {
+                      alert('🔑 Grocify Demo Credentials:\n\n• Customer: Phone "9876543210" with Password "123456"\n• Merchant: Merchant ID "MERCH-04" with PIN "0000"\n\nIn production, an SMS OTP is instantly sent to your mobile phone.');
+                    }
+
+                    // Handle Registration Form Submit
+                    async function handleRegister(event) {
+                      if (event) event.preventDefault();
+                      const btn = document.getElementById('reg-submit-btn');
+                      const btnText = document.getElementById('reg-submit-text');
+                      const origText = btnText ? btnText.innerText : 'Create Grocify Account';
+
+                      const name = (document.getElementById('reg-name').value || '').trim();
+                      const phone = (document.getElementById('reg-phone').value || '').trim();
+                      const email = (document.getElementById('reg-email').value || '').trim();
+                      const password = document.getElementById('reg-password').value || '123456';
+
+                      let storeName = 'Sri Lakshmi Stores';
+                      let address = '123/A, Green Valley Apartments, Bangalore';
+
+                      if (currentAuthRole === 'customer') {
+                        const storeSelect = document.getElementById('reg-store');
+                        if (storeSelect) storeName = storeSelect.value;
+                        const addrInput = document.getElementById('reg-address');
+                        if (addrInput && addrInput.value) address = addrInput.value.trim();
+                      } else {
+                        const merchStore = document.getElementById('reg-merchant-store');
+                        if (merchStore && merchStore.value) storeName = merchStore.value.trim();
+                        address = 'Shop #4, Main Market, Bangalore';
+                      }
+
+                      if (!name) {
+                        showToast('Please enter your full name.', 'error');
+                        return;
+                      }
+
+                      if (!phone || phone.length < 10) {
+                        showToast('Please enter a valid 10-digit phone number.', 'error');
+                        return;
+                      }
+
+                      if (btn) btn.disabled = true;
+                      if (btnText) btnText.innerText = 'Creating your account...';
+
+                      const payload = {
+                        name,
+                        phone,
+                        email: email || undefined,
+                        password,
+                        role: currentAuthRole,
+                        store_name: storeName,
+                        address
+                      };
+
+                      try {
+                        const res = await fetch(`${API_BASE}/auth/register`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(payload)
+                        });
+
+                        const data = await res.json();
+
+                        if (res.ok && data.success) {
+                          setCurrentUser(data.user);
+                          showToast(`Welcome to Grocify, ${name}! 🎉`, 'success');
+                          updateDbBadge();
+
+                          setTimeout(() => {
+                            if (btn) btn.disabled = false;
+                            if (btnText) btnText.innerText = origText;
+                            showView(currentAuthRole === 'merchant' ? 'merchant' : 'customer');
+                          }, 700);
+                          return;
+                        } else {
+                          showToast(data.error || 'Registration failed. Please try again.', 'error');
+                          if (btn) btn.disabled = false;
+                          if (btnText) btnText.innerText = origText;
+                          return;
+                        }
+                      } catch (err) {
+                        console.warn('[Auth] Server fetch failed, using local persistence fallback:', err);
+                        const localUser = {
+                          id: 'usr_' + Date.now(),
+                          name,
+                          phone,
+                          email,
+                          role: currentAuthRole,
+                          store_name: storeName,
+                          address
+                        };
+                        setCurrentUser(localUser);
+                        showToast(`Welcome to Grocify, ${name}! 🎉 (Local Mode)`, 'success');
+                        setTimeout(() => {
+                          if (btn) btn.disabled = false;
+                          if (btnText) btnText.innerText = origText;
+                          showView(currentAuthRole === 'merchant' ? 'merchant' : 'customer');
+                        }, 700);
+                      }
+                    }
+
+                    // Handle Login Form Submit
+                    async function handleLogin(event) {
+                      if (event) event.preventDefault();
+                      const btn = document.getElementById('login-submit-btn');
+                      const btnText = document.getElementById('login-submit-text');
+                      const origText = btnText ? btnText.innerText : 'Sign In to Grocify';
+
+                      const identifier = (document.getElementById('login-identifier').value || '').trim();
+                      const password = document.getElementById('login-password').value || '';
+
+                      if (!identifier) {
+                        showToast('Please enter your phone number or email.', 'error');
+                        return;
+                      }
+
+                      if (btn) btn.disabled = true;
+                      if (btnText) btnText.innerText = 'Verifying credentials...';
+
+                      try {
+                        const res = await fetch(`${API_BASE}/auth/login`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            identifier,
+                            password,
+                            role: currentAuthRole
+                          })
+                        });
+
+                        const data = await res.json();
+
+                        if (res.ok && data.success) {
+                          setCurrentUser(data.user);
+                          showToast(`Welcome back, ${data.user.name}! 👋`, 'success');
+
+                          setTimeout(() => {
+                            if (btn) btn.disabled = false;
+                            if (btnText) btnText.innerText = origText;
+                            showView(data.user.role === 'merchant' ? 'merchant' : 'customer');
+                          }, 600);
+                          return;
+                        } else {
+                          showToast(data.error || 'Invalid credentials. Please try again.', 'error');
+                          if (btn) btn.disabled = false;
+                          if (btnText) btnText.innerText = origText;
+                          return;
+                        }
+                      } catch (err) {
+                        console.warn('[Auth] Server offline, using demo fallback:', err);
+                        const fallbackUser = {
+                          id: (currentAuthRole === 'merchant' || identifier === 'MERCH-04') ? 'user_merchant_04' : 'user_arjun',
+                          name: (currentAuthRole === 'merchant' || identifier === 'MERCH-04') ? 'Ramesh Patel' : 'Arjun Sharma',
+                          phone: identifier,
+                          role: (currentAuthRole === 'merchant' || identifier === 'MERCH-04') ? 'merchant' : 'customer',
+                          store_name: 'Sri Lakshmi Stores',
+                          address: '123/A, Green Valley Apartments, Bangalore'
+                        };
+                        setCurrentUser(fallbackUser);
+                        showToast(`Welcome back, ${fallbackUser.name}! 👋`, 'success');
+                        setTimeout(() => {
+                          if (btn) btn.disabled = false;
+                          if (btnText) btnText.innerText = origText;
+                          showView(fallbackUser.role === 'merchant' ? 'merchant' : 'customer');
+                        }, 600);
+                      }
+                    }
+
+                    // Handle Logout
+                    function handleLogout() {
+                      setCurrentUser(null);
+                      showToast('You have been signed out successfully.', 'success');
+                      openAuthPage('signin');
+                    }
+
                     function showView(viewId, addToHistory = true) {
+                      // Intercept legacy login and auth route requests
+                      if (viewId === 'customer-login') {
+                        openAuthPage('signin', 'customer');
+                        return;
+                      }
+                      if (viewId === 'shopkeeper-login') {
+                        openAuthPage('signin', 'merchant');
+                        return;
+                      }
+                      if (viewId === 'register' || viewId === 'signup' || viewId === 'auth-signup') {
+                        openAuthPage('signup', 'customer');
+                        return;
+                      }
+                      if (viewId === 'login' || viewId === 'signin') {
+                        openAuthPage('signin', 'customer');
+                        return;
+                      }
+
                       if (addToHistory) {
                         if (viewHistory.length === 0 || viewHistory[viewHistory.length - 1] !== viewId) {
                           viewHistory.push(viewId);
@@ -4261,8 +4994,8 @@
                       if (viewId === 'orders') loadOrdersData();
                       if (viewId === 'order-tracking') loadLatestOrderTracking();
 
-                      // Splash screen top nav visibility
-                      if (viewId === 'splash') {
+                      // Splash screen & auth top nav visibility
+                      if (viewId === 'splash' || viewId === 'auth') {
                         document.body.classList.add('in-splash');
                       } else {
                         document.body.classList.remove('in-splash');
@@ -4637,14 +5370,16 @@ sugar: {
                           return acc + (p * (item.quantity || 1));
                         }, 0);
 
+                        const activeUser = getCurrentUser();
                         fetch(`${API_BASE}/orders`, {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({
-                            customer_name: 'Arjun',
+                            user_id: activeUser ? activeUser.id : 'user_arjun',
+                            customer_name: activeUser ? activeUser.name : 'Arjun Sharma',
                             items: basket,
                             total_amount: orderTotal,
-                            delivery_address: '123/A, Green Valley Apartments, Near City Center, Bangalore'
+                            delivery_address: (activeUser && activeUser.address) ? activeUser.address : '123/A, Green Valley Apartments, Near City Center, Bangalore'
                           })
                         })
                         .then(r => r.json())
@@ -4868,13 +5603,15 @@ sugar: {
 
                     async function loadCustomerData() {
                       try {
+                        const currentUser = getCurrentUser();
                         const res = await fetch(`${API_BASE}/customer`);
                         const data = await res.json();
 
-                        // Populate greeting dynamically to prove backend works
+                        // Populate greeting dynamically with user's name
                         const greetingEl = document.getElementById('customer-greeting');
                         if (greetingEl) {
-                          greetingEl.innerHTML = `Good evening, ${data.user.name} 🌱`;
+                          const name = currentUser ? currentUser.name : (data && data.user ? data.user.name : 'Arjun');
+                          greetingEl.innerHTML = `Good evening, ${name} 🌱`;
                         }
                       } catch (err) {
                         console.error('Error fetching customer data:', err);
@@ -6190,6 +6927,41 @@ sugar: {
                     
                     // Load Profile Data & sync SQLite order counts
                     function loadProfileData() {
+                      const user = getCurrentUser() || {
+                        name: 'Arjun Sharma',
+                        phone: '9876543210',
+                        email: 'arjun.sharma@example.com',
+                        role: 'customer'
+                      };
+
+                      const nameEl = document.getElementById('profile-user-name');
+                      if (nameEl) nameEl.innerText = user.name;
+
+                      const phoneEl = document.getElementById('profile-user-phone');
+                      if (phoneEl) {
+                        const rawPhone = user.phone || '9876543210';
+                        phoneEl.innerText = rawPhone.startsWith('+91') ? rawPhone : `+91 ${rawPhone}`;
+                      }
+
+                      const emailEl = document.getElementById('profile-user-email');
+                      if (emailEl) {
+                        emailEl.innerText = user.email || `${user.name.toLowerCase().replace(/\s+/g, '.')}@example.com`;
+                      }
+
+                      const badgeEl = document.getElementById('profile-user-badge');
+                      if (badgeEl) {
+                        badgeEl.innerText = (user.role === 'merchant') ? 'MERCHANT' : 'MEMBER';
+                      }
+
+                      const avatarEl = document.getElementById('profile-user-avatar');
+                      if (avatarEl) {
+                        const parts = user.name.trim().split(' ');
+                        const initials = (parts.length > 1) 
+                          ? (parts[0][0] + parts[1][0]).toUpperCase() 
+                          : parts[0].substring(0, 2).toUpperCase();
+                        avatarEl.innerText = initials;
+                      }
+
                       fetch(`${API_BASE}/orders`)
                         .then(r => r.json())
                         .then(res => {

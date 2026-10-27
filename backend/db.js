@@ -89,10 +89,42 @@ function initSchema() {
       data_json TEXT NOT NULL,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    -- Users Table (Customers & Merchants)
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE,
+      phone TEXT UNIQUE,
+      password TEXT NOT NULL,
+      role TEXT DEFAULT 'customer',
+      store_name TEXT DEFAULT 'Sri Lakshmi Stores',
+      address TEXT DEFAULT '123/A, Green Valley Apartments, Bangalore',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 }
 
 initSchema();
+
+// Helper: Seed Default Users (Customer Arjun & Merchant Sri Lakshmi)
+function seedUsersIfEmpty() {
+  try {
+    const count = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
+    if (count === 0) {
+      const insert = db.prepare(`
+        INSERT INTO users (id, name, email, phone, password, role, store_name, address)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      insert.run('user_arjun', 'Arjun Sharma', 'arjun@example.com', '9876543210', '123456', 'customer', 'Sri Lakshmi Stores', '123/A, Green Valley Apartments, Bangalore');
+      insert.run('user_merchant_04', 'Ramesh Patel', 'merchant@srilakshmi.in', 'MERCH-04', '0000', 'merchant', 'Sri Lakshmi Stores', 'Shop #4, Main Bazaar, Bangalore');
+      console.log('[DB] Seeded default users into SQLite (Customer Arjun & Merchant Ramesh).');
+    }
+  } catch (e) {
+    console.warn('[DB] seedUsersIfEmpty error:', e.message);
+  }
+}
+seedUsersIfEmpty();
 
 // Helper: Seed Default Products
 function seedProductsIfEmpty(initialProducts) {
@@ -249,10 +281,43 @@ const dao = {
       .run(section, JSON.stringify(data));
   },
 
+  // Users DAO Methods
+  getAllUsers() {
+    return db.prepare('SELECT id, name, email, phone, role, store_name, address, created_at FROM users ORDER BY created_at DESC').all();
+  },
+
+  getUserById(id) {
+    return db.prepare('SELECT id, name, email, phone, role, store_name, address, created_at FROM users WHERE id = ?').get(id);
+  },
+
+  findUser(identifier) {
+    return db.prepare('SELECT * FROM users WHERE phone = ? OR email = ? OR id = ?').get(identifier, identifier, identifier);
+  },
+
+  registerUser(userData) {
+    const id = userData.id || ('usr_' + Date.now());
+    const stmt = db.prepare(`
+      INSERT INTO users (id, name, email, phone, password, role, store_name, address)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    stmt.run(
+      id,
+      userData.name,
+      userData.email || null,
+      userData.phone || null,
+      userData.password || '123456',
+      userData.role || 'customer',
+      userData.store_name || 'Sri Lakshmi Stores',
+      userData.address || ''
+    );
+    return dao.getUserById(id);
+  },
+
   // System Stats
   getStats() {
     const productCount = db.prepare('SELECT COUNT(*) as count FROM products').get().count;
     const orderCount = db.prepare('SELECT COUNT(*) as count FROM orders').get().count;
+    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
     const logCount = db.prepare('SELECT COUNT(*) as count FROM inventory_logs').get().count;
     const sectionCount = db.prepare('SELECT COUNT(*) as count FROM ecosystem_data').get().count;
 
@@ -271,6 +336,7 @@ const dao = {
       tables: {
         products: productCount,
         orders: orderCount,
+        users: userCount,
         inventory_logs: logCount,
         ecosystem_sections: sectionCount
       },
@@ -278,6 +344,7 @@ const dao = {
     };
   },
 
+  seedUsersIfEmpty,
   seedProductsIfEmpty,
   seedEcosystemIfEmpty,
   db
