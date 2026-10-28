@@ -1611,6 +1611,226 @@ app.delete('/api/pantry/:id', (req, res) => {
   }
 });
 
+// ========================================================
+// SMART GROCERY SHOPPING LIST & BUDGET INTELLIGENCE API
+// ========================================================
+
+// GET customer shopping list items
+app.get('/api/shopping-list', (req, res) => {
+  try {
+    const userId = req.query.user_id || 'user_arjun';
+    const status = req.query.status || null;
+    const items = db.getShoppingItems(userId, status);
+    const budget = db.getCustomerBudget(userId);
+
+    const pendingItems = items.filter(it => it.status === 'pending');
+    const totalEstimatedCost = pendingItems.reduce((acc, it) => {
+      let price = it.estimated_price || 0;
+      if (it.comparison && it.comparison.recommendedShop) {
+        return acc + (it.comparison.estimatedTotal || (it.quantity * price));
+      }
+      return acc + (it.quantity * price);
+    }, 0);
+
+    const roundedEstCost = Math.round(totalEstimatedCost * 100) / 100;
+    const remainingBudget = Math.round((budget - roundedEstCost) * 100) / 100;
+
+    res.json({
+      success: true,
+      count: items.length,
+      data: items,
+      items: items,
+      budget,
+      totalEstimatedCost: roundedEstCost,
+      remainingBudget
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST add item to shopping list
+app.post('/api/shopping-list', (req, res) => {
+  try {
+    const {
+      user_id, category, unit, expected_date,
+      estimated_price, estimated_shop, is_user_price,
+      user_entered_price, pantry_item_id, notes
+    } = req.body;
+
+    const name = (req.body.name || req.body.product_name || '').trim();
+    const quantity = parseFloat(req.body.quantity !== undefined ? req.body.quantity : req.body.required_quantity) || 1;
+    const budget = req.body.budget !== undefined ? req.body.budget : req.body.item_budget;
+
+    if (!name) {
+      return res.status(400).json({ success: false, error: 'Product name is required.' });
+    }
+
+    const userId = user_id || 'user_arjun';
+    const newItem = db.addShoppingItem({
+      user_id: userId,
+      name: name,
+      category: category || 'Food & Grains',
+      quantity: quantity,
+      unit: unit || 'kg',
+      expected_date: expected_date || new Date().toISOString().split('T')[0],
+      budget: budget !== undefined && budget !== null ? parseFloat(budget) : null,
+      estimated_price: estimated_price !== undefined ? parseFloat(estimated_price) : undefined,
+      estimated_shop,
+      is_user_price: is_user_price ? 1 : 0,
+      user_entered_price: user_entered_price !== undefined ? parseFloat(user_entered_price) : undefined,
+      pantry_item_id: pantry_item_id || null,
+      notes: notes || ''
+    });
+
+    console.log(`[ShoppingList] Added item for ${userId}: ${newItem.name || newItem.product_name} (${newItem.quantity || newItem.required_quantity} ${newItem.unit})`);
+    res.status(201).json({ success: true, message: 'Item added to shopping list', data: newItem, item: newItem });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET compare prices across neighborhood shops for a product
+app.get('/api/shopping-list/compare-prices', (req, res) => {
+  try {
+    const productName = req.query.product_name || req.query.name || '';
+    const quantity = parseFloat(req.query.quantity || req.query.required_quantity) || 1;
+    const unit = req.query.unit || 'kg';
+    const result = db.comparePricesForProduct(productName, quantity, unit);
+    res.json({ success: true, data: result, comparison: result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET market prices catalog
+app.get('/api/shopping-list/market-prices', (req, res) => {
+  try {
+    const query = req.query.q || '';
+    const prices = db.getMarketPrices(query);
+    res.json({ success: true, count: prices.length, data: prices });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET customer shopping budget
+app.get('/api/shopping-list/budget', (req, res) => {
+  try {
+    const userId = req.query.user_id || 'user_arjun';
+    const budget = db.getCustomerBudget(userId);
+    res.json({ success: true, budget, total_budget: budget.total_budget });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST update customer shopping budget
+app.post('/api/shopping-list/budget', (req, res) => {
+  try {
+    const userId = req.body.user_id || 'user_arjun';
+    const budgetVal = parseFloat(req.body.budget !== undefined ? req.body.budget : req.body.total_budget) || 1000;
+    const updated = db.setCustomerBudget(userId, budgetVal);
+    res.json({ success: true, message: 'Shopping budget updated', budget: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST confirm purchase & update My Pantry
+app.post('/api/shopping-list/confirm-purchase', (req, res) => {
+  try {
+    const {
+      shopping_item_id, item_id, product_name, name, category,
+      unit, unit_price, total_amount, shop_name, purchase_date,
+      expiry_date, update_pantry, user_id, pantry_item_id
+    } = req.body;
+
+    const shoppingId = shopping_item_id || item_id || null;
+    let prodName = (product_name || name || '').trim();
+    const purchasedQty = parseFloat(req.body.purchased_qty !== undefined ? req.body.purchased_qty : (req.body.actual_quantity !== undefined ? req.body.actual_quantity : req.body.quantity)) || 1;
+
+    const userId = user_id || 'user_arjun';
+    const result = db.recordPurchaseAndUpdatePantry({
+      shopping_item_id: shoppingId,
+      product_name: prodName,
+      category,
+      purchased_qty: purchasedQty,
+      unit: unit || 'kg',
+      unit_price: parseFloat(unit_price) || 0,
+      total_amount: total_amount !== undefined ? parseFloat(total_amount) : undefined,
+      shop_name: shop_name || 'Sri Lakshmi Stores',
+      purchase_date: purchase_date || new Date().toISOString().split('T')[0],
+      expiry_date: expiry_date || null,
+      update_pantry: update_pantry !== false,
+      user_id: userId,
+      pantry_item_id
+    });
+
+    console.log(`[ShoppingList] Purchase confirmed for ${userId}: ${result.purchase.product_name} (${purchasedQty} ${unit || 'kg'}) from ${shop_name}. Pantry updated: ${update_pantry !== false}`);
+    res.status(201).json({
+      success: true,
+      message: 'Purchase recorded and pantry updated successfully',
+      data: result,
+      purchase: result.purchase,
+      pantry_item: result.pantry_item
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET customer grocery purchase history
+app.get('/api/shopping-list/purchases', (req, res) => {
+  try {
+    const userId = req.query.user_id || 'user_arjun';
+    const history = db.getPurchaseHistory(userId);
+    res.json({ success: true, count: history.length, data: history });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET single shopping list item (must be after specific sub-routes)
+app.get('/api/shopping-list/:id', (req, res) => {
+  try {
+    const userId = req.query.user_id || 'user_arjun';
+    const item = db.getShoppingItemById(req.params.id, userId);
+    if (!item) return res.status(404).json({ success: false, error: 'Shopping item not found' });
+    res.json({ success: true, data: item, item: item });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PUT update shopping list item
+app.put('/api/shopping-list/:id', (req, res) => {
+  try {
+    const userId = req.body.user_id || req.query.user_id || 'user_arjun';
+    const updated = db.updateShoppingItem(req.params.id, userId, req.body);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Item not found or unauthorized' });
+    }
+    res.json({ success: true, message: 'Shopping list item updated', data: updated, item: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE shopping list item
+app.delete('/api/shopping-list/:id', (req, res) => {
+  try {
+    const userId = req.query.user_id || (req.body && req.body.user_id) || 'user_arjun';
+    const deleted = db.deleteShoppingItem(req.params.id, userId);
+    if (!deleted) {
+      return res.status(404).json({ success: false, error: 'Item not found or unauthorized' });
+    }
+    res.json({ success: true, message: 'Shopping list item removed' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET SQLite Database Status & Telemetry
 app.get('/api/db/stats', (req, res) => {
   try {

@@ -40,6 +40,7 @@
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('customer-login')">👤 Customer Login</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('customer')">🛒 Customer Home</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px; background: #ecfdf5; border-color: #a7f3d0; color: var(--primary-dark); font-weight: 700;" onclick="showView('pantry')">🥫 My Pantry & Consumption</button>
+        <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px; background: #f0fdf4; border-color: #86efac; color: var(--primary-dark); font-weight: 700;" onclick="showView('shopping-list')">📝 My Shopping List</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('discover')">🔍 Discover Store</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('product')">🥛 Product Detail</button>
         <button class="btn btn-secondary w-full mb-1.5 text-left justify-start" style="font-size: 11px; padding: 6px 10px;" onclick="showView('cart')">🛍️ Basket</button>
@@ -105,6 +106,10 @@
         <a class="grocify-nav-link" id="nav-btn-pantry" onclick="showView('pantry')">
           <i data-lucide="archive" style="width: 17px; height: 17px;"></i>
           <span>My Pantry</span>
+        </a>
+        <a class="grocify-nav-link" id="nav-btn-shopping-list" onclick="showView('shopping-list')">
+          <i data-lucide="list-checks" style="width: 17px; height: 17px;"></i>
+          <span>Shopping List</span>
         </a>
         <a class="grocify-nav-link" id="nav-btn-inventory" onclick="showView('inventory')">
           <i data-lucide="boxes" style="width: 17px; height: 17px;"></i>
@@ -177,6 +182,10 @@
     <a class="grocify-drawer-link" onclick="handleDrawerNav('pantry')">
       <i data-lucide="archive" style="width: 18px; color: var(--primary-dark);"></i>
       <span style="font-weight: 600;">🥫 My Pantry (Grocery Stock)</span>
+    </a>
+    <a class="grocify-drawer-link" onclick="handleDrawerNav('shopping-list')">
+      <i data-lucide="list-checks" style="width: 18px; color: var(--primary-dark);"></i>
+      <span style="font-weight: 600;">📝 My Shopping List</span>
     </a>
     <a class="grocify-drawer-link" onclick="handleDrawerNav('inventory')">
       <i data-lucide="boxes" style="width: 18px; color: var(--primary-dark);"></i>
@@ -793,6 +802,85 @@
             <!-- Home Alert Preview Strip -->
             <div id="cust-home-pantry-alerts" style="display: flex; flex-direction: column; gap: 8px;">
               <!-- Dynamic alert banners injected here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Dedicated Customer Smart Grocery Shopping List Card -->
+        <div class="card mb-6" style="background: white; border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+          <div style="background: linear-gradient(135deg, #047857 0%, #064e3b 100%); padding: 14px 18px; color: white; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div class="flex items-center gap-2.5">
+              <div style="background: rgba(255,255,255,0.18); border-radius: 8px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                📝
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px;">
+                  My Shopping List
+                  <span class="badge" style="background: #34d399; color: #064e3b; font-size: 9px; padding: 2px 6px;">SMART SAVINGS</span>
+                </div>
+                <div style="font-size: 11px; opacity: 0.85;">Digital grocery list with neighborhood price comparison & budget manager</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="btn" onclick="openSetBudgetModal()" style="background: rgba(255,255,255,0.2); color: white; font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.3);" title="Edit total shopping budget">
+                Budget: <span id="cust-home-shoplist-budget-btn">₹1,000</span>
+              </button>
+              <button class="btn" onclick="openAddShoppingItemModal()" style="background: rgba(255,255,255,0.2); color: white; font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.3);">
+                + Add Item
+              </button>
+              <button class="btn" onclick="showView('shopping-list')" style="background: white; color: var(--primary-dark); font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 20px; border: none; display: flex; align-items: center; gap: 4px;">
+                Manage List <i data-lucide="arrow-right" style="width: 14px;"></i>
+              </button>
+            </div>
+          </div>
+
+          <div style="padding: 14px 18px;">
+            <!-- Budget & Cost Summary Row -->
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                <div style="font-size: 12px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                  <span>Shopping Budget Tracker</span>
+                  <span id="cust-home-budget-badge" class="badge" style="background: #ecfdf5; color: #047857; font-size: 10px;">Within Budget</span>
+                </div>
+                <div style="font-size: 12px; font-weight: 600;">
+                  <span style="color: var(--text-muted);">Est. Cost: </span>
+                  <span style="font-weight: 800; color: var(--text-main);" id="cust-home-shoplist-cost">₹0</span>
+                  <span style="color: var(--text-muted); margin: 0 4px;">/</span>
+                  <span style="color: var(--primary-dark); font-weight: 700;" id="cust-home-shoplist-budget">₹1,000</span>
+                  <span style="color: #059669; font-size: 11px; margin-left: 6px;" id="cust-home-shoplist-remain">(₹1,000 remaining)</span>
+                </div>
+              </div>
+              <div style="height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                <div id="cust-home-budget-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #10b981 0%, #059669 100%); transition: width 0.3s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Quick KPIs Row -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 12px;">
+              <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer;" onclick="showView('shopping-list')">
+                <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">To Buy</div>
+                <div style="font-size: 18px; font-weight: 800; color: var(--primary-dark);" id="cust-home-shoplist-pending">0</div>
+              </div>
+              <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer;" onclick="showView('shopping-list')">
+                <div style="font-size: 10px; font-weight: 700; color: #15803d; text-transform: uppercase;">Purchased</div>
+                <div style="font-size: 18px; font-weight: 800; color: #15803d;" id="cust-home-shoplist-purchased">0</div>
+              </div>
+              <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer;" onclick="showView('shopping-list')">
+                <div style="font-size: 10px; font-weight: 700; color: #b45309; text-transform: uppercase;">Low in Pantry</div>
+                <div style="font-size: 18px; font-weight: 800; color: #b45309;" id="cust-home-shoplist-low-pantry">0</div>
+              </div>
+              <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer;" onclick="showView('shopping-list')">
+                <div style="font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase;">Target Date</div>
+                <div style="font-size: 14px; font-weight: 800; color: #1e293b; margin-top: 3px;" id="cust-home-shoplist-next-date">Today</div>
+              </div>
+            </div>
+
+            <!-- Low-Stock Integration Prompt Banner (Injected dynamically) -->
+            <div id="cust-home-shoplist-low-stock-alert" style="display: none; margin-bottom: 12px;"></div>
+
+            <!-- Top Items to Buy Preview List -->
+            <div id="cust-home-shoplist-preview-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamic pending items preview rendered here -->
             </div>
           </div>
         </div>
@@ -1567,6 +1655,716 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- CUSTOMER ROLE ONLY: SMART GROCERY SHOPPING LIST VIEW           -->
+    <!-- ============================================================== -->
+    <div id="view-shopping-list" style="display: none; background: #f8fafc; min-height: 100vh; padding-bottom: 90px;">
+      <!-- Sticky Navigation Bar Header -->
+      <div class="header" style="background: white; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 50;">
+        <div class="flex items-center gap-3">
+          <button class="btn-icon" onclick="goBack()" style="background: #f3f4f6;" title="Back">
+            <i data-lucide="arrow-left" style="width: 18px;"></i>
+          </button>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 style="font-size: 18px; margin: 0; font-weight: 700; color: var(--text-main);">My Shopping List</h1>
+              <span class="badge" style="background: #d1fae5; color: var(--primary-dark); font-size: 10px; font-weight: 700;">Smart Grocery List</span>
+            </div>
+            <div class="text-xs text-muted flex items-center gap-1.5">
+              <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%;"></span>
+              <span id="shoplist-sync-date">Device date synced</span>
+              <span class="text-muted">·</span>
+              <span id="shoplist-customer-tag">Arjun's Grocery List</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn btn-secondary" onclick="showView('pantry')" style="font-size: 11px; padding: 6px 12px; border-radius: 18px; border-color: #a7f3d0; background: #ecfdf5; color: var(--primary-dark); font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>🥫 My Pantry</span>
+          </button>
+          <button class="btn btn-primary" onclick="openAddShoppingItemModal()" style="font-size: 12px; padding: 7px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">
+            <i data-lucide="plus-circle" style="width: 15px;"></i>
+            <span>Add Item</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-4" style="max-width: 1100px; margin: 0 auto;">
+        <!-- Top Grocery Shopping List Banner -->
+        <div class="shoplist-header-banner mb-4">
+          <div style="flex: 1;">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="badge" style="background: rgba(255,255,255,0.22); color: white; font-size: 11px;">🌱 SMART GROCERY OS</span>
+              <span class="badge" style="background: #34d399; color: #064e3b; font-size: 10px; font-weight: 800;">4 Local Stores Compared</span>
+            </div>
+            <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 4px; color: white;">Smart Grocery Shopping List & Budget</h2>
+            <p style="font-size: 12px; opacity: 0.92; margin: 0; max-width: 650px; line-height: 1.4;">
+              Prepare, save, and manage your grocery purchases digitally. Compare real-time prices across neighborhood kirana shops, prevent duplicate purchases, and update your pantry automatically upon purchase.
+            </p>
+          </div>
+          <div class="flex items-center gap-2" style="flex-wrap: wrap;">
+            <button class="btn" onclick="openSetBudgetModal()" style="background: rgba(255,255,255,0.18); color: white; font-weight: 700; font-size: 12px; padding: 8px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; gap: 4px;">
+              <i data-lucide="wallet" style="width: 14px;"></i> Budget: <span id="shoplist-banner-budget">₹1,000</span>
+            </button>
+            <button class="btn" onclick="openAddShoppingItemModal()" style="background: white; color: var(--primary-dark); font-weight: 700; font-size: 12px; padding: 8px 16px; border-radius: 20px; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 4px;">
+              <i data-lucide="plus" style="width: 14px;"></i> Add Item
+            </button>
+          </div>
+        </div>
+
+        <!-- 5-Card KPI Grid -->
+        <div class="shoplist-kpi-grid mb-4">
+          <div class="shoplist-kpi-card" onclick="setShoplistTab('pending')">
+            <div class="shoplist-kpi-top">
+              <span class="shoplist-kpi-label">TO BUY</span>
+              <div class="shoplist-kpi-icon" style="background: #ecfdf5; color: var(--primary-dark);"><i data-lucide="shopping-cart" style="width: 14px;"></i></div>
+            </div>
+            <div class="shoplist-kpi-val" id="shoplist-kpi-to-buy">0</div>
+            <div class="shoplist-kpi-sub">Pending items</div>
+          </div>
+
+          <div class="shoplist-kpi-card" onclick="setShoplistTab('purchased')">
+            <div class="shoplist-kpi-top">
+              <span class="shoplist-kpi-label" style="color: #15803d;">PURCHASED</span>
+              <div class="shoplist-kpi-icon" style="background: #f0fdf4; color: #15803d;"><i data-lucide="check-circle" style="width: 14px;"></i></div>
+            </div>
+            <div class="shoplist-kpi-val" id="shoplist-kpi-purchased" style="color: #15803d;">0</div>
+            <div class="shoplist-kpi-sub">Marked as bought</div>
+          </div>
+
+          <div class="shoplist-kpi-card" onclick="setShoplistTab('lowpantry')">
+            <div class="shoplist-kpi-top">
+              <span class="shoplist-kpi-label" style="color: #b45309;">LOW IN PANTRY</span>
+              <div class="shoplist-kpi-icon" style="background: #fef3c7; color: #b45309;"><i data-lucide="alert-triangle" style="width: 14px;"></i></div>
+            </div>
+            <div class="shoplist-kpi-val" id="shoplist-kpi-low-stock" style="color: #b45309;">0</div>
+            <div class="shoplist-kpi-sub">Ready to restock</div>
+          </div>
+
+          <div class="shoplist-kpi-card">
+            <div class="shoplist-kpi-top">
+              <span class="shoplist-kpi-label">ESTIMATED TOTAL</span>
+              <div class="shoplist-kpi-icon" style="background: #f1f5f9; color: #475569;"><i data-lucide="tag" style="width: 14px;"></i></div>
+            </div>
+            <div class="shoplist-kpi-val" id="shoplist-kpi-est-cost">₹0</div>
+            <div class="shoplist-kpi-sub">Best store prices</div>
+          </div>
+
+          <div class="shoplist-kpi-card" onclick="openSetBudgetModal()">
+            <div class="shoplist-kpi-top">
+              <span class="shoplist-kpi-label" id="shoplist-kpi-rem-label" style="color: #059669;">BUDGET REMAINING</span>
+              <div class="shoplist-kpi-icon" style="background: #ecfdf5; color: #059669;"><i data-lucide="pie-chart" style="width: 14px;"></i></div>
+            </div>
+            <div class="shoplist-kpi-val" id="shoplist-kpi-remaining" style="color: #059669;">₹1,000</div>
+            <div class="shoplist-kpi-sub" id="shoplist-kpi-rem-sub">Out of ₹1,000 budget</div>
+          </div>
+        </div>
+
+        <!-- Budget Visual Tracker Card -->
+        <div class="card mb-4" style="background: white; border: 1px solid var(--border-color); border-radius: 14px; padding: 14px 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Shopping Budget Status</span>
+              <span id="shoplist-budget-status-pill" class="badge" style="background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 700;">Within Budget</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 12px; color: var(--text-muted);">
+                Estimated Total: <b style="color: var(--text-main);" id="shoplist-budget-est-sum">₹0</b> / <b style="color: var(--primary-dark);" id="shoplist-budget-max">₹1,000</b>
+              </span>
+              <button class="btn btn-secondary" onclick="openSetBudgetModal()" style="font-size: 11px; padding: 4px 10px; border-radius: 14px;">Edit Budget</button>
+            </div>
+          </div>
+          <div style="height: 10px; background: #e2e8f0; border-radius: 6px; overflow: hidden; margin-bottom: 6px;">
+            <div id="shoplist-budget-bar-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, #10b981 0%, #059669 100%); transition: width 0.3s ease;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted);">
+            <span id="shoplist-budget-percent-text">0% utilized</span>
+            <span id="shoplist-budget-diff-text">₹1,000 budget remaining</span>
+          </div>
+
+          <!-- Alert banner if budget exceeded -->
+          <div id="shoplist-budget-exceeded-alert" style="display: none; margin-top: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 8px 12px; color: #b91c1c; font-size: 12px; font-weight: 600; align-items: center; gap: 6px;">
+            <i data-lucide="alert-octagon" style="width: 16px; flex-shrink: 0;"></i>
+            <span id="shoplist-budget-exceeded-msg">Estimated cost exceeds your budget! Consider adjusting quantities or selecting affordable alternatives below.</span>
+          </div>
+        </div>
+
+        <!-- Low Stock in Pantry Callout Banner -->
+        <div id="shoplist-pantry-low-alert-card" class="card mb-4" style="display: none; background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 14px 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 18px;">🥫</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #92400e;">Low-Stock Pantry Integration</div>
+                <div style="font-size: 11px; color: #b45309;">Ingredients that reached threshold in your kitchen pantry. Tap to add or update your shopping list.</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary" onclick="showView('pantry')" style="font-size: 11px; padding: 5px 10px; background: white; border-radius: 14px; border-color: #fde68a; color: #92400e; font-weight: 700;">
+              View Kitchen Pantry
+            </button>
+          </div>
+          <div id="shoplist-pantry-low-items-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Low stock pantry items injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Navigation Tabs Bar -->
+        <div class="shoplist-tabs-bar">
+          <button class="shoplist-tab-btn active" id="shoplist-tab-pending" onclick="setShoplistTab('pending')">
+            <i data-lucide="shopping-bag" style="width: 14px;"></i>
+            <span>To Buy</span>
+            <span class="shoplist-tab-badge" id="shoplist-tab-badge-pending">0</span>
+          </button>
+          <button class="shoplist-tab-btn" id="shoplist-tab-purchased" onclick="setShoplistTab('purchased')">
+            <i data-lucide="check-circle-2" style="width: 14px;"></i>
+            <span>Purchased</span>
+            <span class="shoplist-tab-badge" id="shoplist-tab-badge-purchased">0</span>
+          </button>
+          <button class="shoplist-tab-btn" id="shoplist-tab-history" onclick="setShoplistTab('history')">
+            <i data-lucide="history" style="width: 14px;"></i>
+            <span>Purchase History</span>
+            <span class="shoplist-tab-badge" id="shoplist-tab-badge-history">0</span>
+          </button>
+          <button class="shoplist-tab-btn" id="shoplist-tab-lowpantry" onclick="setShoplistTab('lowpantry')">
+            <i data-lucide="alert-triangle" style="width: 14px;"></i>
+            <span>Low Stock in Pantry</span>
+            <span class="shoplist-tab-badge" id="shoplist-tab-badge-lowpantry">0</span>
+          </button>
+        </div>
+
+        <!-- Filter & Search Toolbar (shown for pending & purchased tabs) -->
+        <div id="shoplist-filter-bar" class="card mb-4" style="background: white; border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 16px;">
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <div style="position: relative; flex: 1; min-width: 180px;">
+              <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; color: var(--text-muted);"></i>
+              <input type="text" id="shoplist-search-input" oninput="filterShoppingListItems()" placeholder="Search ingredients (rice, dal, milk, soap, detergent)..." style="width: 100%; padding: 8px 12px 8px 34px; border-radius: 20px; border: 1px solid var(--border-color); font-size: 12px; outline: none;" />
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select id="shoplist-sort-select" onchange="filterShoppingListItems()" style="padding: 7px 12px; border-radius: 18px; border: 1px solid var(--border-color); font-size: 11px; background: white; font-weight: 600; cursor: pointer; color: var(--text-main);">
+                <option value="date">Sort: Expected Date</option>
+                <option value="price_asc">Sort: Price (Lowest First)</option>
+                <option value="price_desc">Sort: Price (Highest First)</option>
+                <option value="name">Sort: Product Name</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Category Filter Pills Bar -->
+          <div id="shoplist-cat-pills" style="display: flex; gap: 6px; overflow-x: auto; padding-top: 10px; margin-top: 8px; border-top: 1px solid #f1f5f9;">
+            <button class="badge active" onclick="setShoplistCategoryFilter('All', this)" style="cursor: pointer; padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: 700; border: 1px solid #10b981; background: #ecfdf5; color: var(--primary-dark);">All Items</button>
+            <button class="badge" onclick="setShoplistCategoryFilter('Food & Grains', this)" style="cursor: pointer; padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; border: 1px solid var(--border-color); background: white; color: var(--text-muted);">🌾 Food & Grains</button>
+            <button class="badge" onclick="setShoplistCategoryFilter('Dal & Pulses', this)" style="cursor: pointer; padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; border: 1px solid var(--border-color); background: white; color: var(--text-muted);">🍲 Dal & Pulses</button>
+            <button class="badge" onclick="setShoplistCategoryFilter('Cooking Oils & Ghee', this)" style="cursor: pointer; padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; border: 1px solid var(--border-color); background: white; color: var(--text-muted);">🌻 Oils & Ghee</button>
+            <button class="badge" onclick="setShoplistCategoryFilter('Dairy & Eggs', this)" style="cursor: pointer; padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; border: 1px solid var(--border-color); background: white; color: var(--text-muted);">🥛 Dairy & Eggs</button>
+            <button class="badge" onclick="setShoplistCategoryFilter('Fresh Produce', this)" style="cursor: pointer; padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; border: 1px solid var(--border-color); background: white; color: var(--text-muted);">🍅 Fresh Vegetables</button>
+            <button class="badge" onclick="setShoplistCategoryFilter('Personal Care', this)" style="cursor: pointer; padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; border: 1px solid var(--border-color); background: white; color: var(--text-muted);">🧼 Soap & Hygiene</button>
+            <button class="badge" onclick="setShoplistCategoryFilter('Household Care', this)" style="cursor: pointer; padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; border: 1px solid var(--border-color); background: white; color: var(--text-muted);">🧺 Detergent & Care</button>
+          </div>
+        </div>
+
+        <!-- TAB 1: PENDING ITEMS TO BUY -->
+        <div id="shoplist-content-pending">
+          <div id="shoplist-pending-grid">
+            <!-- Dynamic pending items rendered here -->
+          </div>
+          <!-- Empty State -->
+          <div id="shoplist-pending-empty" style="display: none; background: white; border: 1px dashed #cbd5e1; border-radius: 16px; padding: 40px 20px; text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 8px;">🛒</div>
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Your Shopping List is Empty</h3>
+            <p style="font-size: 12px; color: var(--text-muted); max-width: 380px; margin: 0 auto 16px auto;">
+              No pending grocery items to buy. You can add household staples manually or import low-stock ingredients from your kitchen pantry.
+            </p>
+            <div class="flex items-center justify-center gap-2">
+              <button class="btn btn-primary" onclick="openAddShoppingItemModal()" style="font-size: 12px; padding: 8px 18px; border-radius: 20px;">
+                + Add Grocery Item
+              </button>
+              <button class="btn btn-secondary" onclick="setShoplistTab('lowpantry')" style="font-size: 12px; padding: 8px 18px; border-radius: 20px;">
+                Check Low Stock in Pantry
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: PURCHASED ITEMS -->
+        <div id="shoplist-content-purchased" style="display: none;">
+          <div id="shoplist-purchased-grid">
+            <!-- Dynamic purchased items rendered here -->
+          </div>
+          <div id="shoplist-purchased-empty" style="display: none; background: white; border: 1px dashed #cbd5e1; border-radius: 16px; padding: 40px 20px; text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 8px;">📦</div>
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">No Purchased Items in Current Trip</h3>
+            <p style="font-size: 12px; color: var(--text-muted); max-width: 380px; margin: 0 auto 16px auto;">
+              When you purchase an item from your list, tap the checkmark icon to confirm the purchase and auto-update your pantry inventory.
+            </p>
+            <button class="btn btn-primary" onclick="setShoplistTab('pending')" style="font-size: 12px; padding: 8px 18px; border-radius: 20px;">
+              View Items to Buy
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 3: PURCHASE HISTORY -->
+        <div id="shoplist-content-history" style="display: none;">
+          <div class="card mb-4" style="background: white; border: 1px solid var(--border-color); border-radius: 14px; padding: 14px 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Customer Grocery Purchase History</h3>
+                <div style="font-size: 11px; color: var(--text-muted);">Historical log of all confirmed grocery purchases, prices paid, store receipts, and pantry updates.</div>
+              </div>
+              <span class="badge" style="background: #eef8f2; color: var(--primary-dark); font-size: 11px; font-weight: 700;" id="shoplist-history-count-badge">0 Purchases Logged</span>
+            </div>
+          </div>
+
+          <div id="shoplist-history-container">
+            <!-- Dynamic purchase history rows rendered here -->
+          </div>
+          <div id="shoplist-history-empty" style="display: none; background: white; border: 1px dashed #cbd5e1; border-radius: 16px; padding: 40px 20px; text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 8px;">📜</div>
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">No Previous Purchases Recorded</h3>
+            <p style="font-size: 12px; color: var(--text-muted); max-width: 380px; margin: 0 auto;">
+              Your past grocery purchase receipts will appear here automatically when you mark items as purchased.
+            </p>
+          </div>
+        </div>
+
+        <!-- TAB 4: PANTRY LOW STOCK FEED -->
+        <div id="shoplist-content-lowpantry" style="display: none;">
+          <div class="card mb-4" style="background: white; border: 1px solid var(--border-color); border-radius: 14px; padding: 14px 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Kitchen Pantry Ingredients Requiring Refill</h3>
+                <div style="font-size: 11px; color: var(--text-muted);">Auto-detected from your current pantry inventory. Click to add directly to your shopping list without creating duplicates.</div>
+              </div>
+              <button class="btn btn-secondary" onclick="showView('pantry')" style="font-size: 11px; padding: 5px 12px; border-radius: 14px;">
+                Manage Pantry
+              </button>
+            </div>
+          </div>
+
+          <div id="shoplist-lowpantry-grid">
+            <!-- Dynamic low stock pantry items rendered here -->
+          </div>
+          <div id="shoplist-lowpantry-empty" style="display: none; background: white; border: 1px dashed #bbf7d0; border-radius: 16px; padding: 40px 20px; text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 8px;">✅</div>
+            <h3 style="font-size: 16px; font-weight: 700; color: #15803d; margin-bottom: 4px;">Kitchen Pantry Stock is Well-Stocked!</h3>
+            <p style="font-size: 12px; color: var(--text-muted); max-width: 380px; margin: 0 auto;">
+              None of your pantry ingredients have crossed their low-stock safety threshold. All staples have sufficient runway.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 1: ADD / EDIT SHOPPING LIST ITEM                         -->
+    <!-- ============================================================== -->
+    <div id="shoplist-item-modal" class="shoplist-modal-backdrop" style="display: none;">
+      <div class="shoplist-modal-content">
+        <div class="shoplist-modal-header">
+          <div class="flex items-center gap-2">
+            <span style="font-size: 18px;">🛒</span>
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0;" id="shoplist-modal-title">Add Shopping List Item</h3>
+          </div>
+          <button class="btn-icon" onclick="closeShoppingItemModal()" style="background: #f1f5f9;"><i data-lucide="x" style="width: 16px;"></i></button>
+        </div>
+
+        <form id="shoplist-item-form" onsubmit="handleShoppingItemSubmit(event)">
+          <div class="shoplist-modal-body">
+            <input type="hidden" id="shoplist-form-item-id" value="" />
+            <input type="hidden" id="shoplist-form-pantry-id" value="" />
+
+            <!-- Pantry Link Notice if applicable -->
+            <div id="shoplist-form-pantry-notice" style="display: none; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 8px 12px; margin-bottom: 14px; font-size: 12px; color: var(--primary-dark);">
+              <span style="font-weight: 700;">🥫 Linked to Kitchen Pantry:</span>
+              <span id="shoplist-form-pantry-desc">Current remaining stock: 200g</span>
+            </div>
+
+            <!-- Product Name -->
+            <div class="mb-3">
+              <label class="auth-label" for="shoplist-form-name">Item Name <span style="color: #ef4444;">*</span></label>
+              <input type="text" id="shoplist-form-name" class="auth-input" placeholder="e.g. Basmati Rice, Toor Dal, Sunflower Oil, Milk, Detergent" required oninput="handleShoppingNameInput(this.value)" />
+            </div>
+
+            <!-- Quick Suggestions Pills -->
+            <div class="mb-3">
+              <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Quick Suggestions</div>
+              <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                <button type="button" class="badge" onclick="fillShoppingSuggestion('Basmati Rice (Royal Supreme)', 'Food & Grains', 2, 'kg')" style="background: #f8fafc; cursor: pointer; border: 1px solid var(--border-color);">Basmati Rice</button>
+                <button type="button" class="badge" onclick="fillShoppingSuggestion('Toor Dal (Organic Unpolished)', 'Dal & Pulses', 1, 'kg')" style="background: #f8fafc; cursor: pointer; border: 1px solid var(--border-color);">Toor Dal</button>
+                <button type="button" class="badge" onclick="fillShoppingSuggestion('Sunflower Cooking Oil', 'Cooking Oils & Ghee', 2, 'L')" style="background: #f8fafc; cursor: pointer; border: 1px solid var(--border-color);">Sunflower Oil</button>
+                <button type="button" class="badge" onclick="fillShoppingSuggestion('Farmhouse Fresh Milk', 'Dairy & Eggs', 2, 'L')" style="background: #f8fafc; cursor: pointer; border: 1px solid var(--border-color);">Fresh Milk</button>
+                <button type="button" class="badge" onclick="fillShoppingSuggestion('Organic Free-Range Eggs', 'Dairy & Eggs', 6, 'pcs')" style="background: #f8fafc; cursor: pointer; border: 1px solid var(--border-color);">Free-Range Eggs</button>
+                <button type="button" class="badge" onclick="fillShoppingSuggestion('Fresh Country Tomatoes', 'Fresh Produce', 2, 'kg')" style="background: #f8fafc; cursor: pointer; border: 1px solid var(--border-color);">Tomatoes</button>
+                <button type="button" class="badge" onclick="fillShoppingSuggestion('Dettol Herbal Bath Soap', 'Personal Care', 4, 'pcs')" style="background: #f8fafc; cursor: pointer; border: 1px solid var(--border-color);">Bath Soap</button>
+                <button type="button" class="badge" onclick="fillShoppingSuggestion('Surf Excel Matic Top Load Detergent', 'Household Care', 1, 'kg')" style="background: #f8fafc; cursor: pointer; border: 1px solid var(--border-color);">Detergent</button>
+              </div>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-3">
+              <label class="auth-label" for="shoplist-form-category">Category</label>
+              <select id="shoplist-form-category" class="auth-input" style="background: white; cursor: pointer;">
+                <option value="Food & Grains">Food & Grains</option>
+                <option value="Dal & Pulses">Dal & Pulses</option>
+                <option value="Cooking Oils & Ghee">Cooking Oils & Ghee</option>
+                <option value="Dairy & Eggs">Dairy & Eggs</option>
+                <option value="Fresh Produce">Fresh Produce (Vegetables)</option>
+                <option value="Personal Care">Personal Care (Soap, Shampoo)</option>
+                <option value="Household Care">Household Care (Detergent, Cleaners)</option>
+                <option value="Beverages & Snacks">Beverages & Snacks</option>
+                <option value="Spices & Condiments">Spices & Condiments</option>
+              </select>
+            </div>
+
+            <!-- Quantity & Unit Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="mb-3">
+              <div>
+                <label class="auth-label" for="shoplist-form-qty">Required Quantity <span style="color: #ef4444;">*</span></label>
+                <input type="number" step="any" min="0.01" id="shoplist-form-qty" class="auth-input" value="1" required oninput="updateModalPricePreview()" />
+              </div>
+              <div>
+                <label class="auth-label" for="shoplist-form-unit">Unit <span style="color: #ef4444;">*</span></label>
+                <select id="shoplist-form-unit" class="auth-input" style="background: white; cursor: pointer;" onchange="updateModalPricePreview()">
+                  <option value="kg">kg (Kilogram)</option>
+                  <option value="g">g (Gram)</option>
+                  <option value="L">L (Litre)</option>
+                  <option value="ml">ml (Millilitre)</option>
+                  <option value="pcs">pcs (Pieces / Count)</option>
+                  <option value="packet">packet</option>
+                  <option value="bottle">bottle</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Expected Purchase Date & Optional Budget -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="mb-3">
+              <div>
+                <label class="auth-label" for="shoplist-form-date">Expected Purchase Date</label>
+                <input type="date" id="shoplist-form-date" class="auth-input" style="background: white; cursor: pointer;" />
+              </div>
+              <div>
+                <label class="auth-label" for="shoplist-form-budget">Item Budget / Price Limit (Optional)</label>
+                <div style="position: relative;">
+                  <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--text-muted);">₹</span>
+                  <input type="number" step="any" min="0" id="shoplist-form-budget" class="auth-input" style="padding-left: 28px;" placeholder="e.g. 150" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Price Comparison Mode Switcher -->
+            <div class="mb-3" style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label style="font-size: 12px; font-weight: 700; color: var(--text-main); margin: 0;">Price Recommendation Source</label>
+                <span class="badge" style="background: #ecfdf5; color: var(--primary-dark); font-size: 10px;">Smart Telemetry</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;">
+                  <input type="radio" name="shoplist_price_mode" value="auto" checked onchange="togglePriceMode(this.value)" />
+                  <span>Auto Neighborhood Store Comparison</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;">
+                  <input type="radio" name="shoplist_price_mode" value="manual" onchange="togglePriceMode(this.value)" />
+                  <span>Enter Price Manually</span>
+                </label>
+              </div>
+
+              <!-- Manual Price Entry Input -->
+              <div id="shoplist-manual-price-box" style="display: none; margin-top: 10px;">
+                <label class="auth-label" for="shoplist-form-manual-price">Customer-Entered Price (Per Unit)</label>
+                <div style="position: relative;">
+                  <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--text-muted);">₹</span>
+                  <input type="number" step="any" min="0" id="shoplist-form-manual-price" class="auth-input" style="padding-left: 28px;" placeholder="e.g. 65" oninput="updateModalPricePreview()" />
+                </div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">
+                  ⚠️ Clearly labeled as "User-Entered Price". Never fabricated or claimed as lowest price without verification.
+                </div>
+              </div>
+
+              <!-- Live Comparison Telemetry Preview Strip -->
+              <div id="shoplist-modal-price-preview" style="margin-top: 10px; padding: 8px 12px; background: white; border-radius: 8px; border: 1px solid #bbf7d0; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <div style="font-size: 11px; font-weight: 700; color: var(--primary-dark);" id="shoplist-preview-shop-name">Searching neighborhood stores...</div>
+                  <div style="font-size: 10px; color: var(--text-muted);" id="shoplist-preview-rate">Rate: -</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 14px; font-weight: 800; color: var(--primary-dark);" id="shoplist-preview-est-total">₹0</div>
+                  <div style="font-size: 9px; color: var(--text-muted);">Est. Total</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div>
+              <label class="auth-label" for="shoplist-form-notes">Notes / Brand Preference</label>
+              <input type="text" id="shoplist-form-notes" class="auth-input" placeholder="e.g. Unpolished preferred, Daawat or Fortune, buy in morning" />
+            </div>
+          </div>
+
+          <div class="shoplist-modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeShoppingItemModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="shoplist-modal-save-btn" style="padding: 8px 22px; font-weight: 700;">Save Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 2: CONFIRM PURCHASE & UPDATE PANTRY                      -->
+    <!-- ============================================================== -->
+    <div id="shoplist-confirm-modal" class="shoplist-modal-backdrop" style="display: none;">
+      <div class="shoplist-modal-content">
+        <div class="shoplist-modal-header" style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%); color: white; border-radius: 20px 20px 0 0;">
+          <div class="flex items-center gap-2">
+            <span style="font-size: 20px;">✅</span>
+            <div>
+              <h3 style="font-size: 16px; font-weight: 800; color: white; margin: 0;">Confirm Grocery Purchase</h3>
+              <div style="font-size: 11px; opacity: 0.85;">Record purchase details and synchronize with kitchen pantry</div>
+            </div>
+          </div>
+          <button class="btn-icon" onclick="closeConfirmPurchaseModal()" style="background: rgba(255,255,255,0.2); color: white;"><i data-lucide="x" style="width: 16px;"></i></button>
+        </div>
+
+        <form id="shoplist-confirm-form" onsubmit="handleConfirmPurchaseSubmit(event)">
+          <div class="shoplist-modal-body">
+            <input type="hidden" id="confirm-form-item-id" value="" />
+            <input type="hidden" id="confirm-form-pantry-id" value="" />
+            <input type="hidden" id="confirm-form-category" value="" />
+
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;">
+              <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Product Purchased</div>
+              <div style="font-size: 16px; font-weight: 800; color: var(--text-main);" id="confirm-form-prod-name">Basmati Rice</div>
+            </div>
+
+            <!-- Actual Quantity & Unit -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="mb-3">
+              <div>
+                <label class="auth-label" for="confirm-form-qty">Actual Purchased Quantity <span style="color: #ef4444;">*</span></label>
+                <input type="number" step="any" min="0.01" id="confirm-form-qty" class="auth-input" required oninput="recalcConfirmTotal()" />
+              </div>
+              <div>
+                <label class="auth-label" for="confirm-form-unit">Unit <span style="color: #ef4444;">*</span></label>
+                <select id="confirm-form-unit" class="auth-input" style="background: white; cursor: pointer;">
+                  <option value="kg">kg (Kilogram)</option>
+                  <option value="g">g (Gram)</option>
+                  <option value="L">L (Litre)</option>
+                  <option value="ml">ml (Millilitre)</option>
+                  <option value="pcs">pcs (Pieces / Count)</option>
+                  <option value="packet">packet</option>
+                  <option value="bottle">bottle</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Actual Unit Price & Total Amount Paid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="mb-3">
+              <div>
+                <label class="auth-label" for="confirm-form-price">Actual Unit Price <span style="color: #ef4444;">*</span></label>
+                <div style="position: relative;">
+                  <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--text-muted);">₹</span>
+                  <input type="number" step="any" min="0" id="confirm-form-price" class="auth-input" style="padding-left: 28px;" required oninput="recalcConfirmTotal()" />
+                </div>
+              </div>
+              <div>
+                <label class="auth-label" for="confirm-form-total">Total Amount Paid</label>
+                <div style="position: relative;">
+                  <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--text-muted);">₹</span>
+                  <input type="number" step="any" min="0" id="confirm-form-total" class="auth-input" style="padding-left: 28px; font-weight: 800; color: var(--primary-dark);" required />
+                </div>
+              </div>
+            </div>
+
+            <!-- Shop Name Purchased From -->
+            <div class="mb-3">
+              <label class="auth-label" for="confirm-form-shop">Shop / Store Name <span style="color: #ef4444;">*</span></label>
+              <select id="confirm-form-shop" class="auth-input" style="background: white; cursor: pointer;">
+                <option value="Sri Lakshmi Stores">Sri Lakshmi Stores · Indiranagar (0.8 km)</option>
+                <option value="Ganesh Provisions">Ganesh Provisions · Koramangala (1.2 km)</option>
+                <option value="Kavitha Supermarket">Kavitha Supermarket · HSR Layout (1.5 km)</option>
+                <option value="Balaji Daily Fresh">Balaji Daily Fresh · Whitefield (2.1 km)</option>
+                <option value="Other Kirana Store">Other Local Kirana Store</option>
+              </select>
+            </div>
+
+            <!-- Actual Purchase Date (Device Local Date) & Expiry Date -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="mb-3">
+              <div>
+                <label class="auth-label" for="confirm-form-date">Actual Purchase Date <span style="color: #ef4444;">*</span></label>
+                <input type="date" id="confirm-form-date" class="auth-input" style="background: white; cursor: pointer;" required />
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Default: local device date</div>
+              </div>
+              <div>
+                <label class="auth-label" for="confirm-form-expiry">Expiry Date (When Applicable)</label>
+                <input type="date" id="confirm-form-expiry" class="auth-input" style="background: white; cursor: pointer;" />
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Optional for staples</div>
+              </div>
+            </div>
+
+            <!-- Checkbox: Update My Pantry Inventory -->
+            <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 12px 14px;">
+              <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; margin: 0;">
+                <input type="checkbox" id="confirm-form-update-pantry" checked style="width: 18px; height: 18px; accent-color: #10b981; margin-top: 2px;" />
+                <div>
+                  <div style="font-size: 13px; font-weight: 700; color: #064e3b;">Update My Pantry Inventory Automatically</div>
+                  <div style="font-size: 11px; color: #047857; margin-top: 2px;">
+                    Correctly adds the purchased quantity to your kitchen stock balance, preventing double-counting or duplicate entries.
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="shoplist-modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeConfirmPurchaseModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="confirm-form-submit-btn" style="padding: 8px 22px; font-weight: 700; background: #059669; border-color: #059669;">
+              Confirm & Update Pantry
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 3: SET TOTAL SHOPPING BUDGET                             -->
+    <!-- ============================================================== -->
+    <div id="shoplist-budget-modal" class="shoplist-modal-backdrop" style="display: none;">
+      <div class="shoplist-modal-content" style="max-width: 420px;">
+        <div class="shoplist-modal-header">
+          <div class="flex items-center gap-2">
+            <span style="font-size: 18px;">💰</span>
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0;">Set Grocery Shopping Budget</h3>
+          </div>
+          <button class="btn-icon" onclick="closeSetBudgetModal()" style="background: #f1f5f9;"><i data-lucide="x" style="width: 16px;"></i></button>
+        </div>
+
+        <form onsubmit="handleSaveBudgetSubmit(event)">
+          <div class="shoplist-modal-body">
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4;">
+              Enter your target shopping budget (e.g. ₹1,000). The Smart Grocify engine calculates total estimated costs across shops and dynamically monitors your remaining budget balance.
+            </p>
+
+            <div class="mb-3">
+              <label class="auth-label" for="budget-modal-input">Total Shopping Budget (₹) <span style="color: #ef4444;">*</span></label>
+              <div style="position: relative;">
+                <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-weight: 800; font-size: 16px; color: var(--primary-dark);">₹</span>
+                <input type="number" step="any" min="1" id="budget-modal-input" class="auth-input" style="padding-left: 32px; font-size: 18px; font-weight: 800;" placeholder="1000" required />
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button type="button" class="badge" onclick="setPresetBudget(500)" style="cursor: pointer; background: #f8fafc; border: 1px solid var(--border-color);">₹500</button>
+              <button type="button" class="badge" onclick="setPresetBudget(1000)" style="cursor: pointer; background: #f8fafc; border: 1px solid var(--border-color);">₹1,000</button>
+              <button type="button" class="badge" onclick="setPresetBudget(1500)" style="cursor: pointer; background: #f8fafc; border: 1px solid var(--border-color);">₹1,500</button>
+              <button type="button" class="badge" onclick="setPresetBudget(2000)" style="cursor: pointer; background: #f8fafc; border: 1px solid var(--border-color);">₹2,000</button>
+              <button type="button" class="badge" onclick="setPresetBudget(3000)" style="cursor: pointer; background: #f8fafc; border: 1px solid var(--border-color);">₹3,000</button>
+            </div>
+          </div>
+
+          <div class="shoplist-modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeSetBudgetModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" style="padding: 8px 20px; font-weight: 700;">Save Budget</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 4: MULTI-SHOP PRICE COMPARISON DETAILS                   -->
+    <!-- ============================================================== -->
+    <div id="shoplist-comparison-modal" class="shoplist-modal-backdrop" style="display: none;">
+      <div class="shoplist-modal-content" style="max-width: 580px;">
+        <div class="shoplist-modal-header" style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%); color: white; border-radius: 20px 20px 0 0;">
+          <div class="flex items-center gap-2">
+            <span style="font-size: 20px;">⚖️</span>
+            <div>
+              <h3 style="font-size: 16px; font-weight: 800; color: white; margin: 0;" id="comp-modal-title">Neighborhood Store Price Comparison</h3>
+              <div style="font-size: 11px; opacity: 0.85;" id="comp-modal-subtitle">Comparing equivalent quantities and base units across shops</div>
+            </div>
+          </div>
+          <button class="btn-icon" onclick="closeComparisonModal()" style="background: rgba(255,255,255,0.2); color: white;"><i data-lucide="x" style="width: 16px;"></i></button>
+        </div>
+
+        <div class="shoplist-modal-body">
+          <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Comparing Required Quantity</div>
+                <div style="font-size: 15px; font-weight: 800; color: var(--text-main);" id="comp-modal-req-qty">2 kg Basmati Rice</div>
+              </div>
+              <div style="text-align: right;">
+                <span class="badge" style="background: #ecfdf5; color: var(--primary-dark); font-weight: 800; font-size: 11px;" id="comp-modal-best-shop-badge">Best Value: Sri Lakshmi Stores</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shops Comparison List -->
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">
+            Available Local Kirana Shops & Prices
+          </div>
+          <div id="comp-modal-shops-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+            <!-- Comparison rows injected dynamically -->
+          </div>
+
+          <!-- Affordable Alternatives Callout if available -->
+          <div id="comp-modal-alts-box" style="display: none; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px 14px;">
+            <div style="font-size: 12px; font-weight: 700; color: #1e40af; display: flex; align-items: center; gap: 5px; margin-bottom: 6px;">
+              <i data-lucide="sparkles" style="width: 14px;"></i> Affordable Alternatives Suggested by Telemetry
+            </div>
+            <div id="comp-modal-alts-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
+          </div>
+        </div>
+
+        <div class="shoplist-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeComparisonModal()">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 5: DUPLICATE ITEM QUANTITY UPDATE DIALOG                 -->
+    <!-- ============================================================== -->
+    <div id="shoplist-duplicate-modal" class="shoplist-modal-backdrop" style="display: none;">
+      <div class="shoplist-modal-content" style="max-width: 440px;">
+        <div class="shoplist-modal-header" style="background: #fffbeb; border-color: #fde68a;">
+          <div class="flex items-center gap-2">
+            <span style="font-size: 20px;">⚠️</span>
+            <h3 style="font-size: 15px; font-weight: 800; color: #92400e; margin: 0;">Item Already on Shopping List</h3>
+          </div>
+          <button class="btn-icon" onclick="closeDuplicateModal()" style="background: white;"><i data-lucide="x" style="width: 16px;"></i></button>
+        </div>
+
+        <div class="shoplist-modal-body">
+          <p style="font-size: 13px; color: var(--text-main); margin-bottom: 12px; line-height: 1.4;" id="duplicate-modal-msg">
+            <b>Toor Dal</b> is already on your shopping list with a quantity of <b>1 kg</b>.
+          </p>
+
+          <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; font-size: 12px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span class="text-muted">Current Pantry Stock:</span>
+              <b style="color: #b45309;" id="duplicate-modal-pantry-stock">200g remaining</b>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span class="text-muted">Already on Shopping List:</span>
+              <b style="color: var(--primary-dark);" id="duplicate-modal-cur-list-qty">1 kg</b>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="auth-label" for="duplicate-modal-new-qty">Update Required Quantity To:</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="number" step="any" min="0.01" id="duplicate-modal-new-qty" class="auth-input" style="font-weight: 700;" value="2" />
+              <input type="text" id="duplicate-modal-unit" class="auth-input" style="width: 80px; background: #f8fafc;" readonly value="kg" />
+            </div>
+          </div>
+        </div>
+
+        <div class="shoplist-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeDuplicateModal()">Keep Existing (1 kg)</button>
+          <button type="button" class="btn btn-primary" onclick="confirmUpdateDuplicateQuantity()" style="padding: 8px 18px; font-weight: 700;">
+            Update Quantity
+          </button>
+        </div>
       </div>
     </div>
 
@@ -5535,6 +6333,7 @@
                       if (viewId === 'profile') loadProfileData();
                       if (viewId === 'orders') loadOrdersData();
                       if (viewId === 'order-tracking') loadLatestOrderTracking();
+                      if (viewId === 'shopping-list') loadShoppingListData();
 
                       // Splash screen & auth top nav visibility
                       if (viewId === 'splash' || viewId === 'auth') {
@@ -5551,6 +6350,7 @@
                         'discover': 'nav-btn-products',
                         'product': 'nav-btn-products',
                         'pantry': 'nav-btn-pantry',
+                        'shopping-list': 'nav-btn-shopping-list',
                         'inventory': 'nav-btn-inventory',
                         'merchant': 'nav-btn-dashboard',
                         'decision': 'nav-btn-dashboard',
@@ -6157,11 +6957,13 @@ sugar: {
                           greetingEl.innerHTML = `Good evening, ${name} 🌱`;
                         }
 
-                        // Refresh Customer Home Pantry Widget
+                        // Refresh Customer Home Pantry & Shopping List Widgets
                         updateCustomerHomePantry();
+                        if (typeof loadShoppingListData === 'function') loadShoppingListData();
                       } catch (err) {
                         console.error('Error fetching customer data:', err);
                         updateCustomerHomePantry();
+                        if (typeof loadShoppingListData === 'function') loadShoppingListData();
                       }
                     }
 
@@ -8251,9 +9053,14 @@ sugar: {
                                 <div class="pantry-alert-title">${al.title}</div>
                                 <div class="pantry-alert-desc">${al.msg}</div>
                               </div>
-                              <button class="btn btn-secondary" onclick="openRecordUsageModal('${al.itemId}')" style="font-size: 11px; padding: 5px 10px; background: white; border-radius: 14px; flex-shrink: 0;">
-                                Record Usage
-                              </button>
+                              <div style="display: flex; gap: 6px; flex-shrink: 0; align-items: center;">
+                                <button class="btn btn-secondary" onclick="addLowStockPantryToShoppingList('${al.itemId}')" style="font-size: 11px; padding: 5px 10px; background: #fffbeb; border-color: #fde68a; color: #92400e; border-radius: 14px; font-weight: 700; display: flex; align-items: center; gap: 4px;" title="Add to Smart Shopping List">
+                                  <i data-lucide="plus-circle" style="width: 12px;"></i> + Shopping List
+                                </button>
+                                <button class="btn btn-secondary" onclick="openRecordUsageModal('${al.itemId}')" style="font-size: 11px; padding: 5px 10px; background: white; border-radius: 14px;">
+                                  Record Usage
+                                </button>
+                              </div>
                             </div>
                           `).join('');
                         } else {
@@ -8793,6 +9600,9 @@ sugar: {
                             </button>
                             <button class="btn btn-secondary pantry-btn-edit" onclick="openEditPantryModal('${item.id}')" title="Edit Item Details">
                               <i data-lucide="edit-3" style="width: 13px;"></i> Edit
+                            </button>
+                            <button class="btn btn-secondary" onclick="addLowStockPantryToShoppingList('${item.id}')" title="Add to Smart Shopping List" style="padding: 7px 10px; border-radius: 14px; background: #fffbeb; color: #92400e; border-color: #fde68a; font-weight: 700;">
+                              <i data-lucide="list-plus" style="width: 13px;"></i> + List
                             </button>
                             <button class="btn btn-secondary pantry-btn-delete" onclick="deletePantryItem('${item.id}')" title="Delete from Pantry">
                               <i data-lucide="trash-2" style="width: 13px;"></i>
@@ -9431,12 +10241,1271 @@ sugar: {
                       showToast(`Added "${item.product_name}" to your basket! 🛒`, 'success');
                     }
 
-                    // Auto-sync pantry on page load
+                    // Auto-sync pantry and shopping list on page load
                     window.addEventListener('DOMContentLoaded', () => {
                       setTimeout(() => {
                         updateCustomerHomePantry();
+                        loadShoppingListData();
                       }, 400);
                     });
+
+                    // ==============================================================
+                    // SMART GROCERY SHOPPING LIST CONTROLLER
+                    // ==============================================================
+                    let currentShoppingItems = [];
+                    let currentPurchases = [];
+                    let shoppingListBudget = 1000;
+                    let shoplistActiveTab = 'pending';
+                    let shoplistActiveCategory = 'All';
+                    let shoplistSearchTerm = '';
+                    let shoplistSortBy = 'date';
+                    let activeDuplicateExistingItem = null;
+                    let shoppingPriceCheckTimeout = null;
+
+                    function getShoppingUserId() {
+                      // Returns active logged-in customer ID (Arjun Sharma)
+                      return (typeof getPantryUserId === 'function') ? getPantryUserId() : 'user_arjun';
+                    }
+
+                    // Helper: Device Local Date formatted YYYY-MM-DD
+                    function getDeviceLocalDateStr(daysOffset = 0) {
+                      const d = new Date();
+                      if (daysOffset !== 0) d.setDate(d.getDate() + daysOffset);
+                      const year = d.getFullYear();
+                      const month = String(d.getMonth() + 1).padStart(2, '0');
+                      const day = String(d.getDate()).padStart(2, '0');
+                      return `${year}-${month}-${day}`;
+                    }
+
+                    // Load all shopping list data from backend
+                    async function loadShoppingListData() {
+                      const userId = getShoppingUserId();
+                      try {
+                        const [itemsRes, budgetRes, purchasesRes] = await Promise.all([
+                          fetch(`/api/shopping-list?user_id=${userId}`),
+                          fetch(`/api/shopping-list/budget?user_id=${userId}`),
+                          fetch(`/api/shopping-list/purchases?user_id=${userId}`)
+                        ]);
+
+                        if (itemsRes.ok) {
+                          const data = await itemsRes.json();
+                          currentShoppingItems = data.items || [];
+                          localStorage.setItem(`grocify_shopping_list_${userId}`, JSON.stringify(currentShoppingItems));
+                        }
+                        if (budgetRes.ok) {
+                          const bData = await budgetRes.json();
+                          shoppingListBudget = (bData.budget && bData.budget.total_budget) ? Number(bData.budget.total_budget) : 1000;
+                          localStorage.setItem(`grocify_shopping_budget_${userId}`, String(shoppingListBudget));
+                        }
+                        if (purchasesRes.ok) {
+                          const pData = await purchasesRes.json();
+                          currentPurchases = pData.purchases || [];
+                          localStorage.setItem(`grocify_shopping_purchases_${userId}`, JSON.stringify(currentPurchases));
+                        }
+                      } catch (err) {
+                        console.warn('Network offline, using cached shopping list data:', err);
+                        const cachedItems = localStorage.getItem(`grocify_shopping_list_${userId}`);
+                        if (cachedItems) {
+                          try { currentShoppingItems = JSON.parse(cachedItems); } catch(e){}
+                        }
+                        const cachedBudget = localStorage.getItem(`grocify_shopping_budget_${userId}`);
+                        if (cachedBudget) shoppingListBudget = Number(cachedBudget) || 1000;
+                        const cachedPurchases = localStorage.getItem(`grocify_shopping_purchases_${userId}`);
+                        if (cachedPurchases) {
+                          try { currentPurchases = JSON.parse(cachedPurchases); } catch(e){}
+                        }
+                      }
+
+                      // Check pantry items
+                      if (!currentPantryItems || currentPantryItems.length === 0) {
+                        if (typeof loadPantryData === 'function') {
+                          try { await loadPantryData(); } catch(e){}
+                        }
+                      }
+
+                      renderShoppingListUI();
+                      updateCustomerHomeShoppingList();
+                    }
+
+                    // Main UI Renderer for Smart Grocery Shopping List
+                    function renderShoppingListUI() {
+                      // Synchronize device date label
+                      const syncDateEl = document.getElementById('shoplist-sync-date');
+                      if (syncDateEl) {
+                        const today = new Date();
+                        syncDateEl.innerText = `Device Date: ${today.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+                      }
+
+                      const pendingItems = currentShoppingItems.filter(i => i.status === 'pending');
+                      const purchasedItems = currentShoppingItems.filter(i => i.status === 'purchased');
+
+                      // Calculate low-stock pantry items
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+                      const lowStockPantry = (currentPantryItems || []).filter(item => {
+                        const stock = Math.max(0, item.current_stock_base || 0);
+                        const threshold = item.low_stock_threshold_base || 0;
+                        const dailyRate = item.daily_usage_base || 0;
+                        const runwayDays = dailyRate > 0 ? Math.floor(stock / dailyRate) : null;
+                        return stock <= threshold || (runwayDays !== null && runwayDays <= 2);
+                      });
+
+                      // Calculate estimated total cost of pending items
+                      let estTotalCost = 0;
+                      pendingItems.forEach(item => {
+                        let unitRate = 0;
+                        if (item.suggested_price) {
+                          unitRate = Number(item.suggested_price);
+                        } else if (item.user_entered_price) {
+                          unitRate = Number(item.user_entered_price);
+                        }
+                        const qty = Number(item.required_quantity) || 1;
+                        estTotalCost += (unitRate * qty);
+                      });
+                      estTotalCost = Math.round(estTotalCost);
+
+                      const budget = shoppingListBudget || 1000;
+                      const remainingBudget = budget - estTotalCost;
+
+                      // Update 5-Card KPI Grid
+                      const kpiToBuy = document.getElementById('shoplist-kpi-to-buy');
+                      const kpiPurchased = document.getElementById('shoplist-kpi-purchased');
+                      const kpiLow = document.getElementById('shoplist-kpi-low-stock');
+                      const kpiEst = document.getElementById('shoplist-kpi-est-cost');
+                      const kpiRem = document.getElementById('shoplist-kpi-remaining');
+                      const kpiRemLabel = document.getElementById('shoplist-kpi-rem-label');
+                      const kpiRemSub = document.getElementById('shoplist-kpi-rem-sub');
+
+                      if (kpiToBuy) kpiToBuy.innerText = pendingItems.length;
+                      if (kpiPurchased) kpiPurchased.innerText = purchasedItems.length;
+                      if (kpiLow) kpiLow.innerText = lowStockPantry.length;
+                      if (kpiEst) kpiEst.innerText = `₹${estTotalCost.toLocaleString('en-IN')}`;
+
+                      if (kpiRem) {
+                        if (remainingBudget >= 0) {
+                          kpiRem.innerText = `₹${remainingBudget.toLocaleString('en-IN')}`;
+                          kpiRem.style.color = '#059669';
+                          if (kpiRemLabel) {
+                            kpiRemLabel.innerText = 'BUDGET REMAINING';
+                            kpiRemLabel.style.color = '#059669';
+                          }
+                          if (kpiRemSub) kpiRemSub.innerText = `Out of ₹${budget.toLocaleString('en-IN')} budget`;
+                        } else {
+                          kpiRem.innerText = `-₹${Math.abs(remainingBudget).toLocaleString('en-IN')}`;
+                          kpiRem.style.color = '#dc2626';
+                          if (kpiRemLabel) {
+                            kpiRemLabel.innerText = 'BUDGET OVER LIMIT';
+                            kpiRemLabel.style.color = '#dc2626';
+                          }
+                          if (kpiRemSub) kpiRemSub.innerText = `Exceeded by ₹${Math.abs(remainingBudget).toLocaleString('en-IN')}`;
+                        }
+                      }
+
+                      // Update Budget Visual Tracker Card
+                      const bannerBudgetEl = document.getElementById('shoplist-banner-budget');
+                      const budgetEstSum = document.getElementById('shoplist-budget-est-sum');
+                      const budgetMaxEl = document.getElementById('shoplist-budget-max');
+                      const barFill = document.getElementById('shoplist-budget-bar-fill');
+                      const statusPill = document.getElementById('shoplist-budget-status-pill');
+                      const pctText = document.getElementById('shoplist-budget-percent-text');
+                      const diffText = document.getElementById('shoplist-budget-diff-text');
+                      const alertExceeded = document.getElementById('shoplist-budget-exceeded-alert');
+                      const alertExceededMsg = document.getElementById('shoplist-budget-exceeded-msg');
+
+                      if (bannerBudgetEl) bannerBudgetEl.innerText = `₹${budget.toLocaleString('en-IN')}`;
+                      if (budgetEstSum) budgetEstSum.innerText = `₹${estTotalCost.toLocaleString('en-IN')}`;
+                      if (budgetMaxEl) budgetMaxEl.innerText = `₹${budget.toLocaleString('en-IN')}`;
+
+                      const utilizedPct = budget > 0 ? Math.round((estTotalCost / budget) * 100) : 0;
+                      if (barFill) {
+                        barFill.style.width = `${Math.min(100, Math.max(0, utilizedPct))}%`;
+                        if (estTotalCost > budget) {
+                          barFill.style.background = 'linear-gradient(90deg, #f87171 0%, #ef4444 100%)';
+                        } else if (utilizedPct >= 80) {
+                          barFill.style.background = 'linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%)';
+                        } else {
+                          barFill.style.background = 'linear-gradient(90deg, #10b981 0%, #059669 100%)';
+                        }
+                      }
+
+                      if (statusPill) {
+                        if (estTotalCost > budget) {
+                          statusPill.style.background = '#fef2f2';
+                          statusPill.style.color = '#b91c1c';
+                          statusPill.innerText = `⚠️ Budget Exceeded by ₹${estTotalCost - budget}`;
+                        } else if (utilizedPct >= 80) {
+                          statusPill.style.background = '#fffbeb';
+                          statusPill.style.color = '#b45309';
+                          statusPill.innerText = `Near Limit (${utilizedPct}%)`;
+                        } else {
+                          statusPill.style.background = '#ecfdf5';
+                          statusPill.style.color = '#047857';
+                          statusPill.innerText = `Within Budget (${utilizedPct}%)`;
+                        }
+                      }
+
+                      if (pctText) pctText.innerText = `${utilizedPct}% utilized`;
+                      if (diffText) {
+                        diffText.innerText = remainingBudget >= 0
+                          ? `₹${remainingBudget.toLocaleString('en-IN')} budget remaining`
+                          : `₹${Math.abs(remainingBudget).toLocaleString('en-IN')} over budget`;
+                      }
+
+                      if (alertExceeded) {
+                        if (estTotalCost > budget) {
+                          alertExceeded.style.display = 'flex';
+                          if (alertExceededMsg) {
+                            alertExceededMsg.innerText = `Estimated grocery cost (₹${estTotalCost.toLocaleString('en-IN')}) exceeds your budget (₹${budget.toLocaleString('en-IN')}) by ₹${(estTotalCost - budget).toLocaleString('en-IN')}! Review items or choose affordable alternatives below.`;
+                          }
+                        } else {
+                          alertExceeded.style.display = 'none';
+                        }
+                      }
+
+                      // Update Tab Badges
+                      const badgePending = document.getElementById('shoplist-tab-badge-pending');
+                      const badgePurchased = document.getElementById('shoplist-tab-badge-purchased');
+                      const badgeHistory = document.getElementById('shoplist-tab-badge-history');
+                      const badgeLowPantry = document.getElementById('shoplist-tab-badge-lowpantry');
+                      const badgeHistCount = document.getElementById('shoplist-history-count-badge');
+
+                      if (badgePending) badgePending.innerText = pendingItems.length;
+                      if (badgePurchased) badgePurchased.innerText = purchasedItems.length;
+                      if (badgeHistory) badgeHistory.innerText = currentPurchases.length;
+                      if (badgeLowPantry) badgeLowPantry.innerText = lowStockPantry.length;
+                      if (badgeHistCount) badgeHistCount.innerText = `${currentPurchases.length} Purchases Logged`;
+
+                      // Low Stock in Pantry Callout Banner on Top
+                      const pantryAlertCard = document.getElementById('shoplist-pantry-low-alert-card');
+                      const pantryAlertItemsBox = document.getElementById('shoplist-pantry-low-items-container');
+                      if (pantryAlertCard && pantryAlertItemsBox) {
+                        if (lowStockPantry.length > 0) {
+                          pantryAlertCard.style.display = 'block';
+                          pantryAlertItemsBox.innerHTML = lowStockPantry.map(pItem => {
+                            const alreadyInList = pendingItems.some(i =>
+                              String(i.pantry_item_id) === String(pItem.id) ||
+                              i.product_name.toLowerCase().trim() === pItem.product_name.toLowerCase().trim() ||
+                              (i.canonical_name && pItem.product_name.toLowerCase().includes(i.canonical_name))
+                            );
+                            const stock = Math.max(0, pItem.current_stock_base || 0);
+                            const threshold = pItem.low_stock_threshold_base || 0;
+                            const dailyRate = pItem.daily_usage_base || 0;
+                            const runwayDays = dailyRate > 0 ? Math.floor(stock / dailyRate) : null;
+                            const runwayMsg = runwayDays !== null ? (runwayDays <= 0 ? 'Out of stock' : `~${runwayDays}d runway left`) : 'Low stock';
+
+                            return `
+                              <div style="background: white; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                  <span style="font-size: 20px;">${(typeof getPantryCategoryEmoji === 'function') ? getPantryCategoryEmoji(pItem.category) : '🥫'}</span>
+                                  <div>
+                                    <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">${pItem.product_name}</div>
+                                    <div style="font-size: 11px; color: #b45309;">
+                                      Remaining: <b>${(typeof formatPantryBaseQty === 'function') ? formatPantryBaseQty(stock, pItem.unit) : stock + ' ' + pItem.unit}</b> · Threshold: ${(typeof formatPantryBaseQty === 'function') ? formatPantryBaseQty(threshold, pItem.unit) : threshold} · <span style="font-weight: 700;">${runwayMsg}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                  ${alreadyInList ? `
+                                    <span class="badge" style="background: #eef8f2; color: var(--primary-dark); font-size: 11px; font-weight: 700;">Already on List</span>
+                                    <button class="btn btn-secondary" onclick="addLowStockPantryToShoppingList('${pItem.id}')" style="font-size: 11px; padding: 5px 12px; border-radius: 14px; background: #fef3c7; border-color: #fde68a; color: #92400e; font-weight: 700;">
+                                      Update Qty
+                                    </button>
+                                  ` : `
+                                    <button class="btn btn-primary" onclick="addLowStockPantryToShoppingList('${pItem.id}')" style="font-size: 11px; padding: 5px 12px; border-radius: 14px; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                                      <i data-lucide="plus" style="width: 12px;"></i> Add to Shopping List
+                                    </button>
+                                  `}
+                                </div>
+                              </div>
+                            `;
+                          }).join('');
+                        } else {
+                          pantryAlertCard.style.display = 'none';
+                        }
+                      }
+
+                      // Render active tab view
+                      renderActiveTabContent(pendingItems, purchasedItems, lowStockPantry);
+                      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+                    }
+
+                    // Render active tab container
+                    function renderActiveTabContent(pendingItems, purchasedItems, lowStockPantry) {
+                      const pendingTabEl = document.getElementById('shoplist-content-pending');
+                      const purchasedTabEl = document.getElementById('shoplist-content-purchased');
+                      const historyTabEl = document.getElementById('shoplist-content-history');
+                      const lowPantryTabEl = document.getElementById('shoplist-content-lowpantry');
+                      const filterBar = document.getElementById('shoplist-filter-bar');
+
+                      if (pendingTabEl) pendingTabEl.style.display = shoplistActiveTab === 'pending' ? 'block' : 'none';
+                      if (purchasedTabEl) purchasedTabEl.style.display = shoplistActiveTab === 'purchased' ? 'block' : 'none';
+                      if (historyTabEl) historyTabEl.style.display = shoplistActiveTab === 'history' ? 'block' : 'none';
+                      if (lowPantryTabEl) lowPantryTabEl.style.display = shoplistActiveTab === 'lowpantry' ? 'block' : 'none';
+
+                      if (filterBar) {
+                        filterBar.style.display = (shoplistActiveTab === 'pending' || shoplistActiveTab === 'purchased') ? 'block' : 'none';
+                      }
+
+                      // 1. Pending Items
+                      if (shoplistActiveTab === 'pending') {
+                        let filtered = filterItemsList(pendingItems);
+                        const grid = document.getElementById('shoplist-pending-grid');
+                        const empty = document.getElementById('shoplist-pending-empty');
+                        if (grid && empty) {
+                          if (filtered.length === 0) {
+                            grid.innerHTML = '';
+                            empty.style.display = 'block';
+                          } else {
+                            empty.style.display = 'none';
+                            grid.innerHTML = filtered.map(item => renderShoppingItemCard(item, false)).join('');
+                          }
+                        }
+                      }
+
+                      // 2. Purchased Items
+                      if (shoplistActiveTab === 'purchased') {
+                        let filtered = filterItemsList(purchasedItems);
+                        const grid = document.getElementById('shoplist-purchased-grid');
+                        const empty = document.getElementById('shoplist-purchased-empty');
+                        if (grid && empty) {
+                          if (filtered.length === 0) {
+                            grid.innerHTML = '';
+                            empty.style.display = 'block';
+                          } else {
+                            empty.style.display = 'none';
+                            grid.innerHTML = filtered.map(item => renderShoppingItemCard(item, true)).join('');
+                          }
+                        }
+                      }
+
+                      // 3. Purchase History Tab
+                      if (shoplistActiveTab === 'history') {
+                        const container = document.getElementById('shoplist-history-container');
+                        const empty = document.getElementById('shoplist-history-empty');
+                        if (container && empty) {
+                          if (!currentPurchases || currentPurchases.length === 0) {
+                            container.innerHTML = '';
+                            empty.style.display = 'block';
+                          } else {
+                            empty.style.display = 'none';
+                            container.innerHTML = currentPurchases.map(p => `
+                              <div class="card mb-3" style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
+                                  <div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                                      <span style="font-size: 15px; font-weight: 800; color: var(--text-main);">${p.product_name}</span>
+                                      <span class="badge" style="background: #f1f5f9; color: var(--text-muted); font-size: 10px;">${p.category || 'Grocery'}</span>
+                                      ${p.pantry_updated ? '<span class="badge" style="background: #ecfdf5; color: #047857; font-size: 10px; font-weight: 700;">🥫 Pantry Synchronized</span>' : ''}
+                                    </div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">
+                                      Purchased from: <b style="color: var(--text-main);">${p.shop_name || 'Neighborhood Store'}</b> · Date: <b style="color: var(--text-main);">${p.purchase_date}</b>
+                                      ${p.expiry_date ? ` · Expiry: ${p.expiry_date}` : ''}
+                                    </div>
+                                  </div>
+                                  <div style="text-align: right;">
+                                    <div style="font-size: 16px; font-weight: 800; color: #047857;">₹${Number(p.total_amount).toLocaleString('en-IN')}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">${p.purchased_quantity} ${p.unit} @ ₹${p.unit_price}/${p.unit}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            `).join('');
+                          }
+                        }
+                      }
+
+                      // 4. Low Pantry Feed Tab
+                      if (shoplistActiveTab === 'lowpantry') {
+                        const grid = document.getElementById('shoplist-lowpantry-grid');
+                        const empty = document.getElementById('shoplist-lowpantry-empty');
+                        if (grid && empty) {
+                          if (lowStockPantry.length === 0) {
+                            grid.innerHTML = '';
+                            empty.style.display = 'block';
+                          } else {
+                            empty.style.display = 'none';
+                            grid.innerHTML = lowStockPantry.map(pItem => {
+                              const alreadyInList = pendingItems.some(i =>
+                                String(i.pantry_item_id) === String(pItem.id) ||
+                                i.product_name.toLowerCase().trim() === pItem.product_name.toLowerCase().trim()
+                              );
+                              const stock = Math.max(0, pItem.current_stock_base || 0);
+                              const threshold = pItem.low_stock_threshold_base || 0;
+                              const orig = Math.max(1, pItem.original_quantity_base || 1);
+                              const pct = Math.min(100, Math.max(0, Math.round((stock / orig) * 100)));
+
+                              return `
+                                <div class="card mb-3" style="background: white; border: 1px solid #fde68a; border-radius: 12px; padding: 14px 16px;">
+                                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                      <span style="font-size: 24px;">${(typeof getPantryCategoryEmoji === 'function') ? getPantryCategoryEmoji(pItem.category) : '🥫'}</span>
+                                      <div>
+                                        <div style="font-size: 14px; font-weight: 800; color: var(--text-main);">${pItem.product_name}</div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">${pItem.category} · Threshold: ${(typeof formatPantryBaseQty === 'function') ? formatPantryBaseQty(threshold, pItem.unit) : threshold}</div>
+                                      </div>
+                                    </div>
+                                    <span class="badge" style="background: #fef3c7; color: #b45309; font-weight: 700; font-size: 11px;">⚠️ Low Stock</span>
+                                  </div>
+                                  <div style="height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
+                                    <div style="height: 100%; width: ${pct}%; background: #f59e0b;"></div>
+                                  </div>
+                                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 12px; color: #b45309; font-weight: 700;">
+                                      Current Stock: ${(typeof formatPantryBaseQty === 'function') ? formatPantryBaseQty(stock, pItem.unit) : stock} remaining
+                                    </span>
+                                    <button class="btn btn-primary" onclick="addLowStockPantryToShoppingList('${pItem.id}')" style="font-size: 11px; padding: 6px 14px; border-radius: 16px; font-weight: 700;">
+                                      ${alreadyInList ? 'Update Qty in Shopping List' : '+ Add to Shopping List'}
+                                    </button>
+                                  </div>
+                                </div>
+                              `;
+                            }).join('');
+                          }
+                        }
+                      }
+                    }
+
+                    // Filter and sort items helper
+                    function filterItemsList(items) {
+                      return items.filter(it => {
+                        if (shoplistActiveCategory !== 'All' && it.category !== shoplistActiveCategory) return false;
+                        if (shoplistSearchTerm) {
+                          const term = shoplistSearchTerm.toLowerCase();
+                          const matchesName = it.product_name.toLowerCase().includes(term);
+                          const matchesCat = (it.category || '').toLowerCase().includes(term);
+                          const matchesNotes = (it.notes || '').toLowerCase().includes(term);
+                          if (!matchesName && !matchesCat && !matchesNotes) return false;
+                        }
+                        return true;
+                      }).sort((a, b) => {
+                        if (shoplistSortBy === 'date') {
+                          return (a.expected_date || '9999').localeCompare(b.expected_date || '9999');
+                        } else if (shoplistSortBy === 'price_asc') {
+                          const pA = (a.suggested_price || a.user_entered_price || 0) * (a.required_quantity || 1);
+                          const pB = (b.suggested_price || b.user_entered_price || 0) * (b.required_quantity || 1);
+                          return pA - pB;
+                        } else if (shoplistSortBy === 'price_desc') {
+                          const pA = (a.suggested_price || a.user_entered_price || 0) * (a.required_quantity || 1);
+                          const pB = (b.suggested_price || b.user_entered_price || 0) * (b.required_quantity || 1);
+                          return pB - pA;
+                        } else if (shoplistSortBy === 'name') {
+                          return a.product_name.localeCompare(b.product_name);
+                        }
+                        return 0;
+                      });
+                    }
+
+                    // Render Individual Shopping Item Card
+                    function renderShoppingItemCard(item, isPurchased) {
+                      const hasStoreData = Boolean(item.suggested_price && item.suggested_shop);
+                      const hasUserPrice = Boolean(!hasStoreData && item.user_entered_price);
+                      const qty = Number(item.required_quantity) || 1;
+                      const unit = item.unit || 'kg';
+
+                      let unitPrice = 0;
+                      let estTotal = 0;
+                      if (hasStoreData) {
+                        unitPrice = Number(item.suggested_price);
+                        estTotal = Math.round(unitPrice * qty);
+                      } else if (hasUserPrice) {
+                        unitPrice = Number(item.user_entered_price);
+                        estTotal = Math.round(unitPrice * qty);
+                      }
+
+                      // Date label & overdue detection
+                      let dateBadge = '';
+                      if (item.expected_date) {
+                        const todayStr = getDeviceLocalDateStr();
+                        if (item.expected_date < todayStr && !isPurchased) {
+                          dateBadge = `<span class="badge" style="background: #fef2f2; color: #b91c1c; font-size: 10px; font-weight: 700;">⚠️ Due: ${item.expected_date}</span>`;
+                        } else if (item.expected_date === todayStr) {
+                          dateBadge = `<span class="badge" style="background: #ecfdf5; color: #047857; font-size: 10px; font-weight: 700;">📅 Buy Today</span>`;
+                        } else {
+                          dateBadge = `<span class="badge" style="background: #f1f5f9; color: var(--text-muted); font-size: 10px;">Expected: ${item.expected_date}</span>`;
+                        }
+                      }
+
+                      return `
+                        <div class="shoplist-item-card ${isPurchased ? 'purchased' : ''}" id="shoplist-card-${item.id}">
+                          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                            <div style="flex: 1; min-width: 180px;">
+                              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px;">
+                                <span class="badge" style="background: #f8fafc; color: var(--text-muted); font-size: 10px; border: 1px solid var(--border-color);">${item.category || 'Grocery'}</span>
+                                ${dateBadge}
+                                ${item.pantry_item_id ? '<span class="badge" style="background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 700;">🥫 Low Stock Refill</span>' : ''}
+                                ${item.item_budget ? `<span class="badge" style="background: #f1f5f9; color: var(--text-muted); font-size: 10px;">Limit: ₹${item.item_budget}</span>` : ''}
+                              </div>
+                              <h3 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0; line-height: 1.3;">
+                                ${item.product_name}
+                              </h3>
+                              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                                Required: <b style="color: var(--text-main); font-size: 13px;">${qty} ${unit}</b>
+                                ${item.notes ? ` · <span style="font-style: italic;">"${item.notes}"</span>` : ''}
+                              </div>
+                            </div>
+
+                            <div style="text-align: right;">
+                              ${estTotal > 0 ? `
+                                <div style="font-size: 16px; font-weight: 800; color: var(--primary-dark);">₹${estTotal.toLocaleString('en-IN')}</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">₹${unitPrice}/${unit}</div>
+                              ` : `
+                                <div style="font-size: 12px; color: var(--text-muted); font-style: italic;">No price set</div>
+                              `}
+                            </div>
+                          </div>
+
+                          <!-- Price Recommendation Strip -->
+                          <div class="shoplist-price-strip">
+                            ${hasStoreData ? `
+                              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 6px;">
+                                <div>
+                                  <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span class="shoplist-badge store"><i data-lucide="check" style="width: 10px; display: inline;"></i> Price Comparison Available</span>
+                                    <span style="font-size: 12px; font-weight: 700; color: #064e3b;">${item.suggested_shop} (Lowest Price)</span>
+                                  </div>
+                                  <div style="font-size: 11px; color: #047857; margin-top: 2px;">
+                                    Best Rate: <b>₹${item.suggested_price} / ${unit}</b> · Estimated item cost: <b>₹${estTotal}</b>
+                                  </div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="openComparisonModal('${item.product_name.replace(/'/g, "\'")}', ${qty}, '${unit}')" style="font-size: 11px; padding: 4px 10px; border-radius: 12px; background: white; border-color: #86efac; color: #064e3b; font-weight: 700;">
+                                  ⚖️ Compare 4 Stores
+                                </button>
+                              </div>
+                            ` : (hasUserPrice ? `
+                              <div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                  <span class="shoplist-badge manual">✍️ User-Entered Price</span>
+                                  <span style="font-size: 12px; font-weight: 600; color: #334155;">Customer rate: ₹${item.user_entered_price} / ${unit}</span>
+                                </div>
+                                <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">
+                                  Clearly labeled user price. No neighborhood store comparison claimed.
+                                </div>
+                              </div>
+                            ` : `
+                              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <div style="font-size: 11px; color: #9a3412;">
+                                  <span class="shoplist-badge unavail">Price Not Available</span>
+                                  <span>No local catalog match found. Enter price manually or set limit.</span>
+                                </div>
+                                <button class="btn btn-secondary" onclick="openEditShoppingItemModal('${item.id}')" style="font-size: 10px; padding: 3px 8px; border-radius: 10px;">
+                                  Set Price
+                                </button>
+                              </div>
+                            `)}
+                          </div>
+
+                          <!-- Affordable Alternative Callout Strip -->
+                          ${item.affordable_alternative ? `
+                            <div class="shoplist-alt-strip">
+                              <i data-lucide="sparkles" style="width: 14px; color: #2563eb; flex-shrink: 0;"></i>
+                              <div style="flex: 1;">
+                                <span style="font-weight: 700; color: #1e40af;">Affordable Alternative:</span>
+                                <span>Try <b>${item.affordable_alternative.product_name}</b> at <b>₹${item.affordable_alternative.price}/${item.affordable_alternative.unit}</b> (${item.affordable_alternative.shop_name}) · Save ~₹${Math.round((item.suggested_price - item.affordable_alternative.price) * qty)}!</span>
+                              </div>
+                            </div>
+                          ` : ''}
+
+                          <!-- Actions Bar -->
+                          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9;">
+                            <div style="display: flex; gap: 6px;">
+                              ${!isPurchased ? `
+                                <button class="btn btn-primary" onclick="openConfirmPurchaseModal('${item.id}')" style="font-size: 11px; padding: 6px 14px; border-radius: 16px; font-weight: 700; display: flex; align-items: center; gap: 4px; background: #059669; border-color: #059669;">
+                                  <i data-lucide="check" style="width: 13px;"></i> Mark as Purchased
+                                </button>
+                              ` : `
+                                <span class="badge" style="background: #ecfdf5; color: #047857; font-weight: 700; font-size: 11px; padding: 6px 12px;">
+                                  ✅ Purchased on ${item.purchase_date || 'Today'}
+                                </span>
+                              `}
+                            </div>
+
+                            <div style="display: flex; gap: 4px;">
+                              <button class="btn btn-secondary" onclick="openEditShoppingItemModal('${item.id}')" style="font-size: 11px; padding: 5px 8px; border-radius: 12px;" title="Edit Item">
+                                <i data-lucide="edit-3" style="width: 12px;"></i>
+                              </button>
+                              <button class="btn btn-secondary" onclick="deleteShoppingItem('${item.id}')" style="font-size: 11px; padding: 5px 8px; border-radius: 12px; color: #ef4444;" title="Delete Item">
+                                <i data-lucide="trash-2" style="width: 12px;"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      `;
+                    }
+
+                    // Update Customer Dashboard Home Shopping List Widget
+                    function updateCustomerHomeShoppingList() {
+                      const toBuyEl = document.getElementById('cust-home-shoplist-to-buy');
+                      const purchasedEl = document.getElementById('cust-home-shoplist-purchased');
+                      const lowEl = document.getElementById('cust-home-shoplist-low');
+                      const dateEl = document.getElementById('cust-home-shoplist-target-date');
+                      const estCostEl = document.getElementById('cust-home-shoplist-est-cost');
+                      const budgetBarEl = document.getElementById('cust-home-shoplist-budget-bar');
+                      const remBudgetEl = document.getElementById('cust-home-shoplist-rem-budget');
+                      const previewContainer = document.getElementById('cust-home-shoplist-items-preview');
+                      const lowStockBanner = document.getElementById('cust-home-shoplist-low-stock-banner');
+
+                      if (!toBuyEl) return;
+
+                      const pendingItems = currentShoppingItems.filter(i => i.status === 'pending');
+                      const purchasedItems = currentShoppingItems.filter(i => i.status === 'purchased');
+
+                      // Calculate low stock items in pantry
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+                      const lowStockPantry = (currentPantryItems || []).filter(item => {
+                        const stock = Math.max(0, item.current_stock_base || 0);
+                        const threshold = item.low_stock_threshold_base || 0;
+                        const dailyRate = item.daily_usage_base || 0;
+                        const runwayDays = dailyRate > 0 ? Math.floor(stock / dailyRate) : null;
+                        return stock <= threshold || (runwayDays !== null && runwayDays <= 2);
+                      });
+
+                      let estTotal = 0;
+                      let earliestDate = null;
+                      pendingItems.forEach(item => {
+                        let unitRate = item.suggested_price ? Number(item.suggested_price) : (item.user_entered_price ? Number(item.user_entered_price) : 0);
+                        estTotal += (unitRate * (Number(item.required_quantity) || 1));
+                        if (item.expected_date && (!earliestDate || item.expected_date < earliestDate)) {
+                          earliestDate = item.expected_date;
+                        }
+                      });
+                      estTotal = Math.round(estTotal);
+
+                      const budget = shoppingListBudget || 1000;
+                      const remaining = budget - estTotal;
+
+                      toBuyEl.innerText = pendingItems.length;
+                      if (purchasedEl) purchasedEl.innerText = purchasedItems.length;
+                      if (lowEl) lowEl.innerText = lowStockPantry.length;
+                      if (dateEl) dateEl.innerText = earliestDate || 'Today';
+                      if (estCostEl) estCostEl.innerText = `₹${estTotal.toLocaleString('en-IN')}`;
+
+                      const utilizedPct = budget > 0 ? Math.min(100, Math.round((estTotal / budget) * 100)) : 0;
+                      if (budgetBarEl) {
+                        budgetBarEl.style.width = `${utilizedPct}%`;
+                        budgetBarEl.style.background = estTotal > budget ? '#ef4444' : '#10b981';
+                      }
+
+                      if (remBudgetEl) {
+                        remBudgetEl.innerText = remaining >= 0
+                          ? `₹${remaining.toLocaleString('en-IN')} remaining`
+                          : `₹${Math.abs(remaining).toLocaleString('en-IN')} over budget`;
+                        remBudgetEl.style.color = remaining >= 0 ? 'var(--text-muted)' : '#ef4444';
+                      }
+
+                      // Top 3 pending items preview chips
+                      if (previewContainer) {
+                        if (pendingItems.length > 0) {
+                          previewContainer.innerHTML = pendingItems.slice(0, 3).map(it => {
+                            const unitPrice = it.suggested_price || it.user_entered_price || 0;
+                            const total = Math.round(unitPrice * (Number(it.required_quantity) || 1));
+                            return `
+                              <div style="background: white; border: 1px solid var(--border-color); border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                                <div>
+                                  <div style="font-weight: 700; color: var(--text-main);">${it.product_name}</div>
+                                  <div style="font-size: 11px; color: var(--text-muted);">${it.required_quantity} ${it.unit} · ${it.suggested_shop || 'Local Kirana'}</div>
+                                </div>
+                                <div style="font-weight: 800; color: var(--primary-dark);">${total > 0 ? '₹' + total : '-'}</div>
+                              </div>
+                            `;
+                          }).join('');
+                        } else {
+                          previewContainer.innerHTML = `
+                            <div style="text-align: center; padding: 12px; font-size: 12px; color: var(--text-muted);">
+                              No pending items on shopping list. Tap "+ Add Item" to create your list.
+                            </div>
+                          `;
+                        }
+                      }
+
+                      // Low stock pantry banner
+                      if (lowStockBanner) {
+                        if (lowStockPantry.length > 0) {
+                          lowStockBanner.style.display = 'flex';
+                          lowStockBanner.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                              <i data-lucide="alert-triangle" style="width: 16px; color: #b45309;"></i>
+                              <span style="font-size: 12px; color: #92400e; font-weight: 600;">
+                                ${lowStockPantry.length} pantry ingredients are running low! Add them directly to your shopping list.
+                              </span>
+                            </div>
+                            <button class="btn btn-secondary" onclick="showView('shopping-list'); setShoplistTab('lowpantry');" style="font-size: 11px; padding: 4px 10px; border-radius: 12px; background: white; border-color: #fde68a; color: #92400e; font-weight: 700;">
+                              Review Refills &rarr;
+                            </button>
+                          `;
+                        } else {
+                          lowStockBanner.style.display = 'none';
+                        }
+                      }
+                    }
+
+                    // MODAL 1: ADD / EDIT SHOPPING LIST ITEM
+                    function openAddShoppingItemModal(pantryItem = null) {
+                      const form = document.getElementById('shoplist-item-form');
+                      if (form) form.reset();
+
+                      document.getElementById('shoplist-modal-title').innerText = 'Add Shopping List Item';
+                      document.getElementById('shoplist-modal-save-btn').innerText = 'Add to List';
+                      document.getElementById('shoplist-form-item-id').value = '';
+                      document.getElementById('shoplist-form-pantry-id').value = '';
+                      document.getElementById('shoplist-form-pantry-notice').style.display = 'none';
+                      document.getElementById('shoplist-form-date').value = getDeviceLocalDateStr(1);
+                      document.getElementById('shoplist-form-qty').value = '1';
+                      document.getElementById('shoplist-form-unit').value = 'kg';
+
+                      // Radio buttons default to auto
+                      const autoRadio = document.querySelector('input[name="shoplist_price_mode"][value="auto"]');
+                      if (autoRadio) autoRadio.checked = true;
+                      document.getElementById('shoplist-manual-price-box').style.display = 'none';
+
+                      if (pantryItem) {
+                        document.getElementById('shoplist-form-pantry-id').value = pantryItem.id;
+                        document.getElementById('shoplist-form-name').value = pantryItem.product_name;
+                        document.getElementById('shoplist-form-category').value = pantryItem.category || 'Food & Grains';
+                        document.getElementById('shoplist-form-unit').value = pantryItem.unit || 'kg';
+
+                        // Suggested refill quantity
+                        const stock = Math.max(0, pantryItem.current_stock_base || 0);
+                        const orig = Math.max(1, pantryItem.original_quantity_base || 1);
+                        const refillBase = Math.max(1, orig - stock);
+                        const refillDisplay = (pantryItem.unit === 'kg' || pantryItem.unit === 'L') ? (refillBase / 1000) : refillBase;
+                        document.getElementById('shoplist-form-qty').value = Math.max(1, Math.round(refillDisplay));
+
+                        const notice = document.getElementById('shoplist-form-pantry-notice');
+                        const noticeDesc = document.getElementById('shoplist-form-pantry-desc');
+                        if (notice && noticeDesc) {
+                          notice.style.display = 'block';
+                          noticeDesc.innerText = `Current pantry stock: ${(typeof formatPantryBaseQty === 'function') ? formatPantryBaseQty(stock, pantryItem.unit) : stock} remaining.`;
+                        }
+                      }
+
+                      updateModalPricePreview();
+                      document.getElementById('shoplist-item-modal').style.display = 'flex';
+                    }
+
+                    function openEditShoppingItemModal(itemId) {
+                      const item = currentShoppingItems.find(i => String(i.id) === String(itemId));
+                      if (!item) return;
+
+                      document.getElementById('shoplist-modal-title').innerText = 'Edit Shopping List Item';
+                      document.getElementById('shoplist-modal-save-btn').innerText = 'Update Item';
+                      document.getElementById('shoplist-form-item-id').value = item.id;
+                      document.getElementById('shoplist-form-pantry-id').value = item.pantry_item_id || '';
+                      document.getElementById('shoplist-form-name').value = item.product_name;
+                      document.getElementById('shoplist-form-category').value = item.category || 'Food & Grains';
+                      document.getElementById('shoplist-form-qty').value = item.required_quantity;
+                      document.getElementById('shoplist-form-unit').value = item.unit || 'kg';
+                      document.getElementById('shoplist-form-date').value = item.expected_date || getDeviceLocalDateStr();
+                      document.getElementById('shoplist-form-budget').value = item.item_budget || '';
+                      document.getElementById('shoplist-form-notes').value = item.notes || '';
+
+                      if (item.user_entered_price) {
+                        const manRadio = document.querySelector('input[name="shoplist_price_mode"][value="manual"]');
+                        if (manRadio) manRadio.checked = true;
+                        document.getElementById('shoplist-manual-price-box').style.display = 'block';
+                        document.getElementById('shoplist-form-manual-price').value = item.user_entered_price;
+                      } else {
+                        const autoRadio = document.querySelector('input[name="shoplist_price_mode"][value="auto"]');
+                        if (autoRadio) autoRadio.checked = true;
+                        document.getElementById('shoplist-manual-price-box').style.display = 'none';
+                        document.getElementById('shoplist-form-manual-price').value = '';
+                      }
+
+                      document.getElementById('shoplist-form-pantry-notice').style.display = item.pantry_item_id ? 'block' : 'none';
+
+                      updateModalPricePreview();
+                      document.getElementById('shoplist-item-modal').style.display = 'flex';
+                    }
+
+                    function closeShoppingItemModal() {
+                      document.getElementById('shoplist-item-modal').style.display = 'none';
+                    }
+
+                    function fillShoppingSuggestion(name, cat, qty, unit) {
+                      document.getElementById('shoplist-form-name').value = name;
+                      document.getElementById('shoplist-form-category').value = cat;
+                      document.getElementById('shoplist-form-qty').value = qty;
+                      document.getElementById('shoplist-form-unit').value = unit;
+                      updateModalPricePreview();
+                    }
+
+                    function togglePriceMode(mode) {
+                      const box = document.getElementById('shoplist-manual-price-box');
+                      if (box) box.style.display = mode === 'manual' ? 'block' : 'none';
+                      updateModalPricePreview();
+                    }
+
+                    function handleShoppingNameInput(name) {
+                      if (shoppingPriceCheckTimeout) clearTimeout(shoppingPriceCheckTimeout);
+                      shoppingPriceCheckTimeout = setTimeout(() => {
+                        updateModalPricePreview();
+                      }, 300);
+                    }
+
+                    async function updateModalPricePreview() {
+                      const name = (document.getElementById('shoplist-form-name').value || '').trim();
+                      const qty = Number(document.getElementById('shoplist-form-qty').value) || 1;
+                      const unit = document.getElementById('shoplist-form-unit').value || 'kg';
+                      const modeRadio = document.querySelector('input[name="shoplist_price_mode"]:checked');
+                      const mode = modeRadio ? modeRadio.value : 'auto';
+
+                      const shopEl = document.getElementById('shoplist-preview-shop-name');
+                      const rateEl = document.getElementById('shoplist-preview-rate');
+                      const totalEl = document.getElementById('shoplist-preview-est-total');
+
+                      if (!name) {
+                        if (shopEl) shopEl.innerText = 'Enter product name to compare';
+                        if (rateEl) rateEl.innerText = 'Rate: -';
+                        if (totalEl) totalEl.innerText = '₹0';
+                        return;
+                      }
+
+                      if (mode === 'manual') {
+                        const manualPrice = Number(document.getElementById('shoplist-form-manual-price').value) || 0;
+                        const total = Math.round(manualPrice * qty);
+                        if (shopEl) shopEl.innerText = 'Customer-Entered Custom Rate';
+                        if (rateEl) rateEl.innerText = `Rate: ₹${manualPrice} / ${unit} (User Price)`;
+                        if (totalEl) totalEl.innerText = `₹${total}`;
+                        return;
+                      }
+
+                      // Auto store comparison preview
+                      try {
+                        const res = await fetch(`/api/shopping-list/compare-prices?product_name=${encodeURIComponent(name)}&quantity=${qty}&unit=${unit}`);
+                        if (res.ok) {
+                          const data = await res.json();
+                          if (data.comparison && data.comparison.recommended_shop) {
+                            const rec = data.comparison.recommended_shop;
+                            if (shopEl) shopEl.innerText = `Lowest: ${rec.shop_name}`;
+                            if (rateEl) rateEl.innerText = `Best Rate: ₹${rec.unit_price}/${rec.unit} · Total: ₹${Math.round(rec.estimated_total_cost)}`;
+                            if (totalEl) totalEl.innerText = `₹${Math.round(rec.estimated_total_cost)}`;
+                          } else {
+                            if (shopEl) shopEl.innerText = 'No store price data found in local database';
+                            if (rateEl) rateEl.innerText = 'You can switch to Enter Price Manually';
+                            if (totalEl) totalEl.innerText = '₹0';
+                          }
+                        }
+                      } catch (e) {
+                        if (shopEl) shopEl.innerText = 'Could not fetch neighborhood prices';
+                      }
+                    }
+
+                    // Save / Add Shopping List Item
+                    async function handleShoppingItemSubmit(event) {
+                      event.preventDefault();
+                      const userId = getShoppingUserId();
+                      const itemId = document.getElementById('shoplist-form-item-id').value;
+                      const pantryId = document.getElementById('shoplist-form-pantry-id').value;
+                      const name = (document.getElementById('shoplist-form-name').value || '').trim();
+                      const category = document.getElementById('shoplist-form-category').value;
+                      const qty = Number(document.getElementById('shoplist-form-qty').value) || 1;
+                      const unit = document.getElementById('shoplist-form-unit').value || 'kg';
+                      const expDate = document.getElementById('shoplist-form-date').value || getDeviceLocalDateStr();
+                      const budget = document.getElementById('shoplist-form-budget').value || null;
+                      const notes = document.getElementById('shoplist-form-notes').value || '';
+                      const modeRadio = document.querySelector('input[name="shoplist_price_mode"]:checked');
+                      const isManual = modeRadio && modeRadio.value === 'manual';
+                      const manualPrice = isManual ? Number(document.getElementById('shoplist-form-manual-price').value) : null;
+
+                      // Prevent adding duplicate if creating new item
+                      if (!itemId) {
+                        const duplicate = currentShoppingItems.find(i =>
+                          i.status === 'pending' &&
+                          i.product_name.toLowerCase().trim() === name.toLowerCase().trim()
+                        );
+                        if (duplicate) {
+                          activeDuplicateExistingItem = duplicate;
+                          document.getElementById('duplicate-modal-msg').innerHTML = `<b>${name}</b> is already on your shopping list with a quantity of <b>${duplicate.required_quantity} ${duplicate.unit}</b>.`;
+                          document.getElementById('duplicate-modal-pantry-stock').innerText = 'Already present on list';
+                          document.getElementById('duplicate-modal-cur-list-qty').innerText = `${duplicate.required_quantity} ${duplicate.unit}`;
+                          document.getElementById('duplicate-modal-new-qty').value = duplicate.required_quantity + qty;
+                          document.getElementById('duplicate-modal-unit').value = duplicate.unit;
+                          closeShoppingItemModal();
+                          document.getElementById('shoplist-duplicate-modal').style.display = 'flex';
+                          return;
+                        }
+                      }
+
+                      const payload = {
+                        user_id: userId,
+                        product_name: name,
+                        category: category,
+                        required_quantity: qty,
+                        unit: unit,
+                        expected_date: expDate,
+                        item_budget: budget ? Number(budget) : null,
+                        notes: notes,
+                        user_entered_price: manualPrice,
+                        pantry_item_id: pantryId || null
+                      };
+
+                      try {
+                        const url = itemId ? `/api/shopping-list/${itemId}` : '/api/shopping-list';
+                        const method = itemId ? 'PUT' : 'POST';
+                        const res = await fetch(url, {
+                          method: method,
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(payload)
+                        });
+
+                        if (res.ok) {
+                          closeShoppingItemModal();
+                          await loadShoppingListData();
+                          showToast(itemId ? `Updated "${name}" on shopping list!` : `Added "${name}" to shopping list! 🛒`, 'success');
+                        } else {
+                          const errData = await res.json();
+                          alert('Error saving item: ' + (errData.error || 'Server error'));
+                        }
+                      } catch (err) {
+                        console.error('Error saving item:', err);
+                        alert('Could not save shopping list item. Please try again.');
+                      }
+                    }
+
+                    // Delete item
+                    async function deleteShoppingItem(itemId) {
+                      if (!confirm('Remove this item from your shopping list?')) return;
+                      try {
+                        const res = await fetch(`/api/shopping-list/${itemId}`, { method: 'DELETE' });
+                        if (res.ok) {
+                          await loadShoppingListData();
+                          showToast('Item removed from shopping list.', 'info');
+                        }
+                      } catch (err) {
+                        console.error('Error deleting item:', err);
+                      }
+                    }
+
+                    // MODAL 2: CONFIRM PURCHASE & PANTRY UPDATE
+                    function openConfirmPurchaseModal(itemId) {
+                      const item = currentShoppingItems.find(i => String(i.id) === String(itemId));
+                      if (!item) return;
+
+                      document.getElementById('confirm-form-item-id').value = item.id;
+                      document.getElementById('confirm-form-pantry-id').value = item.pantry_item_id || '';
+                      document.getElementById('confirm-form-category').value = item.category || 'Food & Grains';
+                      document.getElementById('confirm-form-prod-name').innerText = `${item.product_name} (${item.category || 'Grocery'})`;
+
+                      const qty = Number(item.required_quantity) || 1;
+                      const unit = item.unit || 'kg';
+                      const unitPrice = item.suggested_price ? Number(item.suggested_price) : (item.user_entered_price ? Number(item.user_entered_price) : 50);
+
+                      document.getElementById('confirm-form-qty').value = qty;
+                      document.getElementById('confirm-form-unit').value = unit;
+                      document.getElementById('confirm-form-price').value = unitPrice;
+                      document.getElementById('confirm-form-total').value = Math.round(qty * unitPrice);
+
+                      // Suggested shop
+                      const shopSelect = document.getElementById('confirm-form-shop');
+                      if (item.suggested_shop && shopSelect) {
+                        for (let opt of shopSelect.options) {
+                          if (opt.value === item.suggested_shop) {
+                            shopSelect.value = item.suggested_shop;
+                            break;
+                          }
+                        }
+                      }
+
+                      // Actual purchase date defaults to customer device's local date
+                      document.getElementById('confirm-form-date').value = getDeviceLocalDateStr();
+
+                      // Default expiry date: 30 days ahead for fresh/dairy, empty for staples
+                      const isPerishable = ['Fresh Produce', 'Dairy & Eggs'].includes(item.category);
+                      document.getElementById('confirm-form-expiry').value = isPerishable ? getDeviceLocalDateStr(14) : '';
+
+                      document.getElementById('confirm-form-update-pantry').checked = true;
+                      document.getElementById('shoplist-confirm-modal').style.display = 'flex';
+                    }
+
+                    function closeConfirmPurchaseModal() {
+                      document.getElementById('shoplist-confirm-modal').style.display = 'none';
+                    }
+
+                    function recalcConfirmTotal() {
+                      const qty = Number(document.getElementById('confirm-form-qty').value) || 0;
+                      const price = Number(document.getElementById('confirm-form-price').value) || 0;
+                      document.getElementById('confirm-form-total').value = Math.round(qty * price);
+                    }
+
+                    async function handleConfirmPurchaseSubmit(event) {
+                      event.preventDefault();
+                      const userId = getShoppingUserId();
+                      const itemId = document.getElementById('confirm-form-item-id').value;
+                      const qty = Number(document.getElementById('confirm-form-qty').value) || 1;
+                      const unit = document.getElementById('confirm-form-unit').value || 'kg';
+                      const unitPrice = Number(document.getElementById('confirm-form-price').value) || 0;
+                      const totalAmount = Number(document.getElementById('confirm-form-total').value) || (qty * unitPrice);
+                      const shopName = document.getElementById('confirm-form-shop').value || 'Neighborhood Store';
+                      const purchaseDate = document.getElementById('confirm-form-date').value || getDeviceLocalDateStr();
+                      const expiryDate = document.getElementById('confirm-form-expiry').value || null;
+                      const updatePantry = document.getElementById('confirm-form-update-pantry').checked;
+
+                      const payload = {
+                        item_id: itemId,
+                        user_id: userId,
+                        actual_quantity: qty,
+                        unit: unit,
+                        unit_price: unitPrice,
+                        total_amount: totalAmount,
+                        shop_name: shopName,
+                        purchase_date: purchaseDate,
+                        expiry_date: expiryDate,
+                        update_pantry: updatePantry
+                      };
+
+                      try {
+                        const res = await fetch('/api/shopping-list/confirm-purchase', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(payload)
+                        });
+
+                        if (res.ok) {
+                          closeConfirmPurchaseModal();
+                          await Promise.all([
+                            loadShoppingListData(),
+                            (typeof loadPantryData === 'function') ? loadPantryData() : Promise.resolve()
+                          ]);
+                          showToast(`Purchase recorded! ${updatePantry ? 'Kitchen pantry stock synchronized.' : ''} 🛒✅`, 'success');
+                        } else {
+                          const errData = await res.json();
+                          alert('Error confirming purchase: ' + (errData.error || 'Server error'));
+                        }
+                      } catch (err) {
+                        console.error('Error confirming purchase:', err);
+                        alert('Could not record purchase. Please try again.');
+                      }
+                    }
+
+                    // MODAL 3: SET TOTAL SHOPPING BUDGET
+                    function openSetBudgetModal() {
+                      document.getElementById('budget-modal-input').value = shoppingListBudget || 1000;
+                      document.getElementById('shoplist-budget-modal').style.display = 'flex';
+                    }
+
+                    function closeSetBudgetModal() {
+                      document.getElementById('shoplist-budget-modal').style.display = 'none';
+                    }
+
+                    function setPresetBudget(val) {
+                      document.getElementById('budget-modal-input').value = val;
+                    }
+
+                    async function handleSaveBudgetSubmit(event) {
+                      event.preventDefault();
+                      const userId = getShoppingUserId();
+                      const val = Number(document.getElementById('budget-modal-input').value) || 1000;
+
+                      try {
+                        const res = await fetch('/api/shopping-list/budget', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ user_id: userId, total_budget: val })
+                        });
+
+                        if (res.ok) {
+                          shoppingListBudget = val;
+                          localStorage.setItem(`grocify_shopping_budget_${userId}`, String(val));
+                          closeSetBudgetModal();
+                          renderShoppingListUI();
+                          updateCustomerHomeShoppingList();
+                          showToast(`Monthly shopping budget set to ₹${val.toLocaleString('en-IN')}! 💰`, 'success');
+                        }
+                      } catch (err) {
+                        console.error('Error saving budget:', err);
+                      }
+                    }
+
+                    // MODAL 4: MULTI-STORE PRICE COMPARISON
+                    async function openComparisonModal(productName, qty, unit) {
+                      document.getElementById('comp-modal-req-qty').innerText = `${qty} ${unit} ${productName}`;
+                      const listContainer = document.getElementById('comp-modal-shops-list');
+                      const altsBox = document.getElementById('comp-modal-alts-box');
+                      const altsList = document.getElementById('comp-modal-alts-list');
+                      const bestBadge = document.getElementById('comp-modal-best-shop-badge');
+
+                      listContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">Comparing 4 neighborhood stores...</div>';
+                      altsBox.style.display = 'none';
+                      document.getElementById('shoplist-comparison-modal').style.display = 'flex';
+
+                      try {
+                        const res = await fetch(`/api/shopping-list/compare-prices?product_name=${encodeURIComponent(productName)}&quantity=${qty}&unit=${unit}`);
+                        if (res.ok) {
+                          const data = await res.json();
+                          const comp = data.comparison;
+                          if (comp && comp.stores_compared && comp.stores_compared.length > 0) {
+                            if (bestBadge && comp.recommended_shop) {
+                              bestBadge.innerText = `Lowest Price: ${comp.recommended_shop.shop_name} (₹${Math.round(comp.recommended_shop.estimated_total_cost)})`;
+                            }
+
+                            listContainer.innerHTML = comp.stores_compared.map((st, idx) => `
+                              <div style="background: ${idx === 0 ? '#ecfdf5' : '#f8fafc'}; border: 1.5px solid ${idx === 0 ? '#10b981' : 'var(--border-color)'}; border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                <div>
+                                  <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 14px; font-weight: 800; color: var(--text-main);">${st.shop_name}</span>
+                                    ${idx === 0 ? '<span class="badge" style="background: #10b981; color: white; font-weight: 800; font-size: 10px;">LOWEST PRICE</span>' : ''}
+                                  </div>
+                                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                                    ${st.address || 'Local Neighborhood Kirana'} · ${st.distance || 'Nearby'}
+                                  </div>
+                                  <div style="font-size: 11px; color: ${idx === 0 ? '#047857' : 'var(--text-main)'}; margin-top: 2px;">
+                                    Unit Price: <b>₹${st.unit_price} / ${st.unit}</b> (${st.product_name})
+                                  </div>
+                                </div>
+                                <div style="text-align: right;">
+                                  <div style="font-size: 16px; font-weight: 800; color: ${idx === 0 ? '#047857' : 'var(--text-main)'};">₹${Math.round(st.estimated_total_cost)}</div>
+                                  <div style="font-size: 10px; color: var(--text-muted);">Est. for ${qty} ${unit}</div>
+                                </div>
+                              </div>
+                            `).join('');
+
+                            if (comp.affordable_alternatives && comp.affordable_alternatives.length > 0) {
+                              altsBox.style.display = 'block';
+                              altsList.innerHTML = comp.affordable_alternatives.map(alt => `
+                                <div style="background: white; border: 1px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                                  <div>
+                                    <div style="font-weight: 700; color: #1e40af;">${alt.product_name}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">${alt.shop_name} · ₹${alt.price} / ${alt.unit}</div>
+                                  </div>
+                                  <div style="text-align: right; color: #1e40af; font-weight: 800;">
+                                    Save ~₹${Math.round((comp.recommended_shop.unit_price - alt.price) * qty)}!
+                                  </div>
+                                </div>
+                              `).join('');
+                            }
+                          } else {
+                            listContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No comparison records found for this product.</div>';
+                          }
+                        }
+                      } catch (err) {
+                        listContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #ef4444;">Error fetching store comparisons.</div>';
+                      }
+                    }
+
+                    function closeComparisonModal() {
+                      document.getElementById('shoplist-comparison-modal').style.display = 'none';
+                    }
+
+                    // PANTRY LOW STOCK INTEGRATION: Add or Update Qty
+                    function addLowStockPantryToShoppingList(pantryId) {
+                      const pItem = (currentPantryItems || []).find(i => String(i.id) === String(pantryId));
+                      if (!pItem) return;
+
+                      // Check if already in shopping list with status 'pending'
+                      const existing = currentShoppingItems.find(i =>
+                        i.status === 'pending' &&
+                        (String(i.pantry_item_id) === String(pantryId) ||
+                         i.product_name.toLowerCase().trim() === pItem.product_name.toLowerCase().trim())
+                      );
+
+                      if (existing) {
+                        // Prevent duplicate: open modal to update quantity
+                        activeDuplicateExistingItem = existing;
+                        const stock = Math.max(0, pItem.current_stock_base || 0);
+                        document.getElementById('duplicate-modal-msg').innerHTML = `<b>${pItem.product_name}</b> is already on your shopping list.`;
+                        document.getElementById('duplicate-modal-pantry-stock').innerText = `${(typeof formatPantryBaseQty === 'function') ? formatPantryBaseQty(stock, pItem.unit) : stock} remaining in kitchen`;
+                        document.getElementById('duplicate-modal-cur-list-qty').innerText = `${existing.required_quantity} ${existing.unit}`;
+                        document.getElementById('duplicate-modal-new-qty').value = Number(existing.required_quantity) + 1;
+                        document.getElementById('duplicate-modal-unit').value = existing.unit;
+                        document.getElementById('shoplist-duplicate-modal').style.display = 'flex';
+                      } else {
+                        // Not duplicate: open add modal pre-filled with pantry details
+                        openAddShoppingItemModal(pItem);
+                      }
+                    }
+
+                    async function confirmUpdateDuplicateQuantity() {
+                      if (!activeDuplicateExistingItem) return;
+                      const newQty = Number(document.getElementById('duplicate-modal-new-qty').value) || activeDuplicateExistingItem.required_quantity;
+
+                      try {
+                        const res = await fetch(`/api/shopping-list/${activeDuplicateExistingItem.id}`, {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            user_id: getShoppingUserId(),
+                            required_quantity: newQty
+                          })
+                        });
+
+                        if (res.ok) {
+                          closeDuplicateModal();
+                          await loadShoppingListData();
+                          showToast(`Updated quantity for "${activeDuplicateExistingItem.product_name}" to ${newQty} ${activeDuplicateExistingItem.unit}! 🛒`, 'success');
+                        }
+                      } catch (err) {
+                        console.error('Error updating quantity:', err);
+                      }
+                    }
+
+                    function closeDuplicateModal() {
+                      document.getElementById('shoplist-duplicate-modal').style.display = 'none';
+                      activeDuplicateExistingItem = null;
+                    }
+
+                    // TAB & FILTER NAVIGATION
+                    function setShoplistTab(tab) {
+                      shoplistActiveTab = tab;
+                      document.querySelectorAll('.shoplist-tab-btn').forEach(b => b.classList.remove('active'));
+                      const btn = document.getElementById(`shoplist-tab-${tab}`);
+                      if (btn) btn.classList.add('active');
+
+                      const pendingItems = currentShoppingItems.filter(i => i.status === 'pending');
+                      const purchasedItems = currentShoppingItems.filter(i => i.status === 'purchased');
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+                      const lowStockPantry = (currentPantryItems || []).filter(item => {
+                        const stock = Math.max(0, item.current_stock_base || 0);
+                        const threshold = item.low_stock_threshold_base || 0;
+                        const dailyRate = item.daily_usage_base || 0;
+                        const runwayDays = dailyRate > 0 ? Math.floor(stock / dailyRate) : null;
+                        return stock <= threshold || (runwayDays !== null && runwayDays <= 2);
+                      });
+
+                      renderActiveTabContent(pendingItems, purchasedItems, lowStockPantry);
+                      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+                    }
+
+                    function setShoplistCategoryFilter(cat, btn) {
+                      shoplistActiveCategory = cat;
+                      const pills = document.querySelectorAll('#shoplist-cat-pills button');
+                      pills.forEach(p => {
+                        p.classList.remove('active');
+                        p.style.background = 'white';
+                        p.style.borderColor = 'var(--border-color)';
+                        p.style.color = 'var(--text-muted)';
+                        p.style.fontWeight = '600';
+                      });
+                      if (btn) {
+                        btn.classList.add('active');
+                        btn.style.background = '#ecfdf5';
+                        btn.style.borderColor = '#10b981';
+                        btn.style.color = 'var(--primary-dark)';
+                        btn.style.fontWeight = '700';
+                      }
+                      filterShoppingListItems();
+                    }
+
+                    function filterShoppingListItems() {
+                      const searchInput = document.getElementById('shoplist-search-input');
+                      const sortSelect = document.getElementById('shoplist-sort-select');
+                      if (searchInput) shoplistSearchTerm = searchInput.value.trim();
+                      if (sortSelect) shoplistSortBy = sortSelect.value;
+
+                      const pendingItems = currentShoppingItems.filter(i => i.status === 'pending');
+                      const purchasedItems = currentShoppingItems.filter(i => i.status === 'purchased');
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+                      const lowStockPantry = (currentPantryItems || []).filter(item => {
+                        const stock = Math.max(0, item.current_stock_base || 0);
+                        const threshold = item.low_stock_threshold_base || 0;
+                        const dailyRate = item.daily_usage_base || 0;
+                        const runwayDays = dailyRate > 0 ? Math.floor(stock / dailyRate) : null;
+                        return stock <= threshold || (runwayDays !== null && runwayDays <= 2);
+                      });
+
+                      renderActiveTabContent(pendingItems, purchasedItems, lowStockPantry);
+                      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+                    }
 
 </script>
 </body>
